@@ -1,12 +1,22 @@
 #include "../inc/IRC.hpp"
+#include <fcntl.h>
+//#include "Client.hpp"
+#include <vector>
 
 int test_server(int socketD, struct sockaddr_in *address) {
 	bool is_online = true;
-	int client_FD;
+	std::vector<int> client_FDS;
+
+	int infd;
 	char buffer[1024];
 	struct sockaddr_in clientAddress;
+
+	//int flags = fcntl(socketD, F_GETFL, 0);
+	fcntl(socketD, F_SETFL, O_NONBLOCK);
+
 	unsigned int clientAddressSize = sizeof(clientAddress);
 	int bind_result = bind(socketD, (struct sockaddr *)address, sizeof(*address));
+
 	if (bind_result != 0) {
 		cout << "bind failed." << endl;
 		return (1);
@@ -16,24 +26,49 @@ int test_server(int socketD, struct sockaddr_in *address) {
 		cout << "listen failed." << endl;
 		return (1);
 	}
-	client_FD = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
-	if (client_FD < 0) {
-		cout << "accept failed." << endl;
-		close(client_FD);
-		return (1);
-	}
-	cout << "Client message accepted." << endl;
 
-	while (is_online) {
-		if (recv(client_FD, buffer, 1024, 0) == -1) {
-			cerr << "recv failed: " << std::strerror(errno) << endl;
-			close(client_FD);
-			return (1);
+	while (is_online)
+	{
+		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
+		if (infd > 0)
+		{
+			//Client c = Client(infd);
+			client_FDS.push_back(infd);
+			std::cout << "Client connect !!!!" << std::endl;
 		}
-		cout << "Client send: " << buffer << endl;
-		bzero(buffer, 1024);
+		if (!client_FDS.empty())
+		{
+			for (std::vector<int>::iterator it = client_FDS.begin(); it != client_FDS.end(); it++)
+			{
+				//cout << "for loop looping..." << endl;
+				if (recv(*it, buffer, 1024, 0) == -1)
+				{
+					//cout << ""
+					//cerr << "recv failed: " << std::strerror(errno) << endl;
+					//close((*it));
+				}
+				else
+				{
+					if (buffer[0] != '\0')
+					{
+						cout << "Client send: " << buffer << endl;
+						//cout << "Client send: " << buffer << endl;
+						bzero(buffer, 1024);
+					}
+					else
+					{
+						close(*it);
+						client_FDS.erase(it);
+					}
+				}
+			}
+		}
+		
 	}
-	close(client_FD);
+	for (std::vector<int>::iterator it = client_FDS.begin(); it != client_FDS.end(); it++)
+	{
+		close(*it);
+	}
 	return (0);
 }
 

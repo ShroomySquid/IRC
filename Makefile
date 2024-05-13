@@ -6,7 +6,7 @@
 #    By: fbarrett <fbarrett@42quebec.com>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/30 09:59:24 by fbarrett          #+#    #+#              #
-#    Updated: 2024/05/13 13:40:44 by fbarrett         ###   ########.fr        #
+#    Updated: 2024/05/13 16:09:47 by bbouchar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ CCFLAGS		=	-Wall -Wextra -Werror -std=c++98
 all:		$(NAME)
 
 $(NAME):	$(O_DIRECT) $(MY_SOURCES)
+	@make test
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
 test:	$(O_DIRECT) $(TEST_SOURCES)
