@@ -11,6 +11,7 @@ int test_server(int socketD, struct sockaddr_in *address) {
 
 	int infd;
 	char buffer[1024];
+	bzero(buffer, 1024);
 	struct sockaddr_in clientAddress;
 
 	//int flags = fcntl(socketD, F_GETFL, 0);
@@ -54,14 +55,19 @@ int test_server(int socketD, struct sockaddr_in *address) {
 					else
 					{
 						(*it).disconnect();
+						std::cout << "closing client on fd" << (*it).get_fd() << std::endl;
 						close((*it).get_fd());
 					}
 				}
 			}
-			for (std::vector<Client>::iterator it = client_container.end() - 1; it != client_container.begin(); it--)
-			{
-				if ((*it).is_disconnected())
-					client_container.erase(it);
+			for (std::vector<Client>::reverse_iterator it = client_container.rbegin(); it != client_container.rend();) {
+				if ((*it).is_disconnected()) {
+					// Supprimer l'élément et mettre à jour l'itérateur
+					it = std::vector<Client>::reverse_iterator(client_container.erase(std::next(it).base()));
+				} else {
+					// Passer à l'élément suivant
+					++it;
+				}
 			}
 		}
 
