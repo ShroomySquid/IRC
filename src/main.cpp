@@ -1,11 +1,13 @@
 #include "../inc/IRC.hpp"
+#include "../inc/Client.hpp"
 #include <fcntl.h>
 //#include "Client.hpp"
 #include <vector>
 
 int test_server(int socketD, struct sockaddr_in *address) {
 	bool is_online = true;
-	std::vector<int> client_FDS;
+	std::vector<Client> client_container;
+	//std::vector<int>::iterator to_erase;
 
 	int infd;
 	char buffer[1024];
@@ -32,42 +34,41 @@ int test_server(int socketD, struct sockaddr_in *address) {
 		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 		if (infd > 0)
 		{
-			//Client c = Client(infd);
-			client_FDS.push_back(infd);
+			Client c = Client(infd);
+			client_container.push_back(c);
 			std::cout << "Client connect !!!!" << std::endl;
 		}
-		if (!client_FDS.empty())
+		if (!client_container.empty())
 		{
-			for (std::vector<int>::iterator it = client_FDS.begin(); it != client_FDS.end(); it++)
+			for (std::vector<Client>::iterator it = client_container.begin(); it != client_container.end(); it++)
 			{
 				//cout << "for loop looping..." << endl;
-				if (recv(*it, buffer, 1024, 0) == -1)
-				{
-					//cout << ""
-					//cerr << "recv failed: " << std::strerror(errno) << endl;
-					//close((*it));
-				}
-				else
+				if (recv((*it).get_fd(), buffer, 1024, 0) != -1)
 				{
 					if (buffer[0] != '\0')
 					{
 						cout << "Client send: " << buffer << endl;
-						//cout << "Client send: " << buffer << endl;
+						send((*it).get_fd(), buffer, 1024, 0);
 						bzero(buffer, 1024);
 					}
 					else
 					{
-						close(*it);
-						client_FDS.erase(it);
+						(*it).disconnect();
+						close((*it).get_fd());
 					}
 				}
 			}
+			for (std::vector<Client>::iterator it = client_container.end() - 1; it != client_container.begin(); it--)
+			{
+				if ((*it).is_disconnected())
+					client_container.erase(it);
+			}
 		}
-		
+
 	}
-	for (std::vector<int>::iterator it = client_FDS.begin(); it != client_FDS.end(); it++)
+	for (std::vector<Client>::iterator it = client_container.begin(); it != client_container.end(); it++)
 	{
-		close(*it);
+		close((*it).get_fd());
 	}
 	return (0);
 }

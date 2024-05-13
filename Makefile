@@ -14,7 +14,7 @@ NAME			=	ircserv
 
 SRC_DIRECT		=	src/
 
-MY_FILES		=	main.cpp utils.cpp
+MY_FILES		=	main.cpp utils.cpp Client.cpp
 
 TEST_FILES		=	test_main.cpp utils.cpp
 

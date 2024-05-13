@@ -10,7 +10,7 @@ int test_client(int socketD, struct sockaddr_in address) {
 	cout << "connection was successful." << endl;
 
 	std::string msg;
-	//char buffer[1024];
+	char buffer[1024];
 	while (server_online && !std::cin.fail()) {
 		cout << "> ";
 		std::getline(std::cin, msg);
@@ -19,13 +19,13 @@ int test_client(int socketD, struct sockaddr_in address) {
 			return (1);
 		}
 		cout << "send succeed." << endl;
-		/*
+		
 		if (recv(socketD, buffer, 1024, 0) == -1) {
 			cout << "recv failed." << endl;
 			return (1);
 		}
 		cout << buffer << endl;
-		*/
+		
 	}
 	return (0);
 }
