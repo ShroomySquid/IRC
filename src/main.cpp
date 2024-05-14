@@ -3,12 +3,25 @@
 #include <fcntl.h>
 //#include "Client.hpp"
 #include <vector>
+#include <poll.h>
+
+void broadcastAll(std::vector<Client>& clients, Client &execp, char *buffer)
+{
+	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		Client &c = (*it);
+		if (&c != &execp)
+		{
+			send(c.get_fd(), buffer, 1024, 0);
+		}
+	}
+}
+
 
 int test_server(int socketD, struct sockaddr_in *address) {
 	bool is_online = true;
 	std::vector<Client> client_container;
 	//std::vector<int>::iterator to_erase;
-
 	int infd;
 	char buffer[1024];
 	bzero(buffer, 1024);
@@ -43,32 +56,41 @@ int test_server(int socketD, struct sockaddr_in *address) {
 		{
 			for (std::vector<Client>::iterator it = client_container.begin(); it != client_container.end(); it++)
 			{
+				if ((*it).is_disconnected())
+					continue;
 				//cout << "for loop looping..." << endl;
-				if (recv((*it).get_fd(), buffer, 1024, 0) != -1)
+				pollfd pfd;
+				pfd.fd = (*it).get_fd();
+				pfd.events = POLLIN | POLLOUT;
+				poll(&pfd, 1, 0);
+				if (pfd.revents)
 				{
-					if (buffer[0] != '\0')
+					if (recv((*it).get_fd(), buffer, 1024, 0) != -1)
 					{
-						cout << "Client send: " << buffer << endl;
-						send((*it).get_fd(), buffer, 1024, 0);
-						bzero(buffer, 1024);
-					}
-					else
-					{
-						(*it).disconnect();
-						std::cout << "closing client on fd" << (*it).get_fd() << std::endl;
-						close((*it).get_fd());
+						if (buffer[0] != '\0')
+						{
+							cout << "Client send: " << buffer;
+							broadcastAll(client_container, (*it), buffer);
+							bzero(buffer, 1024);
+						}
+						else
+						{
+							(*it).disconnect();
+							std::cout << "closing client on fd" << (*it).get_fd() << std::endl;
+							close((*it).get_fd());
+						}
 					}
 				}
 			}
-			for (std::vector<Client>::reverse_iterator it = client_container.rbegin(); it != client_container.rend();) {
-				if ((*it).is_disconnected()) {
-					// Supprimer l'élément et mettre à jour l'itérateur
-					it = std::vector<Client>::reverse_iterator(client_container.erase(std::next(it).base()));
-				} else {
-					// Passer à l'élément suivant
-					++it;
-				}
-			}
+			// for (std::vector<Client>::reverse_iterator it = client_container.rbegin(); it != client_container.rend();) {
+			// 	if ((*it).is_disconnected()) {
+			// 		// Supprimer l'élément et mettre à jour l'itérateur
+			// 		it = std::vector<Client>::reverse_iterator(client_container.erase(std::next(it).base()));
+			// 	} else {
+			// 		// Passer à l'élément suivant
+			// 		++it;
+			// 	}
+			// }
 		}
 
 	}
@@ -80,14 +102,14 @@ int test_server(int socketD, struct sockaddr_in *address) {
 }
 
 int main(int argc, char** argv) {
-	/*
-	if (argc != 3)
-	{
-		cerr << "Invalid amount of arguments provided. Please provide a port";
-		cerr << " and a server password." << endl;
-		return (1);
-	}
-	*/
+	
+	// if (argc != 3)
+	// {
+	// 	cerr << "Invalid amount of arguments provided. Please provide a port";
+	// 	cerr << " and a server password." << endl;
+	// 	return (1);
+	// }
+	
 	(void)argc;
 	(void)argv;
 	int socketD = create_socket_descriptor();

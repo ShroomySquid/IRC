@@ -6,6 +6,8 @@ int create_socket_descriptor(void) {
 		cout << "Socket failed" << endl;
 		return (-1);
 	}
+	int optval = 1;
+	setsockopt(socketD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval) < 0);
 	return (socketD);
 }
 
