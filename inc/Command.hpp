@@ -31,4 +31,12 @@ class Cmd_kick : public Command
         virtual void execute(std::vector<std::string> arguments);
 };
 
+class Cmd_privmsg : public Command
+{
+    public:
+        Cmd_privmsg();
+        ~Cmd_privmsg();
+        virtual void execute(std::vector<std::string> arguments);
+};
+
 #endif

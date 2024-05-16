@@ -56,7 +56,7 @@ int test_server(int socketD, struct sockaddr_in *address) {
 	std::map<std::string, Command*> commands;
 	commands["JOIN"] = new Cmd_join();
 	commands["KICK"] = new Cmd_kick();
-
+	commands["PRIVMSG"] = new Cmd_privmsg();
 
 	bool is_online = true;
 	std::vector<Client> client_container;
