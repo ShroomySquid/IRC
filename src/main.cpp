@@ -4,6 +4,8 @@
 //#include "Client.hpp"
 #include <vector>
 #include <poll.h>
+#include "../inc/Command.hpp"
+#include <map>
 
 void broadcastAll(std::vector<Client>& clients, Client &execp, char *buffer)
 {
@@ -17,8 +19,45 @@ void broadcastAll(std::vector<Client>& clients, Client &execp, char *buffer)
 	}
 }
 
+void process_message(std::map<std::string, Command*>& commands, char *buffer)
+{
+	std::string cmd; // nom de la commande.
+	std::vector<std::string> args; // arguments de la commande.
+	//cout << "Client send: " << buffer << std::endl;
+	int i = 0;
+	while (buffer[i] && buffer[i] != ' ' && buffer[i] != '\n')
+	{
+		cmd += buffer[i];
+		i++;
+	}
+	if (buffer[i] == ' ')
+		i++;
+	while(buffer[i] && buffer[i] != '\n')
+	{
+		std::string arg;
+		while (buffer[i] && buffer[i] != ' ')
+		{
+			arg += buffer[i];
+			i++;
+		}
+		i++;
+		args.push_back(arg);
+	}
+
+	if (commands.find(cmd) != commands.end())
+		commands[cmd]->execute(args); // execute la commande
+	else
+		std::cout << "This command doesnt exist !" << std::endl;
+}
+
 
 int test_server(int socketD, struct sockaddr_in *address) {
+
+	std::map<std::string, Command*> commands;
+	commands["JOIN"] = new Cmd_join();
+	commands["KICK"] = new Cmd_kick();
+
+
 	bool is_online = true;
 	std::vector<Client> client_container;
 	//std::vector<int>::iterator to_erase;
@@ -69,8 +108,8 @@ int test_server(int socketD, struct sockaddr_in *address) {
 					{
 						if (buffer[0] != '\0')
 						{
-							cout << "Client send: " << buffer;
-							broadcastAll(client_container, (*it), buffer);
+							// Parsing du message
+							process_message(commands, buffer);
 							bzero(buffer, 1024);
 						}
 						else
@@ -98,10 +137,19 @@ int test_server(int socketD, struct sockaddr_in *address) {
 	{
 		close((*it).get_fd());
 	}
+	//deleting all command instances
+	std::map<std::string, Command*>::iterator it = commands.begin();
+	while (it != commands.end())
+	{
+		delete (*it).second;
+		it++;
+	}
+	commands.clear();
 	return (0);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	
 	// if (argc != 3)
 	// {
