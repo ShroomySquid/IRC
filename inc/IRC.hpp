@@ -8,6 +8,9 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <unistd.h>
+# include <map>
+# include <poll.h>
+# include <fcntl.h>
 
 using std::cout;
 using std::endl;

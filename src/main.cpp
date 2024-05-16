@@ -1,29 +1,26 @@
 #include "../inc/IRC.hpp"
 #include "../inc/Client.hpp"
-#include <fcntl.h>
-//#include "Client.hpp"
-#include <vector>
-#include <poll.h>
 
-void broadcastAll(std::vector<Client>& clients, Client &execp, char *buffer)
+void broadcastAll(std::map<std::string, Client*>& clients, std::string except, char *buffer)
 {
-	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); it++)
+	for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
-		Client &c = (*it);
-		if (&c != &execp)
-		{
-			send(c.get_fd(), buffer, 1024, 0);
-		}
+		if (it->first != except)
+			send(it->second->get_fd(), buffer, 1024, 0);
 	}
 }
 
+Client* new_client(int fd, std::string username, std::string nickname) {
+	Client* new_client = new Client(fd, username, nickname);
+	return (new_client);
+}
 
-int test_server(int socketD, struct sockaddr_in *address) {
+int server(int socketD, struct sockaddr_in *address) {
 	bool is_online = true;
-	std::vector<Client> client_container;
-	//std::vector<int>::iterator to_erase;
+	std::map<std::string, Client*> client_container;
 	int infd;
 	char buffer[1024];
+	Client* received_client;
 	bzero(buffer, 1024);
 	struct sockaddr_in clientAddress;
 
@@ -45,58 +42,47 @@ int test_server(int socketD, struct sockaddr_in *address) {
 
 	while (is_online)
 	{
+		// registration qui va retourner un nouveau client?
 		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 		if (infd > 0)
 		{
-			Client c = Client(infd);
-			client_container.push_back(c);
-			std::cout << "Client connect !!!!" << std::endl;
-		}
-		if (!client_container.empty())
-		{
-			for (std::vector<Client>::iterator it = client_container.begin(); it != client_container.end(); it++)
-			{
-				if ((*it).is_disconnected())
-					continue;
-				//cout << "for loop looping..." << endl;
-				pollfd pfd;
-				pfd.fd = (*it).get_fd();
-				pfd.events = POLLIN | POLLOUT;
-				poll(&pfd, 1, 0);
-				if (pfd.revents)
-				{
-					if (recv((*it).get_fd(), buffer, 1024, 0) != -1)
-					{
-						if (buffer[0] != '\0')
-						{
-							cout << "Client send: " << buffer;
-							broadcastAll(client_container, (*it), buffer);
-							bzero(buffer, 1024);
-						}
-						else
-						{
-							(*it).disconnect();
-							std::cout << "closing client on fd" << (*it).get_fd() << std::endl;
-							close((*it).get_fd());
-						}
-					}
-				}
+			received_client = new_client(infd, "user", "nick");
+			if (received_client != NULL) {
+				client_container.insert(std::pair<std::string, Client*> (received_client->get_username(), received_client));
+				std::cout << "Client " << received_client->get_username() << " connected." << std::endl;
 			}
-			// for (std::vector<Client>::reverse_iterator it = client_container.rbegin(); it != client_container.rend();) {
-			// 	if ((*it).is_disconnected()) {
-			// 		// Supprimer l'élément et mettre à jour l'itérateur
-			// 		it = std::vector<Client>::reverse_iterator(client_container.erase(std::next(it).base()));
-			// 	} else {
-			// 		// Passer à l'élément suivant
-			// 		++it;
-			// 	}
-			// }
 		}
-
+		if (client_container.empty())
+			continue ;
+		for (std::map<std::string, Client*>::iterator it = client_container.begin(); it != client_container.end(); it++)
+		{
+			if (it->second->is_disconnected())
+				continue;
+			pollfd pfd;
+			pfd.fd = it->second->get_fd();
+			pfd.events = POLLIN | POLLOUT;
+			poll(&pfd, 1, 0);
+			if (!pfd.revents || recv(pfd.fd, buffer, 1024, 0) == -1)
+				continue ;
+			cout << "salut" << endl;
+			if (buffer[0] != '\0')
+			{
+				cout << "Client send: " << buffer;
+				broadcastAll(client_container, it->first, buffer);
+				bzero(buffer, 1024);
+			}
+			else
+			{
+				it->second->disconnect();
+				std::cout << "closing client on fd" << it->second->get_fd() << std::endl;
+				close(it->second->get_fd());
+			}
+		}
 	}
-	for (std::vector<Client>::iterator it = client_container.begin(); it != client_container.end(); it++)
+	for (std::map<std::string, Client*>::iterator it = client_container.begin(); it != client_container.end(); it++)
 	{
-		close((*it).get_fd());
+		close(it->second->get_fd());
+		delete it->second;
 	}
 	return (0);
 }
@@ -119,7 +105,7 @@ int main(int argc, char** argv) {
 	struct sockaddr_in* address = set_address(address_str, 2000);
 	if (address == NULL)
 		return (1);
-	test_server(socketD, address);
+	server(socketD, address);
 	free(address);
 	close(socketD);
 	return (0);
