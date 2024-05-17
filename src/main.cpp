@@ -18,6 +18,8 @@ void finish_server(std::map<std::string, Client*> &clients, std::map<std::string
 		delete (*it).second;
 		it++;
 	}
+	Channel::free_channel();
+
 }
 
 void remove_client(std::map<std::string, Client*> &clients) {
@@ -39,9 +41,6 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 	commands["JOIN"] = new Cmd_join();
 	commands["KICK"] = new Cmd_kick();
 	commands["PRIVMSG"] = new Cmd_privmsg();
-
-	Channel testChannel("gaming");
-
 
 	bool is_online = true;
 	bool need_to_remove_client = false;

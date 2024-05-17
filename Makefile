@@ -24,7 +24,7 @@ TEST_SOURCES	=	$(addprefix $(SRC_DIRECT), $(TEST_FILES))
 
 CC		=	c++
 
-CCFLAGS		=	-Wall -Wextra -Werror -std=c++98
+CCFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g
 
 all:		$(NAME)
 

@@ -1,9 +1,5 @@
 {
     "files.associations": {
-        "*.c": "c",
-        "*.lua": "lua",
-        "iostream": "cpp",
-        "ostream": "cpp",
         "__bit_reference": "cpp",
         "__config": "cpp",
         "__debug": "cpp",
@@ -45,6 +41,7 @@
         "iomanip": "cpp",
         "ios": "cpp",
         "iosfwd": "cpp",
+        "iostream": "cpp",
         "istream": "cpp",
         "iterator": "cpp",
         "limits": "cpp",
@@ -55,6 +52,7 @@
         "new": "cpp",
         "numeric": "cpp",
         "optional": "cpp",
+        "ostream": "cpp",
         "ratio": "cpp",
         "sstream": "cpp",
         "stack": "cpp",
@@ -68,13 +66,6 @@
         "typeinfo": "cpp",
         "unordered_map": "cpp",
         "utility": "cpp",
-        "vector": "cpp",
-        "*.tcc": "cpp",
-        "clocale": "cpp",
-        "compare": "cpp",
-        "concepts": "cpp",
-        "memory_resource": "cpp",
-        "random": "cpp",
-        "numbers": "cpp"
+        "vector": "cpp"
     }
 }

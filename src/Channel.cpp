@@ -1,7 +1,8 @@
 #include "../inc/Channel.hpp"
 
-std::map <std::string, Channel*> Channel::channels = std::map <std::string, Channel*>();
+// --------------- STATIC members ----------------
 
+std::map <std::string, Channel*> Channel::channels = std::map <std::string, Channel*>();
 Channel* Channel::getChannel(std::string name)
 {
 	if (channels.find(name) != channels.end())
@@ -10,31 +11,47 @@ Channel* Channel::getChannel(std::string name)
 		return NULL;
 }
 
-Channel::Channel(std::string name)
+void Channel::addChannel(std::string name,Channel *c)
 {
-    this->clients = std::vector<std::string>();
-    this->name = name;
-
-	channels[name] = this;
+	channels.at(name) = c;
 }
 
-Channel::~Channel(){}
+void Channel::free_channel()
+{
+	//deleting all channel instances
+	std::map<std::string, Channel*>::iterator it = channels.begin();
+	while (it != channels.end())
+	{
+		delete (*it).second;
+		it++;
+	}
+}
+// -------------------------------------------
 
+
+// -------------Channel Class --------------
+Channel::Channel(std::string name)
+{
+    this->members = std::vector<Client*>();
+    this->name = name;
+	channels[name] = this;
+}
+Channel::~Channel(){}
 Channel::Channel(const Channel& src)
 {
     *this = src;
 }
 
-bool Channel::addClient(std::string name)
+bool Channel::addClient(Client* c)
 {
-	std::vector<std::string>::iterator it = std::find(clients.begin(), clients.end(), name);
-	if (clients.empty())
+	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
+	if (members.empty())
 	{
-		this->clients.push_back(name);
+		this->members.push_back(c);
 		return true;
 	}
-	if (it != clients.end())
-    	this->clients.push_back(name);
+	if (it == members.end())
+    	this->members.push_back(c);
 	else
 		return false; // Client is already in the Channel
 	return true;
@@ -42,19 +59,24 @@ bool Channel::addClient(std::string name)
 
 Channel& Channel::operator=(const Channel& src)
 {
-    this->clients = src.clients;
+    this->members = src.members;
     this->name = src.name;
     return *this;
 }
 
+// TODO
+// check si la personne fais partie du channel
+// check si pas le meme
+// recupere le client dans la map et envoi le message
+
 void Channel::broadcastAll(Client &sender, std::string message)
 {
-	for (std::vector<std::string>::iterator it = this->clients.begin(); it != this->clients.end(); it++)
+	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		std::string c = (*it);
-		if (c != sender.getName())
+		Client* c = (*it);
+		if (c != &sender)
 		{
-			send(sender.get_fd(), message.c_str(), 1024, 0);
+			send(c->get_fd(), message.c_str(), 1024, 0);
 		}
 	}
 }

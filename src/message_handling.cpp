@@ -15,27 +15,36 @@ void process_message(Client &sender,std::map<std::string, Command*>& commands, c
 {
 	std::string cmd; // nom de la commande.
 	std::vector<std::string> args; // arguments de la commande.
+    char *token = std::strtok(buffer, " ");
+	cmd = token;
+    // Keep printing tokens while one of the
+    // delimiters present in str[].
+    while (token != NULL)
+    {
+        args.push_back(token);
+        token = strtok(NULL, " ");
+    }
 	//cout << "Client send: " << buffer << std::endl;
-	int i = 0;
-	while (buffer[i] && buffer[i] != ' ' && buffer[i] != '\n')
-	{
-		cmd += buffer[i];
-		i++;
-	}
-	if (buffer[i] == ' ')
-		i++;
-	while(buffer[i] && buffer[i] != '\n')
-	{
-		std::string arg;
-		while (buffer[i] && buffer[i] != ' ')
-		{
-			arg += buffer[i];
-			i++;
-		}
-		i++;
-		args.push_back(arg);
-	}
-
+	//int i = 0;
+	// while (buffer[i] && buffer[i] != ' ' && buffer[i] != '\n')
+	// {
+	// 	cmd += buffer[i];
+	// 	i++;
+	// }
+	// if (buffer[i] == ' ')
+	// 	i++;
+	// while(buffer[i] && buffer[i] != '\n' && buffer[i] != ' ')
+	// {
+	// 	std::string arg;
+	// 	while (buffer[i] && buffer[i] != ' ')
+	// 	{
+	// 		arg += buffer[i];
+	// 		i++;
+	// 	}
+	// 	if (buffer[i] == ' ')
+	// 		i++;
+	// 	args.push_back(arg);
+	// }
 	if (commands.find(cmd) != commands.end())
 		commands[cmd]->execute(sender, args); // execute la commande
 	else
