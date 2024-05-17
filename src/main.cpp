@@ -100,17 +100,39 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 	return (0);
 }
 
-bool invalid_port(std::string port) {
+int check_port(std::string port) {
 	int i = 0;
-	while (string[i]) {
-		if (!isdigit(strig[i])) {
+	while (port[i]) {
+		if (!isdigit(port[i])) {
 			cout << "Invalid character in port. Please only put digits." << endl;
-			return (1);
+			return (-1);
 		}
 		i++;
 	}
 	if (i > 5) {
-		cout << "Invalid port address: port address too big" << endl;
+		cout << "Invalid port : port too big" << endl;
+		return (-1);
+	}
+	try {
+		int port_int = std::stoi(port);
+		if (port_int > 65535 || port_int < 1001) {
+			cout << "Invalid port." << endl;
+			return (-1);
+		}
+		return (port_int);
+	}
+	catch (...) {
+		cout << "error with stoi." << endl;
+		return (-1);
+	}
+	return (-1);
+}
+
+bool invalid_password(std::string password) {
+	if (password.length() < 3 || password.length() > 30) {
+		cout << "Invalid password size. Please provide a password with more";
+		cout << " than 3 character and less than 30." << endl;
+		return (true);
 	}
 	return (false);
 }
@@ -124,14 +146,15 @@ int main(int argc, char** argv)
 		cerr << " and a server password." << endl;
 	 	return (1);
 	}
-	if (invalid_port(argv[1]) || invalid_password(argv[2])) {
+	int port = check_port(argv[1]);
+	if (port < 0 || invalid_password(argv[2])) {
 		return (1);
 	}
 	int socketD = create_socket_descriptor();
 	if (socketD == -1)
 		return (1);
 	char address_str[] = "";
-	struct sockaddr_in* address = set_address(address_str, argv[1]);
+	struct sockaddr_in* address = set_address(address_str, port);
 	if (address == NULL)
 		return (1);
 	server(socketD, address, "");
