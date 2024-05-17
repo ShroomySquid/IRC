@@ -13,7 +13,7 @@ void Cmd_join::execute(Client& sender, std::vector<std::string> arguments)
 		std::cout << "Channel doesnt exist !" << std::endl;
 		return;
 	}
-	
+
 	bool sucess = c->addClient(sender.getName());
 	if (sucess)
 		std::cout << sender.getName() << "have been added to channel: "<< channelName << std::endl;

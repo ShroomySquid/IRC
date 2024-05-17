@@ -10,7 +10,7 @@ class Client
         Client();
         std::string name;
     public:
-        Client(int fd);
+        Client(std::string name, int fd);
         ~Client();
         Client& operator=(const Client& src);
         Client(const Client& src);

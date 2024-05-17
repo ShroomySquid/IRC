@@ -29,6 +29,11 @@ Channel::Channel(const Channel& src)
 bool Channel::addClient(std::string name)
 {
 	std::vector<std::string>::iterator it = std::find(clients.begin(), clients.end(), name);
+	if (clients.empty())
+	{
+		this->clients.push_back(name);
+		return true;
+	}
 	if (it != clients.end())
     	this->clients.push_back(name);
 	else

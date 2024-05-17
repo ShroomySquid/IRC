@@ -3,10 +3,11 @@
 Client::Client(){}
 Client::~Client(){}
 
-Client::Client(int fd)
+Client::Client(std::string name ,int fd)
 {
     this->fd = fd;
     this->disconnected = false;
+    this->name = name;
 }
 
 Client::Client(const Client& src)

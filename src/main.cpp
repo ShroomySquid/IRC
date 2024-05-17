@@ -78,7 +78,7 @@ int test_server(int socketD, struct sockaddr_in *address) {
 		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 		if (infd > 0)
 		{
-			Client c = Client(infd);
+			Client c = Client("client_test",infd);
 			client_container.push_back(c);
 			std::cout << "Client connect !!!!" << std::endl;
 		}
