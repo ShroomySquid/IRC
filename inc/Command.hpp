@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "Client.hpp"
 // Commande interface
 class Command
 {
@@ -12,7 +13,7 @@ class Command
     public:
         Command(){};
         virtual ~Command(){};
-        virtual void execute(std::vector<std::string> arguments) = 0;
+        virtual void execute(Client& sender, std::vector<std::string> arguments) = 0;
 };
 
 class Cmd_join : public Command
@@ -20,7 +21,7 @@ class Cmd_join : public Command
     public:
         Cmd_join();
         ~Cmd_join();
-        virtual void execute(std::vector<std::string> arguments);
+        virtual void execute(Client& sender, std::vector<std::string> arguments);
 };
 
 class Cmd_kick : public Command
@@ -28,7 +29,7 @@ class Cmd_kick : public Command
     public:
         Cmd_kick();
         ~Cmd_kick();
-        virtual void execute(std::vector<std::string> arguments);
+        virtual void execute(Client& sender, std::vector<std::string> arguments);
 };
 
 class Cmd_privmsg : public Command
@@ -36,7 +37,7 @@ class Cmd_privmsg : public Command
     public:
         Cmd_privmsg();
         ~Cmd_privmsg();
-        virtual void execute(std::vector<std::string> arguments);
+        virtual void execute(Client& sender, std::vector<std::string> arguments);
 };
 
 #endif

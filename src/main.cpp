@@ -7,19 +7,7 @@
 #include "../inc/Command.hpp"
 #include <map>
 
-void broadcastAll(std::vector<Client>& clients, Client &execp, char *buffer)
-{
-	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); it++)
-	{
-		Client &c = (*it);
-		if (&c != &execp)
-		{
-			send(c.get_fd(), buffer, 1024, 0);
-		}
-	}
-}
-
-void process_message(std::map<std::string, Command*>& commands, char *buffer)
+void process_message(Client &c, std::map<std::string, Command*>& commands, char *buffer)
 {
 	std::string cmd; // nom de la commande.
 	std::vector<std::string> args; // arguments de la commande.
@@ -45,7 +33,7 @@ void process_message(std::map<std::string, Command*>& commands, char *buffer)
 	}
 
 	if (commands.find(cmd) != commands.end())
-		commands[cmd]->execute(args); // execute la commande
+		commands[cmd]->execute(c, args); // execute la commande
 	else
 		std::cout << "This command doesnt exist !" << std::endl;
 }
@@ -57,6 +45,9 @@ int test_server(int socketD, struct sockaddr_in *address) {
 	commands["JOIN"] = new Cmd_join();
 	commands["KICK"] = new Cmd_kick();
 	commands["PRIVMSG"] = new Cmd_privmsg();
+
+	Channel testChannel("gaming");
+
 
 	bool is_online = true;
 	std::vector<Client> client_container;
@@ -109,7 +100,7 @@ int test_server(int socketD, struct sockaddr_in *address) {
 						if (buffer[0] != '\0')
 						{
 							// Parsing du message
-							process_message(commands, buffer);
+							process_message((*it),commands, buffer);
 							bzero(buffer, 1024);
 						}
 						else

@@ -9,6 +9,7 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <cstdlib>
+# include "Channel.hpp"
 
 using std::cout;
 using std::endl;

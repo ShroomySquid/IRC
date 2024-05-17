@@ -1,5 +1,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
+#include <string>
 
 class Client
 {
@@ -7,6 +8,7 @@ class Client
         int fd;
         bool disconnected;
         Client();
+        std::string name;
     public:
         Client(int fd);
         ~Client();
@@ -15,6 +17,7 @@ class Client
         int get_fd();
         bool is_disconnected();
         void disconnect();
+        std::string getName();
 };
 
 #endif

@@ -29,6 +29,11 @@ bool Client::is_disconnected()
     return this->disconnected;
 }
 
+std::string Client::getName()
+{
+    return this->name;
+}
+
 void Client::disconnect()
 {
     this->disconnected = true;
