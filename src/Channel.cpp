@@ -1,6 +1,5 @@
 #include "../inc/Channel.hpp"
 
-
 std::map <std::string, Channel*> Channel::channels = std::map <std::string, Channel*>();
 
 Channel* Channel::getChannel(std::string name)

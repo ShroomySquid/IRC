@@ -1,19 +1,15 @@
 #ifndef CHANNEL_HPP
-#define CHANNEL_HPP
-#include <string>
-#include <vector>
-#include "Client.hpp"
-#include <string>
-#include <sys/socket.h>
-#include <map>
-#include <algorithm>
+# define CHANNEL_HPP
+# include "Client.hpp"
+# include <vector> 
 
+class Client;
 class Channel
 {
     private:
         Channel();
         std::string name;
-        std::vector<std::string> clients;
+        std::vector<std::string> clients; // TODO: renommer !!!
         // Map of all channels
         static std::map <std::string, Channel*> channels;
         // ---------------------

@@ -1,5 +1,8 @@
 #ifndef COMMAND_HPP
-#define COMMAND_HPP
+# define COMMAND_HPP
+
+# include "IRC.hpp"
+# include <vector>
 
 #include <string>
 #include <vector>

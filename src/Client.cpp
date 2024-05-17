@@ -1,33 +1,46 @@
 #include "../inc/Client.hpp"
 
-Client::Client(){}
+Client::Client() : _fd(-1), _username("invalid"), _nickname("invalid") {}
 Client::~Client(){}
 
-Client::Client(std::string name ,int fd)
+Client::Client(int fd) : _fd(fd), _username("username"), _nickname("nickname")
 {
-    this->fd = fd;
-    this->disconnected = false;
-    this->name = name;
+    this->_disconnected = false;
 }
 
-Client::Client(const Client& src)
+Client::Client(int fd, std::string username, std::string nickname) : _fd(fd), _username(username), _nickname(nickname)
+{
+    this->_disconnected = false;
+}
+
+Client::Client(const Client& src): _fd(src._fd), _username(src._username), _nickname(src._nickname), _disconnected(src._disconnected)
 {
     *this = src;
 }
 
-Client& Client::operator=(const Client& src)
-{
-    this->fd = src.fd;
-    return *this;
+Client& Client::operator=(const Client& src) {
+	this->_disconnected = src._disconnected;
+	return *this;
 }
 
 int Client::get_fd()
 {
-    return this->fd;
+    return this->_fd;
 }
+
+std::string Client::get_username()
+{
+    return this->_username;
+}
+
+std::string Client::get_nickname()
+{
+    return this->_nickname;
+}
+
 bool Client::is_disconnected()
 {
-    return this->disconnected;
+    return this->_disconnected;
 }
 
 std::string Client::getName()
@@ -37,5 +50,5 @@ std::string Client::getName()
 
 void Client::disconnect()
 {
-    this->disconnected = true;
+    this->_disconnected = true;
 }
