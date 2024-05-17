@@ -1,5 +1,6 @@
 #include "../inc/IRC.hpp"
 #include "../inc/Client.hpp"
+#include "../inc/Command.hpp"
 
 void broadcastAll(std::map<std::string, Client*>& clients, std::string except, char *buffer)
 {
@@ -15,18 +16,54 @@ Client* new_client(int fd, std::string username, std::string nickname) {
 	return (new_client);
 }
 
-int server(int socketD, struct sockaddr_in *address) {
+void process_message(std::map<std::string, Command*>& commands, char *buffer)
+{
+	std::string cmd; // nom de la commande.
+	std::vector<std::string> args; // arguments de la commande.
+	//cout << "Client send: " << buffer << std::endl;
+	int i = 0;
+	while (buffer[i] && buffer[i] != ' ' && buffer[i] != '\n')
+	{
+		cmd += buffer[i];
+		i++;
+	}
+	if (buffer[i] == ' ')
+		i++;
+	while(buffer[i] && buffer[i] != '\n')
+	{
+		std::string arg;
+		while (buffer[i] && buffer[i] != ' ')
+		{
+			arg += buffer[i];
+			i++;
+		}
+		i++;
+		args.push_back(arg);
+	}
+
+	if (commands.find(cmd) != commands.end())
+		commands[cmd]->execute(args); // execute la commande
+	else
+		std::cout << "This command doesnt exist !" << std::endl;
+}
+
+int server(int socketD, struct sockaddr_in *address, std::string password) {
+
+	std::map<std::string, Command*> commands;
+	commands["JOIN"] = new Cmd_join();
+	commands["KICK"] = new Cmd_kick();
+	commands["PRIVMSG"] = new Cmd_privmsg();
+	(void)password;
+
 	bool is_online = true;
-	std::map<std::string, Client*> client_container;
+	std::map<std::string, Client*> clients;
 	int infd;
 	char buffer[1024];
 	Client* received_client;
 	bzero(buffer, 1024);
 	struct sockaddr_in clientAddress;
 
-	//int flags = fcntl(socketD, F_GETFL, 0);
 	fcntl(socketD, F_SETFL, O_NONBLOCK);
-
 	unsigned int clientAddressSize = sizeof(clientAddress);
 	int bind_result = bind(socketD, (struct sockaddr *)address, sizeof(*address));
 
@@ -48,13 +85,15 @@ int server(int socketD, struct sockaddr_in *address) {
 		{
 			received_client = new_client(infd, "user", "nick");
 			if (received_client != NULL) {
-				client_container.insert(std::pair<std::string, Client*> (received_client->get_username(), received_client));
-				std::cout << "Client " << received_client->get_username() << " connected." << std::endl;
+				clients.insert(std::pair<std::string, Client*> 
+					(received_client->get_username(), received_client));
+				cout << "Client " << received_client->get_username();
+				cout << " connected." << endl;
 			}
 		}
-		if (client_container.empty())
+		if (clients.empty())
 			continue ;
-		for (std::map<std::string, Client*>::iterator it = client_container.begin(); it != client_container.end(); it++)
+		for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 		{
 			if (it->second->is_disconnected())
 				continue;
@@ -68,26 +107,49 @@ int server(int socketD, struct sockaddr_in *address) {
 			if (buffer[0] != '\0')
 			{
 				cout << "Client send: " << buffer;
-				broadcastAll(client_container, it->first, buffer);
+				broadcastAll(clients, it->first, buffer);
+				//process_message(commands, buffer);
 				bzero(buffer, 1024);
 			}
 			else
 			{
 				it->second->disconnect();
-				std::cout << "closing client on fd" << it->second->get_fd() << std::endl;
+				cout << "closing client on fd" << it->second->get_fd() << endl;
 				close(it->second->get_fd());
 			}
 		}
+		for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end();)
+		{
+			if (it->second->is_disconnected()) {
+				close(it->second->get_fd());
+				delete it->second;
+				it = clients.erase(it);
+			}
+			else
+				it++;
+		}
 	}
-	for (std::map<std::string, Client*>::iterator it = client_container.begin(); it != client_container.end(); it++)
+	if (!clients.empty())
 	{
-		close(it->second->get_fd());
-		delete it->second;
+		for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
+		{
+			close(it->second->get_fd());
+			delete it->second;
+		}
 	}
+	//deleting all command instances
+	std::map<std::string, Command*>::iterator it = commands.begin();
+	while (it != commands.end())
+	{
+		delete (*it).second;
+		it++;
+	}
+	commands.clear();
 	return (0);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	
 	// if (argc != 3)
 	// {
@@ -105,7 +167,7 @@ int main(int argc, char** argv) {
 	struct sockaddr_in* address = set_address(address_str, 2000);
 	if (address == NULL)
 		return (1);
-	server(socketD, address);
+	server(socketD, address, "");
 	free(address);
 	close(socketD);
 	return (0);

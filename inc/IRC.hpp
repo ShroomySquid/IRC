@@ -11,10 +11,12 @@
 # include <map>
 # include <poll.h>
 # include <fcntl.h>
+# include <cstdlib>
+# include <vector>
 
 using std::cout;
-using std::endl;
 using std::cerr;
+using std::endl;
 
 class IRC {
 	public:
