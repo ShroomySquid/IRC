@@ -6,7 +6,7 @@
 #    By: bbouchar <BrunoPierreBouchard@hotmail.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/30 09:59:24 by fbarrett          #+#    #+#              #
-#    Updated: 2024/05/16 21:59:57 by bbouchar         ###   ########.fr        #
+#    Updated: 2024/05/17 10:55:42 by fbarrett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME			=	ircserv
 
 SRC_DIRECT		=	src/
 
-MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp
+MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp registration.cpp message_handling.cpp
 
 TEST_FILES		=	test_main.cpp utils.cpp
 
