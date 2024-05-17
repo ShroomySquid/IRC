@@ -100,23 +100,38 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 	return (0);
 }
 
+bool invalid_port(std::string port) {
+	int i = 0;
+	while (string[i]) {
+		if (!isdigit(strig[i])) {
+			cout << "Invalid character in port. Please only put digits." << endl;
+			return (1);
+		}
+		i++;
+	}
+	if (i > 5) {
+		cout << "Invalid port address: port address too big" << endl;
+	}
+	return (false);
+}
+
 int main(int argc, char** argv)
 {
 	
-	// if (argc != 3)
-	// {
-	// 	cerr << "Invalid amount of arguments provided. Please provide a port";
-	// 	cerr << " and a server password." << endl;
-	// 	return (1);
-	// }
-	
-	(void)argc;
-	(void)argv;
+	if (argc != 3)
+	{
+		cerr << "Invalid amount of arguments provided. Please provide a port";
+		cerr << " and a server password." << endl;
+	 	return (1);
+	}
+	if (invalid_port(argv[1]) || invalid_password(argv[2])) {
+		return (1);
+	}
 	int socketD = create_socket_descriptor();
 	if (socketD == -1)
 		return (1);
 	char address_str[] = "";
-	struct sockaddr_in* address = set_address(address_str, 2000);
+	struct sockaddr_in* address = set_address(address_str, argv[1]);
 	if (address == NULL)
 		return (1);
 	server(socketD, address, "");
