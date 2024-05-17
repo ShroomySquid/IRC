@@ -1,4 +1,4 @@
-#include "Channel.hpp"
+#include "../inc/Channel.hpp"
 
 Channel::Channel(std::string name)
 {
@@ -20,6 +20,7 @@ void Channel::addClient(std::string name)
 
 Channel& Channel::operator=(const Channel& src)
 {
-
+    this->clients = src.clients;
+    this->name = src.name;
     return *this;
 }
