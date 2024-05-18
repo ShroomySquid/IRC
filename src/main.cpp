@@ -65,7 +65,7 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 	{
 		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 		if (infd > 0)
-			login_attempt(clients, infd, password);
+			login_attempt(clients, infd);
 		if (clients.empty())
 			continue ;
 		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
@@ -79,9 +79,19 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 				continue ;
 			if (buffer[0] != '\0')
 			{
-				cout << "Client send: " << buffer;
-				broadcastAll(clients, it->first, buffer);
-				//process_message(commands, buffer);
+				if (!it->second->is_authentified()) 
+				{
+					cout << "Client " << it->first << " in registration send: ";
+					cout << buffer;
+					registration((*(it->second)), password, buffer, clients);
+				}
+				else 
+				{
+					cout << "Client " << it->second->get_username();
+				   	cout << " send: " << buffer;
+					broadcastAll(clients, it->first, buffer);
+					//process_message(commands, buffer);
+				}
 				bzero(buffer, 1024);
 			}
 			else
@@ -157,7 +167,7 @@ int main(int argc, char** argv)
 	struct sockaddr_in* address = set_address(address_str, port);
 	if (address == NULL)
 		return (1);
-	server(socketD, address, "");
+	server(socketD, address, argv[2]);
 	free(address);
 	close(socketD);
 	return (0);

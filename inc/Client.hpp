@@ -6,9 +6,11 @@ class Client
 {
     private:
         const int _fd;
-		const std::string _username;
-		const std::string _nickname;
+		std::string _username;
+		std::string _nickname;
         bool _disconnected;
+		bool _authentified;
+		bool _registered;
         Client();
     public:
         Client(int fd);
@@ -20,7 +22,13 @@ class Client
         int get_fd();
 		std::string get_username();
 		std::string get_nickname();
+		void set_username(std::string user);
+		void set_nickname(std::string nick);
         bool is_disconnected();
+		bool is_authentified();
+		bool is_registered();
+		void regist();
+		void authentify();
         void disconnect();
 };
 
