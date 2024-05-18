@@ -6,7 +6,7 @@ void broadcastAll(std::map<int, Client*>& clients, int except, char *buffer)
 {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
-		if (it->first != except)
+		if (it->first != except && it->second->is_registered())
 			send(it->second->get_fd(), buffer, 1024, 0);
 	}
 }

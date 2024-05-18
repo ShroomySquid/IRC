@@ -79,12 +79,8 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 				continue ;
 			if (buffer[0] != '\0')
 			{
-				if (!it->second->is_authentified()) 
-				{
-					cout << "Client " << it->first << " in registration send: ";
-					cout << buffer;
+				if (!it->second->is_registered()) 
 					registration((*(it->second)), password, buffer, clients);
-				}
 				else 
 				{
 					cout << "Client " << it->second->get_username();
