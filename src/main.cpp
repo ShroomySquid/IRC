@@ -2,10 +2,10 @@
 #include "../inc/Client.hpp"
 #include "../inc/Command.hpp"
 
-void finish_server(std::map<std::string, Client*> &clients, std::map<std::string, Command*> &commands) {
+void finish_server(std::map<int, Client*> &clients, std::map<std::string, Command*> &commands) {
 	if (!clients.empty())
 	{
-		for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
+		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 		{
 			close(it->second->get_fd());
 			delete it->second;
@@ -20,8 +20,8 @@ void finish_server(std::map<std::string, Client*> &clients, std::map<std::string
 	}
 }
 
-void remove_client(std::map<std::string, Client*> &clients) {
-	for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end();)
+void remove_client(std::map<int, Client*> &clients) {
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();)
 	{
 		if (it->second->is_disconnected()) {
 			close(it->second->get_fd());
@@ -41,7 +41,7 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 
 	bool is_online = true;
 	bool need_to_remove_client = false;
-	std::map<std::string, Client*> clients;
+	std::map<int, Client*> clients;
 	pollfd pfd;
 	int infd;
 	char buffer[1024];
@@ -68,7 +68,7 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 			login_attempt(clients, infd, password);
 		if (clients.empty())
 			continue ;
-		for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
+		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 		{
 			if (it->second->is_disconnected())
 				continue;
@@ -115,7 +115,7 @@ int check_port(std::string port) {
 	}
 	try {
 		int port_int = std::stoi(port);
-		if (port_int > 65535 || port_int < 1001) {
+		if (port_int > 65535 || port_int < 1025) {
 			cout << "Invalid port." << endl;
 			return (-1);
 		}
@@ -129,9 +129,9 @@ int check_port(std::string port) {
 }
 
 bool invalid_password(std::string password) {
-	if (password.length() < 3 || password.length() > 30) {
+	if (password.length() < 5 || password.length() > 30) {
 		cout << "Invalid password size. Please provide a password with more";
-		cout << " than 3 character and less than 30." << endl;
+		cout << " than 5 character and less than 30." << endl;
 		return (true);
 	}
 	return (false);

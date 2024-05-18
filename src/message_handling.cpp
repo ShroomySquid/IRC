@@ -2,9 +2,9 @@
 #include "../inc/Client.hpp"
 #include "../inc/Command.hpp"
 
-void broadcastAll(std::map<std::string, Client*>& clients, std::string except, char *buffer)
+void broadcastAll(std::map<int, Client*>& clients, int except, char *buffer)
 {
-	for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
 		if (it->first != except)
 			send(it->second->get_fd(), buffer, 1024, 0);

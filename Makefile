@@ -6,7 +6,7 @@
 #    By: bbouchar <BrunoPierreBouchard@hotmail.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/30 09:59:24 by fbarrett          #+#    #+#              #
-#    Updated: 2024/05/17 10:55:42 by fbarrett         ###   ########.fr        #
+#    Updated: 2024/05/17 14:35:27 by fbarrett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,8 +29,11 @@ CCFLAGS		=	-Wall -Wextra -Werror -std=c++98
 all:		$(NAME)
 
 $(NAME):	$(O_DIRECT) $(MY_SOURCES)
-	@make test
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
+
+run:	$(O_DIRECT) $(MY_SOURCES)
+	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
+	./$(NAME) 6667 patate
 
 test:	$(O_DIRECT) $(TEST_SOURCES)
 	$(CC) $(CCFLAGS) -o test $(TEST_SOURCES)
