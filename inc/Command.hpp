@@ -20,7 +20,8 @@ class Cmd_join : public Command
     public:
         Cmd_join();
         ~Cmd_join();
-        virtual void execute(std::vector<std::string> arguments);
+        void execute(std::vector<std::string> arguments);
+
 };
 
 class Cmd_kick : public Command
@@ -28,7 +29,7 @@ class Cmd_kick : public Command
     public:
         Cmd_kick();
         ~Cmd_kick();
-        virtual void execute(std::vector<std::string> arguments);
+        void execute(std::vector<std::string> arguments);
 };
 
 class Cmd_privmsg : public Command
@@ -36,7 +37,7 @@ class Cmd_privmsg : public Command
     public:
         Cmd_privmsg();
         ~Cmd_privmsg();
-        virtual void execute(std::vector<std::string> arguments);
+        void execute(std::vector<std::string> arguments);
 };
 
 #endif

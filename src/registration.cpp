@@ -43,6 +43,10 @@ bool check_invalid_symbols(char *buffer) {
 }
 
 int set_nickname(char *buffer, Client &client, std::map<int, Client*> clients) {
+	if (!client.is_authentified()) {	
+		send(client.get_fd(), "Provide the password first\n", 28, 0);
+		return (1);
+	}
 	if (client.get_nickname().length()) {	
 		send(client.get_fd(), "Nickname already registered\n", 29, 0);
 		return (1);
@@ -69,6 +73,10 @@ int set_nickname(char *buffer, Client &client, std::map<int, Client*> clients) {
 
 
 int set_username(char *buffer, Client &client, std::map<int, Client*> clients) {
+	if (!client.is_authentified()) {	
+		send(client.get_fd(), "Provide the password first\n", 28, 0);
+		return (1);
+	}
 	if (client.get_username().length()) {	
 		send(client.get_fd(), "Username already registered\n", 29, 0);
 		return (1);
