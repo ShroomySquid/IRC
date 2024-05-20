@@ -3,6 +3,7 @@
 # define _XOPEN_SOURCE_EXTENDED 1
 # include <string>
 # include <string.h>
+# include <cstring>
 # include <iostream>
 # include <sys/socket.h>
 # include <netinet/in.h>

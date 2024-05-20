@@ -1,7 +1,6 @@
 #include "../inc/IRC.hpp"
 #include "../inc/Client.hpp"
 #include "../inc/Command.hpp"
-
 // void broadcastAll(std::map<std::string, Client*>& clients, std::string except, char *buffer)
 // {
 // 	for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); it++)

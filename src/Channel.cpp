@@ -71,12 +71,13 @@ Channel& Channel::operator=(const Channel& src)
 
 void Channel::broadcastAll(Client &sender, std::string message)
 {
+	(void) sender; // test
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
 		Client* c = (*it);
-		if (c != &sender)
+		//if (c != &sender)
 		{
-			send(c->get_fd(), message.c_str(), 1024, 0);
+			send(c->get_fd(), message.c_str(), message.size(), 0);
 		}
 	}
 }

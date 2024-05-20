@@ -2,7 +2,7 @@
 # define CHANNEL_HPP
 # include "Client.hpp"
 # include <vector> 
-
+# include <algorithm>
 class Client;
 class Channel
 {

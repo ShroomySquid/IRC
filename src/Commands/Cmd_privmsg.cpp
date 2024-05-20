@@ -5,8 +5,6 @@ Cmd_privmsg::~Cmd_privmsg(){}
 
 void Cmd_privmsg::execute(Client& sender, std::vector<std::string> arguments)
 {
-	std::cout << arguments[1] << std::endl;
-	std::cout << arguments[2] << std::endl;
 	Channel* channel = Channel::getChannel(arguments.at(1));
 	if (channel)
 	{

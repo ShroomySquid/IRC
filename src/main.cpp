@@ -28,10 +28,12 @@ void remove_client(std::map<std::string, Client*> &clients) {
 		if (it->second->is_disconnected()) {
 			close(it->second->get_fd());
 			delete it->second;
-			it = clients.erase(it);
+			std::map<std::string, Client*>::iterator to_erase = it;
+			++it;
+			clients.erase(to_erase);
 		}
 		else
-			it++;
+			++it;
 	}
 
 }
@@ -117,7 +119,7 @@ int check_port(std::string port) {
 		return (-1);
 	}
 	try {
-		int port_int = std::stoi(port);
+		int port_int = std::atoi(port.c_str());
 		if (port_int > 65535 || port_int < 1001) {
 			cout << "Invalid port." << endl;
 			return (-1);
