@@ -148,8 +148,8 @@ int main(int argc, char** argv)
 	
 	if (argc != 3)
 	{
-		cerr << "Invalid amount of arguments provided. Please provide a port";
-		cerr << " and a server password." << endl;
+		cerr << "Invalid amount of arguments provided.";
+		cerr << " ./ircserv <port> <password>" << endl;
 	 	return (1);
 	}
 	int port = check_port(argv[1]);
