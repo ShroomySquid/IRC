@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: bbouchar <BrunoPierreBouchard@hotmail.c    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/09/30 09:59:24 by fbarrett          #+#    #+#              #
-#    Updated: 2024/05/17 14:35:27 by fbarrett         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME			=	ircserv
 
 SRC_DIRECT		=	src/
@@ -24,7 +12,7 @@ TEST_SOURCES	=	$(addprefix $(SRC_DIRECT), $(TEST_FILES))
 
 CC		=	c++
 
-CCFLAGS		=	-Wall -Wextra -Werror -std=c++98
+CCFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g
 
 all:		$(NAME)
 

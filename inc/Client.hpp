@@ -12,6 +12,7 @@ class Client
 		bool _authentified;
 		bool _registered;
         Client();
+        std::string name;
     public:
         Client(int fd);
         Client(int fd, std::string username, std::string nickname);
@@ -30,6 +31,7 @@ class Client
 		void regist();
 		void authentify();
         void disconnect();
+        std::string getName();
 };
 
 #endif

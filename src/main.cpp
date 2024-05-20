@@ -18,6 +18,8 @@ void finish_server(std::map<int, Client*> &clients, std::map<std::string, Comman
 		delete (*it).second;
 		it++;
 	}
+	Channel::free_channel();
+
 }
 
 void remove_client(std::map<int, Client*> &clients) {
@@ -26,11 +28,14 @@ void remove_client(std::map<int, Client*> &clients) {
 		if (it->second->is_disconnected()) {
 			close(it->second->get_fd());
 			delete it->second;
-			it = clients.erase(it);
+			std::map<int, Client*>::iterator to_erase = it;
+			++it;
+			clients.erase(to_erase);
 		}
 		else
-			it++;
+			++it;
 	}
+
 }
 
 int server(int socketD, struct sockaddr_in *address, std::string password) {
@@ -85,8 +90,8 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 				{
 					cout << "Client " << it->second->get_username();
 				   	cout << " send: " << buffer;
-					broadcastAll(clients, it->first, buffer);
-					//process_message(commands, buffer);
+					//broadcastAll(clients, it->first, buffer);
+					process_message(*(it->second),commands, buffer);
 				}
 				bzero(buffer, 1024);
 			}
@@ -120,7 +125,7 @@ int check_port(std::string port) {
 		return (-1);
 	}
 	try {
-		int port_int = std::stoi(port);
+		int port_int = std::atoi(port.c_str());
 		if (port_int > 65535 || port_int < 1025) {
 			cout << "Invalid port." << endl;
 			return (-1);
