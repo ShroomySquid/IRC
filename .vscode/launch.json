@@ -5,14 +5,14 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/ircserv",
-        "args": ["2000","hello"],
+        "args": ["2000","patate"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],
         "externalConsole": false,
-        "MIMode": "gdb", // lldb on 42 Mac, gdb on Windows (WSL)
+        "MIMode": "lldb", // lldb on 42 Mac, gdb on Windows (WSL)
         //"preLaunchTask": "BUILD",
-        "miDebuggerPath": "gdb",
+        //"miDebuggerPath": "/usr/bin/gdb",
         "setupCommands": [
             {
                 "description": "Enable pretty-printing for gdb",

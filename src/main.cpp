@@ -35,10 +35,24 @@ void remove_client(std::map<int, Client*> &clients) {
 		else
 			++it;
 	}
+}
 
+bool is_IRC_message(const std::string& message)
+{
+    // Vérifie si la chaîne se termine par "\r\n"
+	// avec netcat (ctrl v ctrl m enter)
+	std::string end = message.substr(message.length() - 2,2);
+
+    if (message.length() >= 2 && end == "\r\n") {
+        return true;
+    } else {
+        return false;
+    }
+	return false;
 }
 
 int server(int socketD, struct sockaddr_in *address, std::string password) {
+	(void)password; // for test
 	std::map<std::string, Command*> commands;
 	commands["JOIN"] = new Cmd_join();
 	commands["KICK"] = new Cmd_kick();
@@ -80,18 +94,32 @@ int server(int socketD, struct sockaddr_in *address, std::string password) {
 			pfd.fd = it->second->get_fd();
 			pfd.events = POLLIN | POLLOUT;
 			poll(&pfd, 1, 0);
-			if (!pfd.revents || recv(pfd.fd, buffer, 1024, 0) == -1)
+			int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
+			if (!pfd.revents || bytesReceived == -1)
 				continue ;
 			if (buffer[0] != '\0')
 			{
-				if (!it->second->is_registered()) 
-					registration((*(it->second)), password, buffer, clients);
-				else 
+				std::string receivedData;
+				receivedData.append(buffer, bytesReceived);
+				if (!is_IRC_message(receivedData))
+				{
+					cout << " client send: " << receivedData;
+					std::cout << "Not an IRC message !" << std::endl;
+					bzero(buffer, 1024);
+					continue;
+				}
+				receivedData.pop_back();
+				receivedData.pop_back();
+
+
+				//if (!it->second->is_registered()) 
+				//	registration((*(it->second)), password, buffer, clients);
+				//else 
 				{
 					cout << "Client " << it->second->get_username();
 				   	cout << " send: " << buffer;
 					//broadcastAll(clients, it->first, buffer);
-					process_message(*(it->second),commands, buffer);
+					process_message(*(it->second),commands, receivedData);
 				}
 				bzero(buffer, 1024);
 			}
