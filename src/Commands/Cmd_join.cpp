@@ -1,19 +1,19 @@
 #include "../../inc/Command.hpp"
 #include "../../inc/Channel.hpp"
+#include "../../inc/Server.hpp"
 
 Cmd_join::Cmd_join(){}
 Cmd_join::~Cmd_join(){}
 
 void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	(void)server;
 	std::string channelName = arguments[1];
-	Channel *c = Channel::getChannel(channelName);
+	Channel *c = server.getChannel(channelName);
 	if (c == NULL)
 	{
 		std::cout << "Creating new channel" << std::endl;
 		c = new Channel(channelName);
-		Channel::addChannel(channelName, c);
+		server.addChannel(channelName, c);
 	}
 	bool sucess = c->addClient(&sender);
 	if (sucess)

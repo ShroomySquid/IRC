@@ -1,8 +1,10 @@
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
 
+
 Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 {
+	channels = std::map <std::string, Channel*>();
     need_to_remove_client = false;
     this->socketD = socketD;
     this->address = address;
@@ -146,6 +148,32 @@ void Server::Run()
 	}
 }
 
+// --------------- Channels methods ----------------
+Channel* Server::getChannel(std::string name)
+{
+	if (channels.find(name) != channels.end())
+		return channels[name];
+	else
+		return NULL;
+}
+
+void Server::addChannel(std::string name,Channel *c)
+{
+	channels.at(name) = c;
+}
+
+void Server::free_channel()
+{
+	//deleting all channel instances
+	std::map<std::string, Channel*>::iterator it = channels.begin();
+	while (it != channels.end())
+	{
+		delete (*it).second;
+		it++;
+	}
+}
+// -------------------------------------------
+
 Server::~Server()
 {
 	if (!clients.empty())
@@ -163,5 +191,5 @@ Server::~Server()
 		delete (*it).second;
 		it++;
 	}
-	Channel::free_channel();
+	free_channel();
 }

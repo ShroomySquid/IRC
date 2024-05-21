@@ -1,40 +1,10 @@
 #include "../inc/Channel.hpp"
 
-// --------------- STATIC members ----------------
-
-std::map <std::string, Channel*> Channel::channels = std::map <std::string, Channel*>();
-Channel* Channel::getChannel(std::string name)
-{
-	if (channels.find(name) != channels.end())
-		return channels[name];
-	else
-		return NULL;
-}
-
-void Channel::addChannel(std::string name,Channel *c)
-{
-	channels.at(name) = c;
-}
-
-void Channel::free_channel()
-{
-	//deleting all channel instances
-	std::map<std::string, Channel*>::iterator it = channels.begin();
-	while (it != channels.end())
-	{
-		delete (*it).second;
-		it++;
-	}
-}
-// -------------------------------------------
-
-
 // -------------Channel Class --------------
 Channel::Channel(std::string name)
 {
     this->members = std::vector<Client*>();
     this->name = name;
-	channels[name] = this;
 }
 Channel::~Channel(){}
 Channel::Channel(const Channel& src)

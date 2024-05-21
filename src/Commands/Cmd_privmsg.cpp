@@ -1,12 +1,12 @@
 #include "../../inc/Command.hpp"
+#include "../../inc/Server.hpp"
 
 Cmd_privmsg::Cmd_privmsg(){}
 Cmd_privmsg::~Cmd_privmsg(){}
 
 void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	(void) server;
-	Channel* channel = Channel::getChannel(arguments.at(1));
+	Channel* channel = server.getChannel(arguments.at(1));
 	if (channel)
 	{
 		channel->broadcastAll(sender, arguments[2]);

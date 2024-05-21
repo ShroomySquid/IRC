@@ -12,6 +12,7 @@ class Server
         std::string password;
         std::map<std::string, Command*> commands;
         std::map<int, Client*> clients;
+        std::map <std::string, Channel*> channels;
         pollfd pfd;
         int infd;
         struct sockaddr_in clientAddress;
@@ -22,11 +23,16 @@ class Server
         bool is_IRC_message(const std::string& message);
         void remove_client(std::map<int, Client*> &clients);
         void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input);
+        void free_channel();
         // ------------------------------
     public:
         Server(int socketD, struct sockaddr_in *address, std::string password);
         ~Server();
         void Run();
+        // ----- Channels methods
+        Channel* getChannel(std::string name);
+        void addChannel(std::string name,Channel *c);
+        // -----------
 
 };
 
