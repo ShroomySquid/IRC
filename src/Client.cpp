@@ -83,3 +83,9 @@ void Client::regist()
 {
     this->_registered = true;
 }
+
+std::string Client::get_client() {
+	if (_nickname.length())
+		return _username;
+	return _nickname;
+}

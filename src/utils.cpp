@@ -26,3 +26,20 @@ struct sockaddr_in *set_address(char *ip, int port) {
 	return (address);
 }
 
+bool check_invalid_symbols(std::string buffer) {
+	int i = 0;
+	while (buffer[i]) {
+		if (i > 20)
+			return (true);
+		if (!i && (buffer[i] == '#' || buffer[i] == ':'))
+			return (true);
+		if (buffer[i] == 32 || (buffer[i] < 14 && buffer[i] > 8))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+void not_registered_yet(int fd) {
+	send(fd, "Not registered yet. Cannot execute command.", 44, 0);
+}

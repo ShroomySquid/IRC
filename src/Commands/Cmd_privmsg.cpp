@@ -6,6 +6,10 @@ Cmd_privmsg::~Cmd_privmsg(){}
 
 void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	if (!sender.is_registered()) {
+		not_registered_yet(sender.get_fd());
+		return ;
+	}
 	Channel* channel = server.getChannel(arguments.at(1));
 	if (channel)
 	{

@@ -29,6 +29,6 @@ Client*	new_client(int fd, std::string username, std::string nickname);
 void	login_attempt(std::map<int, Client*> &clients, int infd);
 //void	broadcastAll(std::map<int, Client*>& clients, int except, char *buffer);
 void	process_message(Client &client ,std::map<std::string, Command*>& commands, std::string input);
-int		registration (Client &client, std::string password, char* buffer, std::map<int, Client*> clients);
-
+bool	check_invalid_symbols(std::string buffer);
+void	not_registered_yet(int fd);
 #endif

@@ -33,7 +33,8 @@ class Server
         Channel* getChannel(std::string name);
         void addChannel(std::string name,Channel *c);
         // -----------
-
+		std::string get_password() const;
+		std::map<int, Client*>& get_clients();
 };
 
 

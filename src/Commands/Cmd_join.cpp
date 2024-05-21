@@ -7,6 +7,10 @@ Cmd_join::~Cmd_join(){}
 
 void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	if (!sender.is_registered()) {
+		not_registered_yet(sender.get_fd());
+		return ;
+	}
 	std::string channelName = arguments[1];
 	Channel *c = server.getChannel(channelName);
 	if (c == NULL)

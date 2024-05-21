@@ -13,6 +13,9 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	commands["JOIN"] = new Cmd_join();
 	commands["KICK"] = new Cmd_kick();
 	commands["PRIVMSG"] = new Cmd_privmsg();
+	commands["PASS"] = new Cmd_pass();
+	commands["USER"] = new Cmd_user();
+	commands["NICK"] = new Cmd_nick();
 	bzero(buffer, 1024);
 	fcntl(socketD, F_SETFL, O_NONBLOCK);
 	clientAddressSize = sizeof(clientAddress);
@@ -192,4 +195,14 @@ Server::~Server()
 		it++;
 	}
 	free_channel();
+}
+
+std::string Server::get_password() const 
+{
+	return (password);
+}
+
+std::map<int, Client*>& Server::get_clients()
+{
+	return (clients);
 }
