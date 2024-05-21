@@ -1,143 +1,7 @@
 #include "../inc/IRC.hpp"
 #include "../inc/Client.hpp"
 #include "../inc/Command.hpp"
-
-void finish_server(std::map<int, Client*> &clients, std::map<std::string, Command*> &commands) {
-	if (!clients.empty())
-	{
-		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
-		{
-			close(it->second->get_fd());
-			delete it->second;
-		}
-	}
-	//deleting all command instances
-	std::map<std::string, Command*>::iterator it = commands.begin();
-	while (it != commands.end())
-	{
-		delete (*it).second;
-		it++;
-	}
-	Channel::free_channel();
-
-}
-
-void remove_client(std::map<int, Client*> &clients) {
-	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();)
-	{
-		if (it->second->is_disconnected()) {
-			close(it->second->get_fd());
-			delete it->second;
-			std::map<int, Client*>::iterator to_erase = it;
-			++it;
-			clients.erase(to_erase);
-		}
-		else
-			++it;
-	}
-}
-
-bool is_IRC_message(const std::string& message)
-{
-    // Vérifie si la chaîne se termine par "\r\n"
-	// avec netcat (ctrl v ctrl m enter)
-	std::string end = message.substr(message.length() - 2,2);
-
-    if (message.length() >= 2 && end == "\r\n") {
-        return true;
-    } else {
-        return false;
-    }
-	return false;
-}
-
-int server(int socketD, struct sockaddr_in *address, std::string password) {
-	(void)password; // for test
-	std::map<std::string, Command*> commands;
-	commands["JOIN"] = new Cmd_join();
-	commands["KICK"] = new Cmd_kick();
-	commands["PRIVMSG"] = new Cmd_privmsg();
-
-	bool is_online = true;
-	bool need_to_remove_client = false;
-	std::map<int, Client*> clients;
-	pollfd pfd;
-	int infd;
-	char buffer[1024];
-	bzero(buffer, 1024);
-	struct sockaddr_in clientAddress;
-
-	fcntl(socketD, F_SETFL, O_NONBLOCK);
-	unsigned int clientAddressSize = sizeof(clientAddress);
-	int bind_result = bind(socketD, (struct sockaddr *)address, sizeof(*address));
-	if (bind_result != 0) {
-		cout << "bind failed." << endl;
-		return (1);
-	}
-	cout << "Waiting for clients to connect..." << endl;
-	if (listen(socketD, 10) == -1) {
-		cout << "listen failed." << endl;
-		return (1);
-	}
-
-	while (is_online)
-	{
-		infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
-		if (infd > 0)
-			login_attempt(clients, infd);
-		if (clients.empty())
-			continue ;
-		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
-		{
-			if (it->second->is_disconnected())
-				continue;
-			pfd.fd = it->second->get_fd();
-			pfd.events = POLLIN | POLLOUT;
-			poll(&pfd, 1, 0);
-			int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
-			if (!pfd.revents || bytesReceived == -1)
-				continue ;
-			if (buffer[0] != '\0')
-			{
-				std::string receivedData;
-				receivedData.append(buffer, bytesReceived);
-				if (!is_IRC_message(receivedData))
-				{
-					cout << " client send: " << receivedData;
-					std::cout << "Not an IRC message !" << std::endl;
-					bzero(buffer, 1024);
-					continue;
-				}
-				receivedData.pop_back();
-				receivedData.pop_back();
-
-
-				//if (!it->second->is_registered()) 
-				//	registration((*(it->second)), password, buffer, clients);
-				//else 
-				{
-					cout << "Client " << it->second->get_username();
-				   	cout << " send: " << buffer;
-					//broadcastAll(clients, it->first, buffer);
-					process_message(*(it->second),commands, receivedData);
-				}
-				bzero(buffer, 1024);
-			}
-			else
-			{
-				it->second->disconnect();
-				need_to_remove_client = true;
-				cout << "closing client on fd" << it->second->get_fd() << endl;
-				close(it->second->get_fd());
-			}
-		}
-		if (need_to_remove_client)
-			remove_client(clients);
-		need_to_remove_client = false;
-	}
-	finish_server(clients, commands);
-	return (0);
-}
+#include "../inc/Server.hpp"
 
 int check_port(std::string port) {
 	int i = 0;
@@ -196,7 +60,17 @@ int main(int argc, char** argv)
 	struct sockaddr_in* address = set_address(address_str, port);
 	if (address == NULL)
 		return (1);
-	server(socketD, address, argv[2]);
+	try
+	{
+		Server server(socketD, address, argv[2]);
+		server.Run();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+		
+	//server(socketD, address, argv[2]);
 	free(address);
 	close(socketD);
 	return (0);

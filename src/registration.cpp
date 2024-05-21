@@ -1,15 +1,6 @@
 #include "../inc/IRC.hpp"
 #include "../inc/Client.hpp"
 
-void login_attempt(std::map<int, Client*> &clients, int infd) {
-	Client* received_client = new Client(infd);
-	// error if new fail ?
-	if (received_client != NULL) {
-		clients.insert(std::pair<int, Client*> 
-				(received_client->get_fd(), received_client));
-	}
-}
-
 int check_pass(char* buffer, Client &client, std::string password) {
 	cout << "Password is: " << password << endl;
 	if (client.is_authentified()) {
