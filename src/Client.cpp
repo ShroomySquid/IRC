@@ -85,9 +85,7 @@ void Client::regist()
 }
 
 std::string Client::get_client() {
-	if (_username.length())
-		return _username;
 	if (_nickname.length())
-		return _nickname;
-	return _fd;
+		return _username;
+	return _nickname;
 }

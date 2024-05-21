@@ -27,7 +27,8 @@ class Server
         Server(int socketD, struct sockaddr_in *address, std::string password);
         ~Server();
         void Run();
-
+		std::string get_password() const;
+		std::map<int, Client*>& get_clients();
 };
 
 

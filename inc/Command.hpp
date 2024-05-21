@@ -44,4 +44,28 @@ class Cmd_privmsg : public Command
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
+class Cmd_nick : public Command
+{
+    public:
+        Cmd_nick();
+        ~Cmd_nick();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_user : public Command
+{
+    public:
+        Cmd_user();
+        ~Cmd_user();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_pass : public Command
+{
+    public:
+        Cmd_pass();
+        ~Cmd_pass();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
 #endif
