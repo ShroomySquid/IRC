@@ -4,8 +4,9 @@
 Cmd_join::Cmd_join(){}
 Cmd_join::~Cmd_join(){}
 
-void Cmd_join::execute(Client& sender, std::vector<std::string> arguments)
+void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	(void)server;
 	std::string channelName = arguments[1];
 	Channel *c = Channel::getChannel(channelName);
 	if (c == NULL)

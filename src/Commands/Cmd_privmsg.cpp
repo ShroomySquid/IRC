@@ -3,8 +3,9 @@
 Cmd_privmsg::Cmd_privmsg(){}
 Cmd_privmsg::~Cmd_privmsg(){}
 
-void Cmd_privmsg::execute(Client& sender, std::vector<std::string> arguments)
+void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	(void) server;
 	Channel* channel = Channel::getChannel(arguments.at(1));
 	if (channel)
 	{
