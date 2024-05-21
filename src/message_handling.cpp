@@ -18,32 +18,13 @@ void process_message(Client &sender,std::map<std::string, Command*>& commands, c
 	cmd = token;
     // Keep printing tokens while one of the
     // delimiters present in str[].
+	int i = -1;
     while (token != NULL)
     {
+		i++;
         args.push_back(token);
         token = strtok(NULL, " ");
     }
-	//cout << "Client send: " << buffer << std::endl;
-	//int i = 0;
-	// while (buffer[i] && buffer[i] != ' ' && buffer[i] != '\n')
-	// {
-	// 	cmd += buffer[i];
-	// 	i++;
-	// }
-	// if (buffer[i] == ' ')
-	// 	i++;
-	// while(buffer[i] && buffer[i] != '\n' && buffer[i] != ' ')
-	// {
-	// 	std::string arg;
-	// 	while (buffer[i] && buffer[i] != ' ')
-	// 	{
-	// 		arg += buffer[i];
-	// 		i++;
-	// 	}
-	// 	if (buffer[i] == ' ')
-	// 		i++;
-	// 	args.push_back(arg);
-	// }
 	if (commands.find(cmd) != commands.end())
 		commands[cmd]->execute(sender, args); // execute la commande
 	else
