@@ -109,7 +109,7 @@ void Server::Run()
 			pfd.events = POLLIN | POLLOUT;
 			poll(&pfd, 1, 0);
 			int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
-			if (!pfd.revents || bytesReceived <= 1)
+			if (!pfd.revents || bytesReceived <= 2)
 				continue ;
 			if (buffer[0] != '\0')
 			{
@@ -122,19 +122,10 @@ void Server::Run()
 					bzero(buffer, 1024);
 					continue;
 				}
-				receivedData.pop_back();
-				receivedData.pop_back();
-
-
-				//if (!it->second->is_registered()) 
-				//	registration((*(it->second)), password, buffer, clients);
-				//else 
-				//{
+				receivedData.erase(receivedData.length() - 2, 2);
 				cout << "Client " << it->second->get_username();
 				cout << " send: " << buffer;
-				//broadcastAll(clients, it->first, buffer);
 				process_message(*this ,*(it->second),commands, receivedData);
-				//}
 				bzero(buffer, 1024);
 			}
 			else
@@ -162,7 +153,7 @@ Channel* Server::getChannel(std::string name)
 
 void Server::addChannel(std::string name,Channel *c)
 {
-	channels.at(name) = c;
+	channels[name] = c;
 }
 
 void Server::free_channel()

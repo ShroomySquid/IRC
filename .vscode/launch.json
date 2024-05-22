@@ -10,7 +10,7 @@
         "cwd": "${workspaceFolder}",
         "environment": [],
         "externalConsole": false,
-        "MIMode": "lldb", // lldb on 42 Mac, gdb on Windows (WSL)
+        "MIMode": "gdb", // lldb on 42 Mac, gdb on Windows (WSL)
         //"preLaunchTask": "BUILD",
         //"miDebuggerPath": "/usr/bin/gdb",
         "setupCommands": [

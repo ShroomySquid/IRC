@@ -10,7 +10,10 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		not_registered_yet(sender.get_fd());
 		return ;
 	}
+	if (arguments.size() <= 2)
+		return;
 	Channel* channel = server.getChannel(arguments.at(1));
+
 	if (channel)
 	{
 		channel->broadcastAll(sender, arguments[2]);

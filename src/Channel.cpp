@@ -27,6 +27,31 @@ bool Channel::addClient(Client* c)
 	return true;
 }
 
+Client * Channel::getMember_by_name(std::string name)
+{
+	std::vector<Client*>::iterator it;
+	for (it = this->members.begin(); it != this->members.end(); it++)
+	{
+		Client *c = (*it);
+		if (c->get_username() == name)
+			return c;
+	}
+	return NULL;
+}
+
+void Channel::removeClient(Client *c)
+{
+	if (members.empty())
+		return;
+
+	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
+	// Client found
+	if (it != members.end())
+	{
+		this->members.erase(it);
+	}
+}
+
 Channel& Channel::operator=(const Channel& src)
 {
     this->members = src.members;
@@ -47,7 +72,7 @@ void Channel::broadcastAll(Client &sender, std::string message)
 		Client* c = (*it);
 		//if (c != &sender)
 		{
-			send(c->get_fd(), message.c_str(), message.size(), 0);
+			send(c->get_fd(), (message + '\n').c_str(), message.size(), 0);
 		}
 	}
 }

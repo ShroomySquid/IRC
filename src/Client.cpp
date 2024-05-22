@@ -81,6 +81,12 @@ void Client::authentify()
 
 void Client::regist()
 {
+    // should we send this ??
+
+    // std::cout << "Client registered" << std::endl;
+    // std::string message001;
+    // message001 += this->_nickname + ":Welcome to the <networkname> Network, <nick>[!<user>@<host>]";
+    // send(this->_fd, message001.c_str(), message001.length(), 0);
     this->_registered = true;
 }
 
