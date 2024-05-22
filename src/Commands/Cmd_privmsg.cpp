@@ -13,6 +13,9 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 	if (arguments.size() <= 2)
 		return;
 	Channel* channel = server.getChannel(arguments.at(1));
+	Client * is_inside = channel->getMember_by_name(sender.get_username());
+	if (!is_inside)
+		return;
 
 	if (channel)
 	{
