@@ -16,6 +16,7 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	commands["PASS"] = new Cmd_pass();
 	commands["USER"] = new Cmd_user();
 	commands["NICK"] = new Cmd_nick();
+	commands["TOPIC"] = new Cmd_topic();
 	bzero(buffer, 1024);
 	fcntl(socketD, F_SETFL, O_NONBLOCK);
 	clientAddressSize = sizeof(clientAddress);
@@ -63,26 +64,26 @@ bool Server::is_IRC_message(const std::string& message)
 
 	std::string end = message.substr(message.length() - 2,2);
 
-    if (message.length() >= 2 && end == "\r\n") {
-        return true;
-    } else {
-        return false;
-    }
+    if (message.length() >= 2 && end == "\r\n") 
+        return true; 
 	return false;
 }
 
 void Server::remove_client(std::map<int, Client*> &clients) {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();)
 	{
-		if (it->second->is_disconnected()) {
-			close(it->second->get_fd());
-			delete it->second;
-			std::map<int, Client*>::iterator to_erase = it;
+		if (!it->second->is_disconnected()) {
 			++it;
-			clients.erase(to_erase);
+			continue;
 		}
-		else
-			++it;
+		for (std::map<std::string, Channel*>::iterator i = channels.begin(); i != channels.end(); i++) {
+			i->second->removeClient(it->second);
+		}
+		close(it->second->get_fd());
+		delete it->second;
+		std::map<int, Client*>::iterator to_erase = it;
+		++it;
+		clients.erase(to_erase);
 	}
 }
 
@@ -119,7 +120,7 @@ void Server::Run()
 				if (!is_IRC_message(receivedData))
 				{
 					cout << " client send invalid data: " << receivedData;
-					std::cout << "Not an IRC message !" << std::endl;
+					std::cout << ", Not an IRC message !" << std::endl;
 					bzero(buffer, 1024);
 					continue;
 				}
@@ -133,8 +134,6 @@ void Server::Run()
 			{
 				it->second->disconnect();
 				need_to_remove_client = true;
-				cout << "closing client on fd" << it->second->get_fd() << endl;
-				close(it->second->get_fd());
 			}
 		}
 		if (need_to_remove_client)

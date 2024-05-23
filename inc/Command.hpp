@@ -68,4 +68,12 @@ class Cmd_pass : public Command
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
+class Cmd_topic : public Command
+{
+    public:
+        Cmd_topic();
+        ~Cmd_topic();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
 #endif
