@@ -16,6 +16,7 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	commands["PASS"] = new Cmd_pass();
 	commands["USER"] = new Cmd_user();
 	commands["NICK"] = new Cmd_nick();
+	commands["CAP"] = new Cmd_cap();
 	bzero(buffer, 1024);
 	fcntl(socketD, F_SETFL, O_NONBLOCK);
 	clientAddressSize = sizeof(clientAddress);
