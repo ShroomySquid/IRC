@@ -108,7 +108,7 @@ void Server::Run()
 			pfd.fd = it->second->get_fd();
 			pfd.events = POLLIN | POLLOUT;
 			poll(&pfd, 1, 0);
-			int bytesReceived = recv(pfd.fd, buffer, 1024, MSG_DONTWAIT);
+			int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
 			if (!pfd.revents || bytesReceived <= 2)
 				continue ;
 			if (buffer[0] != '\0')
