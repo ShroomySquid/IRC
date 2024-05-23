@@ -10,12 +10,17 @@ class Channel
         Channel();
         std::string name;
         std::vector<Client*> members;
+        std::vector<Client*> operators;
     public:
         Channel(std::string name);
         ~Channel();
         Channel& operator=(const Channel& src);
         Channel(const Channel& src);
-        bool addClient(Client* client);
+
+		bool promote(Client* client);
+		bool is_member(Client* client);
+		bool is_operator(Client* client);
+        bool addClient(Client* client, bool ope);
         void broadcastAll(Client &sender, std::string message);
 };
 

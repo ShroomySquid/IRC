@@ -11,13 +11,8 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		return ;
 	}
 	Channel* channel = server.getChannel(arguments.at(1));
-	if (channel)
-	{
-		channel->broadcastAll(sender, arguments[2]);
-		std::cout << "Message sent to channel: " << arguments.at(1) << std::endl;
-	}
-	else
-	{
+	if (channel == NULL)
 		std::cout << "This channel doesnt exist" << std::endl;
-	}
+	channel->broadcastAll(sender, arguments[2]);
+	std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
 }

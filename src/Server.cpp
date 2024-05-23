@@ -60,6 +60,7 @@ bool Server::is_IRC_message(const std::string& message)
 {
     // Vérifie si la chaîne se termine par "\r\n"
 	// avec netcat (ctrl v ctrl m enter)
+
 	std::string end = message.substr(message.length() - 2,2);
 
     if (message.length() >= 2 && end == "\r\n") {
@@ -117,7 +118,7 @@ void Server::Run()
 				receivedData.append(buffer, bytesReceived);
 				if (!is_IRC_message(receivedData))
 				{
-					cout << " client send: " << receivedData;
+					cout << " client send invalid data: " << receivedData;
 					std::cout << "Not an IRC message !" << std::endl;
 					bzero(buffer, 1024);
 					continue;
@@ -125,16 +126,9 @@ void Server::Run()
 				receivedData.pop_back();
 				receivedData.pop_back();
 
-
-				//if (!it->second->is_registered()) 
-				//	registration((*(it->second)), password, buffer, clients);
-				//else 
-				//{
 				cout << "Client " << it->second->get_username();
 				cout << " send: " << buffer;
-				//broadcastAll(clients, it->first, buffer);
 				process_message(*this ,*(it->second),commands, receivedData);
-				//}
 				bzero(buffer, 1024);
 			}
 			else
