@@ -13,17 +13,11 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 	if (arguments.size() <= 2)
 		return;
 	Channel* channel = server.getChannel(arguments.at(1));
-	Client * is_inside = channel->getMember_by_name(sender.get_username());
-	if (!is_inside)
-		return;
-
-	if (channel)
-	{
-		channel->broadcastAll(sender, arguments[2]);
-		std::cout << "Message sent to channel: " << arguments.at(1) << std::endl;
-	}
-	else
+	if (channel == NULL)
 	{
 		std::cout << "This channel doesnt exist" << std::endl;
+		return;
 	}
+	channel->broadcastAll(sender, arguments[2]);
+	std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
 }
