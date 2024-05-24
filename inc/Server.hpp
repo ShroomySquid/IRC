@@ -3,6 +3,12 @@
 
 #include "IRC.hpp"
 
+#ifdef DEBUG
+#define DEBUG_PRINT(msg) std::cout << "DEBUG: " << msg << std::endl
+#else
+#define DEBUG_PRINT(msg)
+#endif
+
 class Server
 {
     private:
@@ -13,8 +19,6 @@ class Server
         std::map<std::string, Command*> commands;
         std::map<int, Client*> clients;
         std::map <std::string, Channel*> channels;
-        pollfd pfd;
-        int infd;
         struct sockaddr_in clientAddress;
         bool need_to_remove_client;
         unsigned int clientAddressSize;
@@ -24,6 +28,19 @@ class Server
         void remove_client(std::map<int, Client*> &clients);
         void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input);
         void free_channel();
+        void mark_and_remove_disconnected_clients();
+
+        // ---------------- George added and modified ----------------
+        // pollfd pfd; // replaced with vector
+        // int infd; // replaced with vector
+        std::vector<pollfd> pfds;
+        void ListenClients();
+        void AcceptClients();
+        void CreatePollfds(std::vector<pollfd>& pfds);
+        void PollAndProcessClients();
+        void ProcessClientMessage(const pollfd& pfd);
+        void MarkAndRemoveDisconnectedClients();
+
         // ------------------------------
     public:
         Server(int socketD, struct sockaddr_in *address, std::string password);

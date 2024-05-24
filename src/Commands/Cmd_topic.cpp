@@ -7,9 +7,9 @@ Cmd_topic::~Cmd_topic(){}
 
 void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	std::string current_topic;
+	std::string topic;
 	Channel *channel;
-	int current_length;
+	int topic_length;
 	if (!sender.is_registered()) {
 		not_registered_yet(sender.get_fd());
 		return ;

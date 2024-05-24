@@ -10,6 +10,7 @@ Channel::Channel(std::string name)
 	this->topic_protection = true;
 	this->on_invite = false;
 	this->password = "";
+	this->limit = -1;
 }
 Channel::~Channel(){}
 Channel::Channel(const Channel& src)
@@ -176,4 +177,12 @@ bool Channel::has_password(void) {
 
 void Channel::set_password(std::string new_password) {
 	password = new_password;
+}
+
+int Channel::get_limit(void) {
+	return (limit);
+}
+
+void Channel::set_limit(int new_limit) {
+	limit = new_limit;
 }
