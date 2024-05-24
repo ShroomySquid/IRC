@@ -75,6 +75,21 @@ class Cmd_cap : public Command
         ~Cmd_cap();
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
+class Cmd_topic : public Command
+{
+    public:
+        Cmd_topic();
+        ~Cmd_topic();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_mode : public Command
+{
+    public:
+        Cmd_mode();
+        ~Cmd_mode();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
 
 class Cmd_invite : public Command
 {

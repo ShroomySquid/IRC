@@ -23,7 +23,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	bool success = c->addClient(&sender, is_operator);
 	if (success)
-		std::cout << sender.get_username() << "have been added to channel: "<< channelName << std::endl;
+		std::cout << sender.get_username() << " Client have been added to channel: "<< channelName << std::endl;
 	else
-		std::cout << sender.get_username() << "Client already inside channel: "<< channelName << std::endl;
+		std::cout << sender.get_username() << " Client already inside channel: "<< channelName << std::endl;
 }

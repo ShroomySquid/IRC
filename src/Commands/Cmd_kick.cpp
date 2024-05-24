@@ -12,13 +12,17 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	if (arguments.size() <= 2)
 		return;
-
 	std::string channelName = arguments[1];
 	std::string user = arguments[2];
-
 	Channel* channel = server.getChannel(channelName);
-	if (channel == NULL)
+	if (channel == NULL) {
+		cout << "Channel doesn't exist" << endl;
 		return;
+	}
+	if (!channel->is_operator(&sender)) {
+		cout << "User is not allow to kick" << endl;
+		return ;
+	}
 	Client *client = channel->getMember_by_name(user);
 	if (client)
 	{

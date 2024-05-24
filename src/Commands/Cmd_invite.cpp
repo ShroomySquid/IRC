@@ -40,7 +40,7 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
     }
     {
         std::string message = sender.get_username() + " wants to invite you in channel" + channelname + "\r\n";
-        Client *invited = server.getClient_by_name(user);
+        Client *invited = server.find_client(user);
         if(invited == NULL)
         {
             std::cout << "bug" << std::endl;

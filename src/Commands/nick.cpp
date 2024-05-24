@@ -6,6 +6,8 @@ Cmd_nick::~Cmd_nick(){}
 
 void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	//cout << "enter nick function" << endl;
+	//(void)server;
 	if (!sender.is_authentified()) {	
 		send(sender.get_fd(), "Client is not authentified\r\n", 28, 0);
 		return ;

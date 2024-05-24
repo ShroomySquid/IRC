@@ -6,6 +6,8 @@ Cmd_user::~Cmd_user(){}
 
 void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	//cout << "enter user function" << endl;
+	//(void)server;
 	if (!sender.is_authentified()) {	
 		send(sender.get_fd(), "Client is not authentified\n", 28, 0);
 		return ;
@@ -18,10 +20,10 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "No username given\n", 19, 0);
 		return ;
 	}
-	// if (check_invalid_symbols(arguments[1])) {	
-	// 	send(sender.get_fd(), "Erroneus nickname\n", 19, 0);
-	// 	return ;
-	// }
+	if (check_invalid_symbols(arguments[1])) {	
+		send(sender.get_fd(), "Erroneus username\n", 19, 0);
+		return ;
+	}
 	for (std::map<int, Client*>::iterator it = server.get_clients().begin(); it != server.get_clients().end(); it++) {
 		if (!it->second->get_username().compare(arguments[1])) {
 			send(sender.get_fd(), "Username is already in use\n", 27, 0);
@@ -29,6 +31,7 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		}
 	}
 	sender.set_username(arguments[1]);
+	cout << "arugments[1]: " << arguments[1] << endl;
 	if (sender.get_nickname().length() && sender.get_username().length())
 		sender.regist();
 }
