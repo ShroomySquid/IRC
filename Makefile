@@ -2,7 +2,7 @@ NAME			=	ircserv
 
 SRC_DIRECT		=	src/
 
-MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp Server.cpp Commands/pass.cpp Commands/user.cpp Commands/nick.cpp
+MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp Server.cpp Commands/pass.cpp Commands/user.cpp Commands/nick.cpp ServerEventLoop.cpp
 
 TEST_FILES		=	test_main.cpp utils.cpp
 

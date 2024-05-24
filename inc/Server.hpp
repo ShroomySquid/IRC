@@ -40,6 +40,8 @@ class Server
         void PollAndProcessClients();
         void ProcessClientMessage(const pollfd& pfd);
         void MarkAndRemoveDisconnectedClients();
+        void initializeCommands();
+        void initializeBindings(int socketD, struct sockaddr_in *address);
 
         // ------------------------------
     public:
