@@ -12,7 +12,9 @@ TEST_SOURCES	=	$(addprefix $(SRC_DIRECT), $(TEST_FILES))
 
 CC		=	c++
 
-CCFLAGS		=	-Wall -Wextra -Werror -std=c++98 -g
+CCFLAGS		=	-Wall -Wextra -Werror -std=c++98
+
+DEBUG_FLAGS	=	-g -DDEBUG
 
 all:		$(NAME)
 
@@ -26,10 +28,13 @@ run:	$(O_DIRECT) $(MY_SOURCES)
 test:	$(O_DIRECT) $(TEST_SOURCES)
 	$(CC) $(CCFLAGS) -o test $(TEST_SOURCES)
 
+debug:	CCFLAGS += $(DEBUG_FLAGS)
+debug:	re
+
 clean:
 	rm -f *.o
 	rm -rf *.dSYM
-	
+
 fclean:		clean
 	rm -f $(NAME) test
 
