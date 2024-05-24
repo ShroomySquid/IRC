@@ -40,6 +40,8 @@ class Server
         void PollAndProcessClients();
         void ProcessClientMessage(const pollfd& pfd);
         void MarkAndRemoveDisconnectedClients();
+        void initializeCommands();
+        void initializeBindings(int socketD, struct sockaddr_in *address);
 
         // ------------------------------
     public:
@@ -52,6 +54,7 @@ class Server
         // -----------
 		std::string get_password() const;
 		std::map<int, Client*>& get_clients();
+		Client* find_client(std::string client_name);
 };
 
 

@@ -19,7 +19,7 @@ Channel::Channel(const Channel& src)
 }
 
 bool Channel::promote(Client* c) {	
-	if (members.empty())
+	if (members.empty() || !c)
 		return (false);
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
 	if (it == members.end())
@@ -30,7 +30,7 @@ bool Channel::promote(Client* c) {
 }
 
 bool Channel::demote(Client* c) {	
-	if (operators.empty())
+	if (operators.empty() || !c)
 		return (false);
 	std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
 	if (it == operators.end())
@@ -42,7 +42,7 @@ bool Channel::demote(Client* c) {
 
 bool Channel::is_member(Client* c) 
 {
-	if (members.empty())
+	if (members.empty() || !c)
 		return (false);
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
 	if (it == members.end())
@@ -52,7 +52,7 @@ bool Channel::is_member(Client* c)
 
 bool Channel::is_operator(Client* c) 
 {
-	if (operators.empty())
+	if (operators.empty() || !c)
 		return (false);
 	std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
 	if (it == operators.end())
