@@ -13,6 +13,7 @@ class Channel
         std::vector<Client*> operators;
 		std::string topic;
 		bool topic_protection;
+		bool on_invite;
     public:
         Channel(std::string name);
         ~Channel();
@@ -20,10 +21,11 @@ class Channel
         Channel(const Channel& src);
 
         void removeClient(Client* client);
-		bool promote(Client* client);
-		bool is_member(Client* client);
-		bool is_operator(Client* client);
-        bool addClient(Client* client, bool ope);
+		bool demote(Client* c);
+		bool promote(Client* c);
+		bool is_member(Client* c);
+		bool is_operator(Client* c);
+        bool addClient(Client* c, bool ope);
         
 		void broadcastAll(Client &sender, std::string message);
 		void broadcastCmd(std::string cmd, std::string arg);
@@ -33,7 +35,11 @@ class Channel
 		std::string get_topic(void);
 		void set_topic(std::string new_topic);
 		bool is_topic_protected(void);
-		void set_topic_protected(bool is_protected);
+		void set_topic_protected(bool protect_val);
+		bool is_on_invite(void);
+		void set_invite(bool invite_val);
+		bool has_password(void);
+		void set_password(std::string new_password);
 };
 
 #endif

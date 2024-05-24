@@ -76,4 +76,12 @@ class Cmd_topic : public Command
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
+class Cmd_mode : public Command
+{
+    public:
+        Cmd_mode();
+        ~Cmd_mode();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
 #endif

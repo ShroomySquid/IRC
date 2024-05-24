@@ -8,6 +8,8 @@ Channel::Channel(std::string name)
     this->operators = std::vector<Client*>();
     this->name = name;
 	this->topic_protection = true;
+	this->on_invite = false;
+	this->password = "";
 }
 Channel::~Channel(){}
 Channel::Channel(const Channel& src)
@@ -23,6 +25,17 @@ bool Channel::promote(Client* c) {
 		return (false);
 	this->operators.push_back(c);	
 	this->members.erase(it);
+	return true;
+}
+
+bool Channel::demote(Client* c) {	
+	if (operators.empty())
+		return (false);
+	std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
+	if (it == operators.end())
+		return (false);
+	this->members.push_back(c);	
+	this->operators.erase(it);
 	return true;
 }
 
@@ -143,6 +156,24 @@ bool Channel::is_topic_protected(void) {
 	return (topic_protection);
 }
 
-void Channel::set_topic_protected(bool is_protected) {
-	topic_protection = is_protected;
+void Channel::set_topic_protected(bool protect_val) {
+	topic_protection = protect_val;
+}
+
+bool Channel::is_on_invite(void) {
+	return (on_invite);
+}
+
+void Channel::set_invite(bool invite_val) {
+	on_invite = invite_val;
+}
+
+bool Channel::has_password(void) {
+	if (password.length())
+		return (true);
+	return false;
+}
+
+void Channel::set_password(std::string new_password) {
+	password = new_password;
 }
