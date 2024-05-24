@@ -17,6 +17,8 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	commands["USER"] = new Cmd_user();
 	commands["NICK"] = new Cmd_nick();
 	commands["CAP"] = new Cmd_cap();
+	commands["INVITE"] = new Cmd_invite();
+
 	bzero(buffer, 1024);
 	fcntl(socketD, F_SETFL, O_NONBLOCK);
 	clientAddressSize = sizeof(clientAddress);
@@ -156,6 +158,18 @@ Channel* Server::getChannel(std::string name)
 void Server::addChannel(std::string name,Channel *c)
 {
 	channels[name] = c;
+}
+
+Client *Server::getClient_by_name(std::string name)
+{
+	std::map<int, Client*>::iterator it;
+	for (it = this->clients.begin(); it != this->clients.end(); it++)
+	{
+		Client *c = (*it).second;
+		if (c->get_username() == name)
+			return c;
+	}
+	return NULL;
 }
 
 void Server::free_channel()

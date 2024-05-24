@@ -35,6 +35,7 @@ class Server
         // -----------
 		std::string get_password() const;
 		std::map<int, Client*>& get_clients();
+        Client *getClient_by_name(std::string name);
 };
 
 
