@@ -26,6 +26,7 @@ bool Channel::promote(Client* c) {
 		return (false);
 	this->operators.push_back(c);	
 	this->members.erase(it);
+	cout << "promote S" << endl;
 	return true;
 }
 
@@ -37,6 +38,7 @@ bool Channel::demote(Client* c) {
 		return (false);
 	this->members.push_back(c);	
 	this->operators.erase(it);
+	cout << "demote S" << endl;
 	return true;
 }
 

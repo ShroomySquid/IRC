@@ -10,6 +10,7 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
     this->password = password;
     initializeCommands();
     initializeBindings(socketD, address);
+	process_called = 0;
 }
 
 void Server::initializeCommands() {
@@ -20,8 +21,8 @@ void Server::initializeCommands() {
     commands["PASS"] = new Cmd_pass();
     commands["USER"] = new Cmd_user();
     commands["NICK"] = new Cmd_nick();
-    commands["TOPIC"] = new Cmd_nick();
-    commands["MODE"] = new Cmd_nick();
+    commands["TOPIC"] = new Cmd_topic();
+    commands["MODE"] = new Cmd_mode();
 }
 
 void Server::initializeBindings(int socketD, struct sockaddr_in *address) {

@@ -13,6 +13,7 @@ class Server
 {
     private:
         char buffer[1024];
+		int process_called;
         int socketD;
         struct sockaddr_in *address;
         std::string password;
@@ -26,7 +27,7 @@ class Server
         void login_attempt(std::map<int, Client*> &clients, int infd);
         bool is_IRC_message(const std::string& message);
         void remove_client(std::map<int, Client*> &clients);
-        void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input);
+        void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char* input);
         void free_channel();
         void mark_and_remove_disconnected_clients();
 

@@ -63,6 +63,8 @@ void Server::AcceptClients() {
 }
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
+	process_called++;
+	cout << process_called << endl;
     int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
@@ -74,28 +76,29 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
     }
 
     if (buffer[0] != '\0') {
-        std::string receivedData(buffer, bytesReceived);
-        if (!is_IRC_message(receivedData)) {
-            cout << "Client sent invalid data: " << receivedData << endl;
+        //std::string receivedData(buffer, bytesReceived);
+        if (!is_IRC_message(buffer)) {
+            cout << "Client sent invalid data: " << buffer << endl;
             bzero(buffer, 1024);
             return;
         }
-        receivedData.erase(receivedData.length() - 2, 2);
-        std::map<int, Client*>::iterator it = clients.find(pfd.fd);
+        //receivedData.erase(receivedData.length() - 2, 2);
+        buffer[bytesReceived - 2] = '\0';
+		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << buffer;
-            process_message(*this, *(it->second), commands, receivedData);
+            cout << buffer << endl;
+            process_message(*this, *(it->second), commands, buffer);
         }
         bzero(buffer, 1024);
     }
 }
 
-void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input)
+void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
-	std::string cmd; // nom de la commande.
+	cout << "test buffer: " << buffer << endl;
 	std::vector<std::string> args; // arguments de la commande.
-    char *token = std::strtok((char *)input.c_str(), " ");
-	cmd = token;
+    char *token = std::strtok(input, " ");
+	std::string cmd = token;
     // Keep printing tokens while one of the
     // delimiters present in str[].
     while (token != NULL)
@@ -122,7 +125,3 @@ void Server::MarkAndRemoveDisconnectedClients() {
         }
     }
 }
-
-
-
-

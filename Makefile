@@ -22,7 +22,7 @@ $(NAME):	$(O_DIRECT) $(MY_SOURCES)
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
 run:	$(O_DIRECT) $(MY_SOURCES)
-	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
+	$(CC) $(CCFLAGS) -fsanitize=address -g -o $(NAME) $(MY_SOURCES) 
 	./$(NAME) 6667 patate
 
 test:	$(O_DIRECT) $(TEST_SOURCES)

@@ -85,7 +85,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 			return ;
 		}
 		channel->demote(client);
-		channel->broadcastCmd("MODE (operator)", "<client> has been promoted to operator");
+		channel->broadcastCmd("MODE (operator)", "<client> has been demoted to member");
 		return ;
 	}
 	if (!mode.compare("+l")) {
@@ -110,5 +110,5 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		return ;
 	}
 	// ERR_???
-	send(sender.get_fd(), "Invalid mode passed\n", 6, 0);
+	send(sender.get_fd(), "Invalid mode passed\n", 20, 0);
 }
