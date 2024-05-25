@@ -95,7 +95,6 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
 
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
-	cout << "test buffer: " << buffer << endl;
 	std::vector<std::string> args; // arguments de la commande.
     char *token = std::strtok(input, " ");
 	std::string cmd = token;

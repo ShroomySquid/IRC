@@ -31,7 +31,6 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		}
 	}
 	sender.set_username(arguments[1]);
-	cout << "arugments[1]: " << arguments[1] << endl;
 	if (sender.get_nickname().length() && sender.get_username().length())
 		sender.regist();
 }
