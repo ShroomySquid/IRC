@@ -42,7 +42,7 @@ bool invalid_password(std::string password) {
 
 int main(int argc, char** argv)
 {
-	
+
 	if (argc != 3)
 	{
 		cerr << "Invalid amount of arguments provided.";
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	{
 		std::cerr << e.what() << '\n';
 	}
-		
+
 	//server(socketD, address, argv[2]);
 	free(address);
 	close(socketD);
