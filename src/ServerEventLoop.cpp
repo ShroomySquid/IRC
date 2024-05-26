@@ -1,5 +1,6 @@
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
+#include "../inc/ResponseHandler.hpp"
 
 void Server::Run() {
     DEBUG_PRINT("Running server...");
@@ -55,11 +56,22 @@ void Server::CreatePollfds(std::vector<pollfd>& pfds) {
     }
 }
 
+
 void Server::AcceptClients() {
     DEBUG_PRINT("Accepting clients...");
+    sockaddr_in clientAddress;
+    socklen_t clientAddressSize = sizeof(clientAddress);
     int infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
-    if (infd > 0)
+
+    if (infd > 0) {
         login_attempt(clients, infd);
+
+        char clientIp[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIp, INET_ADDRSTRLEN);
+        int clientPort = ntohs(clientAddress.sin_port);
+
+        sendServerMsg("Connection established from %s:%d", clientIp, clientPort);
+    }
 }
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
@@ -83,7 +95,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         receivedData.erase(receivedData.length() - 2, 2);
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << buffer;
+            // cout << buffer;
             process_message(*this, *(it->second), commands, receivedData);
         }
         bzero(buffer, 1024);

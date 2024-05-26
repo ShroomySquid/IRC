@@ -43,24 +43,20 @@ std::string current_timestamp() {
 	struct tm tstruct;
 	char buf[80];
 	tstruct = *localtime(&now);
-	strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+	strftime(buf, sizeof(buf), "[%Y-%m-%d %X]", &tstruct);
 
 	return buf;
 }
 
-void sendServerMsg(int fd, const char* format, ...) {
+void sendServerMsg(const char* format, ...) {
     va_list args;
     va_start(args, format);
 
-    // Format message (C98 compliant)
-    char messageBuffer[1024]; // Adjust buffer size as needed
+    char messageBuffer[1024];
     vsnprintf(messageBuffer, sizeof(messageBuffer), format, args);
     va_end(args);
 
-    // Add timestamp (C98 string concatenation)
-    std::string timestamp = current_timestamp(); // Assuming you have a function to get this
+    std::string timestamp = current_timestamp();
     std::string fullMessage = timestamp + " " + messageBuffer + "\n";
-
-    // Send to server (replace with your actual network logic)
-    write(fd, fullMessage.c_str(), strlen(fullMessage.c_str()));
+	std::cout << fullMessage;
 }

@@ -7,8 +7,6 @@ Cmd_pass::~Cmd_pass(){}
 
 void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	std::string nickname = sender.get_nickname();
-	std::string password = server.get_password();
 	if (!arguments[1].size()) {
 		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", "PASS", ERROR_NOTENOUGHPARAM, NULL);
 		return;
@@ -17,9 +15,9 @@ void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> 
 		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", ERROR_MAYNOTREREGISTER, NULL);
 		return;
 	}
-	if (!password.compare(arguments[1])) {
+	if (!server.get_password().compare(arguments[1])) {
 		sender.authentify();
-		std::cout << "Client " << sender.get_fd() << " is authentified." << std::endl;
+		sendServerMsg("user is authentified");
 	}
 	else {
 		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", ERR_PASSWDMISMATCH, NULL);

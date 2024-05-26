@@ -21,6 +21,6 @@
 void sendErrorMsg(int fd, ...);
 void sendReplyMsg(int fd, ...);
 std::string current_timestamp();
-void sendServerMsg(int fd, const char* format, ...);
+void sendServerMsg(const char* format, ...);
 
 #endif
