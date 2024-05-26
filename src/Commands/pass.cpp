@@ -8,34 +8,18 @@ Cmd_pass::~Cmd_pass(){}
 void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	if (!arguments[1].size()) {
-		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", "PASS", ERROR_NOTENOUGHPARAM, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, "*", "PASS", ERR_NEEDMOREPARAMS_MSG, NULL);
 		return;
 	}
 	else if (sender.is_authentified()) {
-		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", ERROR_MAYNOTREREGISTER, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_ALREADYREGISTERED, "*", ERR_ALREADYREGISTERED_MSG, NULL);
 		return;
 	}
 	if (!server.get_password().compare(arguments[1])) {
 		sender.authentify();
-		sendServerMsg("user is authentified");
+		sendServerMsg("User is authenticated");
 	}
 	else {
-		sendErrorMsg(sender.get_fd(), ERROR_CODE, "*", ERR_PASSWDMISMATCH, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_PASSWDMISMATCH, "*", ERR_PASSWDMISMATCH_MSG, NULL);
 	}
 }
-
-
-// void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> arguments)
-// {
-// 	//cout << "entered pass function" << endl;
-// 	if (sender.is_authentified()) {
-// 		send(sender.get_fd(), "You may not reregister\n", 24, 0);
-// 		return ;
-// 	}
-// 	if (!server.get_password().compare(arguments[1])) {
-// 		sender.authentify();
-// 		cout << "Client " << sender.get_fd() << " is authentified." << endl;
-// 	}
-// 	else
-// 		send(sender.get_fd(), "Password incorrect\n", 20, 0);
-// }

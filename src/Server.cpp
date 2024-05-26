@@ -21,6 +21,9 @@ void Server::initializeCommands() {
     commands["PASS"] = new Cmd_pass();
     commands["USER"] = new Cmd_user();
     commands["NICK"] = new Cmd_nick();
+	commands["CAP"] = new Cmd_cap();
+	// commands["PING"] = new Cmd_ping();
+	// commands["QUIT"] = new Cmd_quit();
 }
 
 void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
@@ -28,20 +31,31 @@ void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
     bzero(buffer, 1024);
     fcntl(socketD, F_SETFL, O_NONBLOCK);
     clientAddressSize = sizeof(clientAddress);
+
     int bind_result = bind(socketD, (struct sockaddr *)address, sizeof(*address));
     if (bind_result != 0) {
-        cout << "bind failed." << endl;
-        throw std::exception();
+        std::ostringstream error_msg;
+		error_msg << "Error binding socket: " << strerror(errno);
+        close(socketD);
+        throw std::runtime_error(error_msg.str());
     }
 }
 
-void Server::login_attempt(std::map<int, Client*> &clients, int infd)
+// login_attempt replaced with registerClient
+// void Server::login_attempt(std::map<int, Client*> &clients, int infd)
+// {
+// 	Client* received_client = new Client(infd);
+// 	if (received_client != NULL) {
+// 		clients.insert(std::pair<int, Client*>
+// 				(received_client->get_fd(), received_client));
+// 	}
+// }
+
+void Server::registerClient(std::map<int, Client*> &clients, Client* newClient)
 {
-	Client* received_client = new Client(infd);
-	// error if new fail ?
-	if (received_client != NULL) {
+	if (newClient != NULL) {
 		clients.insert(std::pair<int, Client*>
-				(received_client->get_fd(), received_client));
+				(newClient->get_fd(), newClient));
 	}
 }
 

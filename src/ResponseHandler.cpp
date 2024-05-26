@@ -39,13 +39,12 @@ void sendReplyMsg(int fd, ...) {
 }
 
 std::string current_timestamp() {
-	time_t now = time(0);
-	struct tm tstruct;
-	char buf[80];
-	tstruct = *localtime(&now);
-	strftime(buf, sizeof(buf), "[%Y-%m-%d %X]", &tstruct);
-
-	return buf;
+	std::time_t now = std::time(0);
+    std::tm now_tm;
+    localtime_r(&now, &now_tm);
+    std::ostringstream oss;
+    oss << "[" << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S") << "]";
+    return oss.str();
 }
 
 void sendServerMsg(const char* format, ...) {
@@ -53,10 +52,10 @@ void sendServerMsg(const char* format, ...) {
     va_start(args, format);
 
     char messageBuffer[1024];
-    vsnprintf(messageBuffer, sizeof(messageBuffer), format, args);
+	vsnprintf(messageBuffer, sizeof(messageBuffer), format, args);
     va_end(args);
 
     std::string timestamp = current_timestamp();
     std::string fullMessage = timestamp + " " + messageBuffer + "\n";
-	std::cout << fullMessage;
+    std::cout << fullMessage;
 }

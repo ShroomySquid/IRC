@@ -14,8 +14,8 @@ void Server::Run() {
 void Server::ListenClients() {
     DEBUG_PRINT("Waiting for clients to connect...");
     if (listen(socketD, 10) == -1) {
-        cout << "listen failed." << endl;
-        throw std::exception();
+        perror("listen");
+        return;
     }
 }
 
@@ -56,7 +56,6 @@ void Server::CreatePollfds(std::vector<pollfd>& pfds) {
     }
 }
 
-
 void Server::AcceptClients() {
     DEBUG_PRINT("Accepting clients...");
     sockaddr_in clientAddress;
@@ -64,12 +63,22 @@ void Server::AcceptClients() {
     int infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 
     if (infd > 0) {
-        login_attempt(clients, infd);
+        // 1. Create a new client object
+        Client* newClient = new Client(infd);
+        if (newClient == NULL) {
+            perror("new");
+            return;
+        }
 
+        // 2. Register the client
+        registerClient(clients, newClient);
+
+        // 3. Extract IP and Port
         char clientIp[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIp, INET_ADDRSTRLEN);
         int clientPort = ntohs(clientAddress.sin_port);
 
+        // 5. Log the connection
         sendServerMsg("Connection established from %s:%d", clientIp, clientPort);
     }
 }
@@ -95,12 +104,12 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         receivedData.erase(receivedData.length() - 2, 2);
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            // cout << buffer;
             process_message(*this, *(it->second), commands, receivedData);
         }
         bzero(buffer, 1024);
     }
 }
+
 
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input)
 {

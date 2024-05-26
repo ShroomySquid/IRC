@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include "IRC.hpp"
+#include "ResponseHandler.hpp"
 
 #ifdef DEBUG
 #define DEBUG_PRINT(msg) std::cout << "DEBUG: " << msg << std::endl
@@ -23,7 +24,6 @@ class Server
         bool need_to_remove_client;
         unsigned int clientAddressSize;
         // -------- Private Methods -----
-        void login_attempt(std::map<int, Client*> &clients, int infd);
         bool is_IRC_message(const std::string& message);
         void remove_client(std::map<int, Client*> &clients);
         void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input);
@@ -33,6 +33,7 @@ class Server
         // ---------------- George added and modified ----------------
         // pollfd pfd; // replaced with vector
         // int infd; // replaced with vector
+        // void login_attempt(std::map<int, Client*> &clients, int infd); // replaced with RegisterClient
         std::vector<pollfd> pfds;
         void ListenClients();
         void AcceptClients();
@@ -42,6 +43,7 @@ class Server
         void MarkAndRemoveDisconnectedClients();
         void initializeCommands();
         void initializeBindings(int socketD, struct sockaddr_in *address);
+        void registerClient(std::map<int, Client*> &clients, Client* received_client);
 
         // ------------------------------
     public:

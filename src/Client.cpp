@@ -46,12 +46,14 @@ void Client::set_username(std::string user)
 {
 	if (_username.empty())
 		_username = user;
+    sendServerMsg("User username set to %s", user.c_str());
 }
 
 void Client::set_nickname(std::string nick)
 {
 	if (_nickname.empty())
 		_nickname = nick;
+    sendServerMsg("User nickname set to %s", nick.c_str());
 }
 
 bool Client::is_authentified()
