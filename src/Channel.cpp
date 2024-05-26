@@ -169,10 +169,8 @@ void Channel::set_invite(bool invite_val) {
 	on_invite = invite_val;
 }
 
-bool Channel::has_password(void) {
-	if (password.length())
-		return (true);
-	return false;
+std::string Channel::get_password(void) {
+	return (password);
 }
 
 void Channel::set_password(std::string new_password) {

@@ -16,7 +16,7 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "Username already registered\n", 29, 0);
 		return ;
 	}
-	if (arguments.empty() || !arguments[1][0]) {	
+	if (arguments.size() < 2 || !arguments[1][0]) {	
 		send(sender.get_fd(), "No username given\n", 19, 0);
 		return ;
 	}

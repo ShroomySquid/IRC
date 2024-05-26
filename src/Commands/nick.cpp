@@ -16,7 +16,7 @@ void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "Nickname already registered\n", 29, 0);
 		return ;
 	}
-	if (arguments.empty() || !arguments[1][0]) {	
+	if (arguments.size() < 2 || !arguments[1][0]) {	
 		send(sender.get_fd(), "No nickname given\n", 19, 0);
 		return ;
 	}
