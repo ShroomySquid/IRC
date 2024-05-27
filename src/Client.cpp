@@ -83,8 +83,7 @@ void Client::authentify()
 
 void Client::regist()
 {
-    std::string message001 = "001 RPL_WELCOME : Welcome to the internet Relay Network\r\n";
-    send(this->_fd, message001.c_str(), message001.length(), 0);
+    sendReplyMsg(this->_fd, RPL_WELCOME, NULL);
     this->_registered = true;
 }
 

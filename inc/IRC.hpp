@@ -16,6 +16,7 @@
 # include <cstdlib>
 # include "Channel.hpp"
 # include <vector>
+# include <signal.h>
 
 using std::cout;
 using std::cerr;

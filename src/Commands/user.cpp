@@ -14,7 +14,7 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "Username already registered\n", 29, 0);
 		return ;
 	}
-	if (arguments.empty() || !arguments[1][0]) {
+	if (arguments.size() < 2 || !arguments[1][0]) {
 		send(sender.get_fd(), "No username given\n", 19, 0);
 		return ;
 	}
@@ -33,6 +33,5 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 	{
 		sender.regist();
 		sendServerMsg("%s has joined the server", sender.get_nickname().c_str());
-		sendReplyMsg(sender.get_fd(), "001 Welcome to the Internet Relay Network", NULL);
 	}
 }

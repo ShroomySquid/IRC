@@ -35,6 +35,5 @@ void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> 
 	{
 		sender.regist();
 		sendServerMsg("%s has joined the server", sender.get_nickname().c_str());
-		sendReplyMsg(sender.get_fd(), "001 Welcome to the Internet Relay Network", NULL);
 	}
 }
