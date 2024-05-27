@@ -1,6 +1,6 @@
 NAME            =   ircserv
 SRC_DIRECT      =   src
-MY_SOURCES      =   $(shell find $(SRC_DIRECT) -name "*.cpp" ! -name "test_*.cpp")
+MY_SOURCES      =   $(shell find $(SRC_DIRECT) -name "*.cpp")
 CC              =   c++
 CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 DEBUG_FLAGS     =   -g -DDEBUG

@@ -5,10 +5,13 @@
 void Server::Run() {
     DEBUG_PRINT("Running server...");
     ListenClients();
-    while (true) {
+    while (online) {
         PollAndProcessClients();
         MarkAndRemoveDisconnectedClients();
+        initSignals();
     }
+    close(socketD);
+    // Full cleanup if signal is received
 }
 
 void Server::ListenClients() {
@@ -105,7 +108,7 @@ void Server::Split_message(Client* client, char *buffer) {
 	int i = 0;
 	while (buffer[i] && buffer[i + 1] && !(buffer[i + 1] == '\n' && buffer[i] == '\r'))
 		i++;
-	buffer[i] = '\0';	
+	buffer[i] = '\0';
 	process_message(*this, *client, commands, buffer);
 	if (buffer[i + 2])
 		Split_message(client, &buffer[i + 2]);
@@ -123,6 +126,12 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         }
         return;
     }
+
+    // [debug] prints all received bytes from client on fd
+    DEBUG_PRINT("Received " << bytesReceived << " bytes from client on fd " << pfd.fd << ": " << recv_buffer);
+    DEBUG_PRINT_HEX(recv_buffer, bytesReceived);
+
+
     if (recv_buffer[0] != '\0') {
 		if (!append_buffer()) {
 			bzero(buffer, buffer_len);
@@ -135,7 +144,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << "buffer: " << buffer << endl;
+            // cout << "buffer: " << buffer << endl;
 			Split_message(it->second, buffer);
             //process_message(*this, *(it->second), commands, buffer);
         }
@@ -163,8 +172,8 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
     }
 	if (commands.find(cmd) != commands.end())
 		commands[cmd]->execute(server, sender, args); // execute la commande
-	else
-		std::cout << cmd << " : Command not found" << std::endl;
+	// else
+	// 	std::cout << cmd << " : Command not found" << std::endl;
 }
 
 void Server::MarkAndRemoveDisconnectedClients() {

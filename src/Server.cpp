@@ -1,6 +1,8 @@
 #include "../inc/Server.hpp"
 #include "../inc/Command.hpp"
 
+bool online = true;
+
 Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 {
 	channels = std::map <std::string, Channel*>();
@@ -11,6 +13,7 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	buffer_len = 0;
     initializeCommands();
     initializeBindings(socketD, address);
+	initSignals();
 	bzero(buffer, 1024);
 	bzero(recv_buffer, 1024);
 }
@@ -46,16 +49,6 @@ void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
         throw std::runtime_error(error_msg.str());
     }
 }
-
-// login_attempt replaced with registerClient
-// void Server::login_attempt(std::map<int, Client*> &clients, int infd)
-// {
-// 	Client* received_client = new Client(infd);
-// 	if (received_client != NULL) {
-// 		clients.insert(std::pair<int, Client*>
-// 				(received_client->get_fd(), received_client));
-// 	}
-// }
 
 void Server::registerClient(std::map<int, Client*> &clients, Client* newClient)
 {
@@ -162,4 +155,17 @@ Client* Server::find_client(std::string client_name) {
 			return (it->second);
 	}
 	return (NULL);
+}
+
+void Server::initSignals()
+{
+	signal(SIGINT, Server::handleSignal);
+	signal(SIGTERM, Server::handleSignal);
+	signal(SIGQUIT, Server::handleSignal);
+}
+
+void Server::handleSignal(int signal)
+{
+	if (signal == SIGINT || signal == SIGTERM || signal == SIGQUIT)
+		online = false;
 }

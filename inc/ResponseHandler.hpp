@@ -11,17 +11,21 @@
 #include <iomanip>
 #include <vector>
 
-#ifdef DEBUG
-#define DEBUG_PRINT(msg) std::cout << "DEBUG: " << msg << std::endl
-#else
-#define DEBUG_PRINT(msg)
+#ifdef DEBUG  // Check if DEBUG is defined
+    #define DEBUG_PRINT(msg) std::cout << "DEBUG: " << msg << std::endl
+    #define DEBUG_PRINT_HEX(msg, len) \
+        printf("DEBUG: "); \
+        for (int i = 0; i < len; i++) { printf("%02x ", msg[i]); } printf("\n")
+#else         // If DEBUG is not defined
+    #define DEBUG_PRINT(msg)  // Empty definition - does nothing
+    #define DEBUG_PRINT_HEX(msg, len) // Empty definition - does nothing
 #endif
+
 
 #define MAX_RESPONSE_SIZE 512
 #define PREFIX ":ft_irc"
 
-#define RPL_WELCOME "001 RPL_WELCOME"
-#define WELCOME_MSG ":Welcome to the IRC server"
+#define RPL_WELCOME "001 RPL_WELCOME :Welcome to the IRC server"
 #define RPL_CHANNELMODEIS "324"
 #define RPL_CHANNELMODEIS_MSG "+i/-i: Add/remove channel on invitation\n +t-t: Add/remove restriction on topic\n +k/-k: Add/remove channel password\n +o/-o: Promote/demote member as operator\n +l/-l Add/remove limit of users in channel"
 #define ERR_UNKNOWNERROR "400"

@@ -4,11 +4,7 @@
 #include "IRC.hpp"
 #include "ResponseHandler.hpp"
 
-#ifdef DEBUG
-#define DEBUG_PRINT(msg) std::cout << "DEBUG: " << msg << std::endl
-#else
-#define DEBUG_PRINT(msg)
-#endif
+extern bool online;
 
 class Server
 {
@@ -48,6 +44,8 @@ class Server
 		bool append_buffer(void);
         void registerClient(std::map<int, Client*> &clients, Client* received_client);
 		void Split_message(Client* client, char *buffer);
+        void initSignals();
+        static void handleSignal(int signal);
 
         // ------------------------------
     public:
