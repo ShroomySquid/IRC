@@ -29,7 +29,7 @@ void Server::initializeCommands() {
 	commands["INVITE"] = new Cmd_invite();
 	commands["CAP"] = new Cmd_cap();
 	// commands["PING"] = new Cmd_ping();
-	// commands["QUIT"] = new Cmd_quit();
+	commands["QUIT"] = new Cmd_quit();
 }
 
 void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
@@ -103,6 +103,10 @@ Channel* Server::getChannel(std::string name)
 		return channels[name];
 	else
 		return NULL;
+}
+std::map <std::string, Channel*> Server::get_all_channels()
+{
+	return this->channels;
 }
 
 void Server::addChannel(std::string name,Channel *c)

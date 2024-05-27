@@ -56,6 +56,7 @@ class Server
         void Run();
         // ----- Channels methods
         Channel* getChannel(std::string name);
+        std::map <std::string, Channel*> get_all_channels();
         void addChannel(std::string name,Channel *c);
         // -----------
 		std::string get_password() const;
