@@ -1,7 +1,7 @@
 #include "../../inc/Command.hpp"
 #include "../../inc/Channel.hpp"
 #include "../../inc/Server.hpp"
-#include "../inc/ResponseHandler.hpp"
+#include "../../inc/ResponseHandler.hpp"
 
 Cmd_invite::Cmd_invite(){}
 Cmd_invite::~Cmd_invite(){}
