@@ -12,6 +12,8 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
     initializeCommands();
     initializeBindings(socketD, address);
 	process_called = 0;
+	bzero(buffer, 1024);
+	bzero(recv_buffer, 1024);
 }
 
 void Server::initializeCommands() {
@@ -24,6 +26,7 @@ void Server::initializeCommands() {
     commands["NICK"] = new Cmd_nick();
     commands["TOPIC"] = new Cmd_topic();
     commands["MODE"] = new Cmd_mode();
+    commands["PART"] = new Cmd_part();
 }
 
 void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
