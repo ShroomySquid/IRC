@@ -38,18 +38,17 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
         send(sender.get_fd(), message.c_str(), message.length(), 0);
         return;
     }
+
+    std::string message1 = sender.get_username() + " wants to invite you in channel " + channelname + "\r\n";
+    Client *invited = server.find_client(user);
+    if(invited == NULL)
     {
-        std::string message = sender.get_username() + " wants to invite you in channel " + channelname + "\r\n";
-        Client *invited = server.find_client(user);
-        if(invited == NULL)
-        {
-            std::cout << "bug, impossible to find client" << std::endl;
-            return;
-        }
-        send(invited->get_fd(), message.c_str(), message.length(), 0);
+        std::cout << "bug, impossible to find client" << std::endl;
+        return;
     }
-    {
-        std::string message = "341 RPL_INVITING : Invite sent to " + user + " to join channel " + channelname + "\r\n";
-        send(sender.get_fd(), message.c_str(), message.length(), 0);
-    }
+    send(invited->get_fd(), message1.c_str(), message1.length(), 0);
+    std::string message2 = "341 RPL_INVITING : Invite sent to " + user + " to join channel " + channelname + "\r\n";
+    send(sender.get_fd(), message2.c_str(), message2.length(), 0);
+    channel->addInvited(invited);
+
 }

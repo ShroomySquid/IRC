@@ -6,6 +6,7 @@ Channel::Channel(std::string name)
 	this->topic = "";
     this->members = std::vector<Client*>();
     this->operators = std::vector<Client*>();
+	this->invited = std::vector<Client*>();
     this->name = name;
 	this->topic_protection = true;
 	this->on_invite = false;
@@ -64,12 +65,51 @@ bool Channel::addClient(Client* c, bool ope)
 {
 	if (is_member(c) || is_operator(c))
 		return false;
+	if (this->on_invite)
+	{
+		std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
+		if (it == invited.end())
+		{
+			std::cout << "cannot join beacause client is not invited !" << std::endl;
+			return false;
+		}
+	}
 	if (!ope) 
 	{
 		this->members.push_back(c);
 		return true;
 	}
 	this->operators.push_back(c);
+
+	// erase from invited 
+	if (!invited.empty()) {
+		std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
+		if (it != invited.end())
+			this->invited.erase(it);
+	}
+	return true;
+}
+
+bool Channel::addInvited(Client *c)
+{
+	if (!this->on_invite)
+		return false;
+	if (is_member(c) || is_operator(c))
+		return false;
+	std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
+	if (it == invited.end())
+	{
+		this->invited.push_back(c);
+		return true;
+	}
+	return false;
+}
+
+bool Channel::is_Invited(Client* c)
+{
+	std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
+	if (it == invited.end())
+		return false;
 	return true;
 }
 
