@@ -1,7 +1,7 @@
 #include "../../inc/Command.hpp"
 #include "../../inc/Channel.hpp"
 #include "../../inc/Server.hpp"
-
+#include "../../inc/ResponseHandler.hpp"
 
 Cmd_invite::Cmd_invite(){}
 Cmd_invite::~Cmd_invite(){}
@@ -21,6 +21,7 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
 
     if (channel == NULL)
     {
+        //sendErrorMsg(sender.get_fd(), "403", "ERR_NOSUCHCHANNEL", ": No such channel\r\n");
         std::string message = "403 ERR_NOSUCHCHANNEL : No such channel\r\n";
         send(sender.get_fd(), message.c_str(), message.length(), 0);
         return;
