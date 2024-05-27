@@ -101,24 +101,6 @@ bool Server::append_buffer(void) {
 	return (true);
 }
 
-bool Server::append_buffer(void) {
-	int a = 0;
-	while (buffer[buffer_len])
-		buffer_len++;
-	while (recv_buffer[a] && (buffer_len + a) < 1024) {
-		buffer[buffer_len + a] = recv_buffer[a];
-		a++;
-	}
-	buffer_len += a;
-	if (buffer_len <= 2)
-		return (true);
-	if ((buffer_len) >= 1024 && (buffer[buffer_len - 2] != '\r' || buffer[buffer_len - 1] != '\n')) {
-		cout << "Invalid message: message too long without being terminated" << endl;
-		return (false);
-	}
-	return (true);
-}
-
 void Server::ProcessClientMessage(const pollfd& pfd) {
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
 	if (bytesReceived < 2 && recv_buffer[0] == '\n')
