@@ -31,7 +31,7 @@ void Server::initializeCommands() {
     commands["PART"] = new Cmd_part();
 	commands["INVITE"] = new Cmd_invite();
 	commands["CAP"] = new Cmd_cap();
-	// commands["PING"] = new Cmd_ping();
+	commands["PING"] = new Cmd_ping();
 	commands["QUIT"] = new Cmd_quit();
 }
 

@@ -128,8 +128,8 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
     }
 
     // [debug] prints all received bytes from client on fd
-    DEBUG_PRINT("Received " << bytesReceived << " bytes from client on fd " << pfd.fd << ": " << recv_buffer);
     DEBUG_PRINT_HEX(recv_buffer, bytesReceived);
+    DEBUG_PRINT("Received " << bytesReceived << " bytes from client on fd " << pfd.fd << ": " << recv_buffer);
 
 
     if (recv_buffer[0] != '\0') {

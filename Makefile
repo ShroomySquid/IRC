@@ -14,7 +14,7 @@ run: $(NAME)
 	./$(NAME) 6667 patate
 
 debug: CCFLAGS += $(DEBUG_FLAGS)
-debug: re
+debug: re run
 
 clean:
 	rm -f *.o

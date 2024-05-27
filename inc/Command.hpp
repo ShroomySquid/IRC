@@ -117,4 +117,12 @@ class Cmd_quit : public Command
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
+class Cmd_ping : public Command
+{
+    public:
+        Cmd_ping();
+        ~Cmd_ping();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
 #endif
