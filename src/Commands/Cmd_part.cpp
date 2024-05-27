@@ -34,6 +34,7 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 	if (arguments.size() < 2) {
 		// err_needmoreparams 461
 		send(sender.get_fd(), "need more param\n", 16, 0);
+		return ;
 	}
 	std::vector<std::string> chan_to_quit;
 	fill_chan_to_quit(chan_to_quit, arguments[1]);

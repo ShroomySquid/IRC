@@ -7,7 +7,7 @@ Cmd_pass::~Cmd_pass(){}
 
 void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	if (!arguments[1].size()) {
+	if (arguments.empty() || arguments.size() < 2) {
 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, "*", "PASS", ERR_NEEDMOREPARAMS_MSG, NULL);
 		return;
 	}

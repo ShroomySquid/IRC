@@ -8,7 +8,7 @@ Cmd_nick::~Cmd_nick(){}
 void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	if (!sender.is_authentified()) {
-		sendErrorMsg(sender.get_fd(), "You must be authentified to use this command");
+		sendErrorMsg(sender.get_fd(), "You must be authentified to use this command", NULL);
 		return ;
 	}
 	if (sender.get_nickname().length()) {
@@ -16,7 +16,7 @@ void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> 
 		// send(sender.get_fd(), "Nickname already registered\n", 29, 0);
 		return ;
 	}
-	if (arguments.empty() || !arguments[1][0]) {
+	if (arguments.size() < 2 || !arguments[1][0]) {
 		sendErrorMsg(sender.get_fd(), ERR_NONICKNAMEGIVEN, ERR_NONICKNAMEGIVEN_MSG, NULL);
 		return ;
 	}
