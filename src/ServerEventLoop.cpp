@@ -98,6 +98,10 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
 	cout << "test buffer: " << buffer << endl;
 	std::vector<std::string> args; // arguments de la commande.
     char *token = std::strtok(input, " ");
+    if (token == NULL)
+    {
+        return ;
+    }
 	std::string cmd = token;
     // Keep printing tokens while one of the
     // delimiters present in str[].

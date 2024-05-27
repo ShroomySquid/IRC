@@ -1,6 +1,7 @@
 #ifndef IRC_HPP
 # define IRC_HPP
 # define _XOPEN_SOURCE_EXTENDED 1
+# include <stdio.h>
 # include <string>
 # include <string.h>
 # include <cstring>
