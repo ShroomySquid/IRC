@@ -80,9 +80,9 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			send(sender.get_fd(), "bad password\n", 13, 0);
 			continue ;
 		}
-		if (channel->is_on_invite()) {	
+		if (channel->is_on_invite() && !channel->is_Invited(&sender)) {	
 			//err_inviteonlychan 473
-			send(sender.get_fd(), "No one is allowed here\n", 23, 0);
+			send(sender.get_fd(), "You must be invited to enter this channel\n", 43, 0);
 			continue ;
 		}
 		bool success = channel->addClient(&sender, is_operator);

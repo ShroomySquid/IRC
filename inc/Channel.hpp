@@ -11,6 +11,7 @@ class Channel
         std::string name;
         std::vector<Client*> members;
         std::vector<Client*> operators;
+		std::vector<Client*> invited;
 		std::string topic;
 		bool topic_protection;
 		bool on_invite;
@@ -28,7 +29,8 @@ class Channel
 		bool is_member(Client* c);
 		bool is_operator(Client* c);
         bool addClient(Client* c, bool ope);
-        
+        bool addInvited(Client* c);
+		bool is_Invited(Client* c);
 		void broadcastAll(Client &sender, std::string message);
 		void broadcastCmd(std::string cmd, std::string arg);
         
