@@ -24,7 +24,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		return ;
 	}
 	if (!channel->is_operator(&sender)) {
-		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), RR_CHANOPRIVSNEEDED_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
 	}
 	std::string mode = arguments[2];
