@@ -101,6 +101,16 @@ bool Server::append_buffer(void) {
 	return (true);
 }
 
+void Server::Split_message(Client* client, char *buffer) {
+	int i = 0;
+	while (buffer[i] && buffer[i + 1] && !(buffer[i + 1] == '\n' && buffer[i] == '\r'))
+		i++;
+	buffer[i] = '\0';	
+	process_message(*this, *client, commands, buffer);
+	if (buffer[i + 2])
+		Split_message(client, &buffer[i + 2]);
+}
+
 void Server::ProcessClientMessage(const pollfd& pfd) {
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
 	if (bytesReceived < 2 && recv_buffer[0] == '\n')
@@ -123,12 +133,11 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         bzero(recv_buffer, bytesReceived);
         if (!is_IRC_message(buffer))
             return;
-		if (buffer_len >= 2)
-        	buffer[buffer_len - 2] = '\0';
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
             cout << "buffer: " << buffer << endl;
-            process_message(*this, *(it->second), commands, buffer);
+			Split_message(it->second, buffer);
+            //process_message(*this, *(it->second), commands, buffer);
         }
         bzero(buffer, buffer_len);
 		buffer_len = 0;

@@ -47,6 +47,7 @@ class Server
         void initializeBindings(int socketD, struct sockaddr_in *address);
 		bool append_buffer(void);
         void registerClient(std::map<int, Client*> &clients, Client* received_client);
+		void Split_message(Client* client, char *buffer);
 
         // ------------------------------
     public:
