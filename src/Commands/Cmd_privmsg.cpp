@@ -19,5 +19,4 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		return;
 	}
 	channel->broadcastAll(sender, arguments[2]);
-	std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
 }

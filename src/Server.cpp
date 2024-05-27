@@ -138,7 +138,7 @@ std::map<int, Client*>& Server::get_clients()
 
 Client* Server::find_client(std::string client_name) {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++) {
-		if (!it->second->get_nickname().compare(client_name))
+		if (!it->second->get_client().compare(client_name))
 			return (it->second);
 	}
 	return (NULL);

@@ -39,11 +39,11 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
         return;
     }
     {
-        std::string message = sender.get_username() + " wants to invite you in channel" + channelname + "\r\n";
+        std::string message = sender.get_username() + " wants to invite you in channel " + channelname + "\r\n";
         Client *invited = server.find_client(user);
         if(invited == NULL)
         {
-            std::cout << "bug" << std::endl;
+            std::cout << "bug, impossible to find client" << std::endl;
             return;
         }
         send(invited->get_fd(), message.c_str(), message.length(), 0);
