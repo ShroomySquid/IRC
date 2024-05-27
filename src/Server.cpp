@@ -8,9 +8,11 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
     this->socketD = socketD;
     this->address = address;
     this->password = password;
-
+	buffer_len = 0;
     initializeCommands();
     initializeBindings(socketD, address);
+	bzero(buffer, 1024);
+	bzero(recv_buffer, 1024);
 }
 
 void Server::initializeCommands() {
@@ -21,6 +23,10 @@ void Server::initializeCommands() {
     commands["PASS"] = new Cmd_pass();
     commands["USER"] = new Cmd_user();
     commands["NICK"] = new Cmd_nick();
+    commands["TOPIC"] = new Cmd_topic();
+    commands["MODE"] = new Cmd_mode();
+    commands["PART"] = new Cmd_part();
+	commands["INVITE"] = new Cmd_invite();
 	commands["CAP"] = new Cmd_cap();
 	// commands["PING"] = new Cmd_ping();
 	// commands["QUIT"] = new Cmd_quit();
@@ -64,28 +70,29 @@ bool Server::is_IRC_message(const std::string& message)
     // Vérifie si la chaîne se termine par "\r\n"
 	// avec netcat (ctrl v ctrl m enter)
 
+	if (message.length() < 2)
+		return false;
 	std::string end = message.substr(message.length() - 2,2);
-
-    if (message.length() >= 2 && end == "\r\n") {
+    if (end == "\r\n")
         return true;
-    } else {
-        return false;
-    }
 	return false;
 }
 
 void Server::remove_client(std::map<int, Client*> &clients) {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();)
 	{
-		if (it->second->is_disconnected()) {
-			close(it->second->get_fd());
-			delete it->second;
-			std::map<int, Client*>::iterator to_erase = it;
+		if (!it->second->is_disconnected()) {
 			++it;
-			clients.erase(to_erase);
+			continue;
 		}
-		else
-			++it;
+		for (std::map<std::string, Channel*>::iterator i = channels.begin(); i != channels.end(); i++) {
+			i->second->removeClient(it->second);
+		}
+		close(it->second->get_fd());
+		delete it->second;
+		std::map<int, Client*>::iterator to_erase = it;
+		++it;
+		clients.erase(to_erase);
 	}
 }
 
@@ -143,4 +150,12 @@ std::string Server::get_password() const
 std::map<int, Client*>& Server::get_clients()
 {
 	return (clients);
+}
+
+Client* Server::find_client(std::string client_name) {
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++) {
+		if (!it->second->get_client().compare(client_name))
+			return (it->second);
+	}
+	return (NULL);
 }

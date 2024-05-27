@@ -2,7 +2,7 @@ NAME			=	ircserv
 
 SRC_DIRECT		=	src/
 
-MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp Server.cpp Commands/pass.cpp Commands/user.cpp Commands/nick.cpp ServerEventLoop.cpp ResponseHandler.cpp Commands/cap.cpp
+MY_FILES		=	main.cpp utils.cpp Client.cpp Channel.cpp Commands/cmd_invite.cpp Commands/Cmd_join.cpp Commands/Cmd_kick.cpp Commands/Cmd_privmsg.cpp Server.cpp Commands/pass.cpp Commands/user.cpp Commands/nick.cpp ServerEventLoop.cpp Commands/Cmd_topic.cpp Commands/Cmd_mode.cpp Commands/Cmd_part.cpp ResponseHandler.cpp Commands/cap.cpp
 
 TEST_FILES		=	test_main.cpp utils.cpp
 
@@ -21,7 +21,8 @@ all:		$(NAME)
 $(NAME):	$(O_DIRECT) $(MY_SOURCES)
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
-run: all
+run:	$(O_DIRECT) $(MY_SOURCES)
+	$(CC) $(CCFLAGS) -fsanitize=address -g -o $(NAME) $(MY_SOURCES)
 	./$(NAME) 6667 patate
 
 test:	$(O_DIRECT) $(TEST_SOURCES)

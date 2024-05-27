@@ -15,7 +15,7 @@ void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> 
 		sendErrorMsg(sender.get_fd(), ERR_ALREADYREGISTERED, "*", ERR_ALREADYREGISTERED_MSG, NULL);
 		return;
 	}
-	if (!server.get_password().compare(arguments[1])) {
+	if (arguments.size() > 1 && !server.get_password().compare(arguments[1])) {
 		sender.authentify();
 		sendServerMsg("User is authenticated");
 	}

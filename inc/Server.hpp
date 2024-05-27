@@ -13,7 +13,9 @@
 class Server
 {
     private:
-        char buffer[1024];
+        char recv_buffer[1024];
+		char buffer[1024];
+		int buffer_len;
         int socketD;
         struct sockaddr_in *address;
         std::string password;
@@ -26,7 +28,7 @@ class Server
         // -------- Private Methods -----
         bool is_IRC_message(const std::string& message);
         void remove_client(std::map<int, Client*> &clients);
-        void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, std::string input);
+        void process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char* input);
         void free_channel();
         void mark_and_remove_disconnected_clients();
 
@@ -43,6 +45,7 @@ class Server
         void MarkAndRemoveDisconnectedClients();
         void initializeCommands();
         void initializeBindings(int socketD, struct sockaddr_in *address);
+		bool append_buffer(void);
         void registerClient(std::map<int, Client*> &clients, Client* received_client);
 
         // ------------------------------
@@ -56,6 +59,7 @@ class Server
         // -----------
 		std::string get_password() const;
 		std::map<int, Client*>& get_clients();
+		Client* find_client(std::string client_name);
 };
 
 

@@ -26,6 +26,7 @@ class Cmd_join : public Command
         Cmd_join();
         ~Cmd_join();
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+		void fill_chan_to_join(std::map<std::string, std::string> &chan_to_join, std::string channels, std::string passwords);
 };
 
 class Cmd_kick : public Command
@@ -73,6 +74,38 @@ class Cmd_cap : public Command
     public:
         Cmd_cap();
         ~Cmd_cap();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+class Cmd_topic : public Command
+{
+    public:
+        Cmd_topic();
+        ~Cmd_topic();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_mode : public Command
+{
+    public:
+        Cmd_mode();
+        ~Cmd_mode();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_part : public Command
+{
+    public:
+        Cmd_part();
+        ~Cmd_part();
+		void fill_chan_to_quit(std::vector<std::string> &chan_to_quit, std::string channels);
+		void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_invite : public Command
+{
+    public:
+        Cmd_invite();
+        ~Cmd_invite();
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
