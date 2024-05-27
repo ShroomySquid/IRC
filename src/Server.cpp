@@ -11,7 +11,8 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
 	buffer_len = 0;
     initializeCommands();
     initializeBindings(socketD, address);
-	process_called = 0;
+	bzero(buffer, 1024);
+	bzero(recv_buffer, 1024);
 }
 
 void Server::initializeCommands() {
@@ -24,6 +25,7 @@ void Server::initializeCommands() {
     commands["NICK"] = new Cmd_nick();
     commands["TOPIC"] = new Cmd_topic();
     commands["MODE"] = new Cmd_mode();
+    commands["PART"] = new Cmd_part();
 	commands["INVITE"] = new Cmd_invite();
 }
 
@@ -54,11 +56,11 @@ bool Server::is_IRC_message(const std::string& message)
     // Vérifie si la chaîne se termine par "\r\n"
 	// avec netcat (ctrl v ctrl m enter)
 
+	if (message.length() < 2)
+		return false;
 	std::string end = message.substr(message.length() - 2,2);
-    if (message.length() >= 2 && end == "\r\n") 
-	{
-		return true; 	
-	}
+    if (end == "\r\n") 
+        return true; 
 	return false;
 }
 

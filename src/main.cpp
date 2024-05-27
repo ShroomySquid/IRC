@@ -69,8 +69,6 @@ int main(int argc, char** argv)
 	{
 		std::cerr << e.what() << '\n';
 	}
-		
-	//server(socketD, address, argv[2]);
 	free(address);
 	close(socketD);
 	return (0);
