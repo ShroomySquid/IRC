@@ -109,4 +109,12 @@ class Cmd_invite : public Command
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 
+class Cmd_quit : public Command
+{
+    public:
+        Cmd_quit();
+        ~Cmd_quit();
+        void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
 #endif
