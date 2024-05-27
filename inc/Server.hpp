@@ -15,7 +15,6 @@ class Server
         char recv_buffer[1024];
 		char buffer[1024];
 		int buffer_len;
-		int process_called;
         int socketD;
         struct sockaddr_in *address;
         std::string password;

@@ -82,7 +82,8 @@ bool Server::append_buffer(void) {
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
-	//cout << "recv_buffer: " << recv_buffer << endl;
+	if (bytesReceived < 2 && recv_buffer[0] == '\n')
+		recv_buffer[0] = '\0';
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -93,35 +94,33 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
     }
     if (recv_buffer[0] != '\0') {
 		if (!append_buffer()) {
-			bzero(buffer, 1024);
-			bzero(recv_buffer, 1024);
+			bzero(buffer, buffer_len);
+			bzero(recv_buffer, bytesReceived);
 			buffer_len = 0;
 			return ;
 		}
-        //cout << "buffer (after append): " << buffer << endl;
-        bzero(recv_buffer, 1024);
+        bzero(recv_buffer, bytesReceived);
         if (!is_IRC_message(buffer))
             return;
-        buffer[buffer_len - 2] = '\0';
+		if (buffer_len >= 2)
+        	buffer[buffer_len - 2] = '\0';
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
             cout << "buffer: " << buffer << endl;
             process_message(*this, *(it->second), commands, buffer);
         }
-        bzero(buffer, 1024);
+        bzero(buffer, buffer_len);
 		buffer_len = 0;
     }
 }
 
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
-	process_called++;
-	cout << process_called << endl;
 	std::vector<std::string> args; // arguments de la commande.
     char *token = std::strtok(input, " ");
 	std::string cmd;
-	if (!token)
-		cmd = "";
+	if (!token || token[0] == '\n')
+		return ;
 	else
 		cmd = token;
     // Keep printing tokens while one of the

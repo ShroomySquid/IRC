@@ -60,6 +60,9 @@ int main(int argc, char** argv)
 	struct sockaddr_in* address = set_address(address_str, port);
 	if (address == NULL)
 		return (1);
+	Server server(socketD, address, argv[2]);
+	server.Run();
+	/*
 	try
 	{
 		Server server(socketD, address, argv[2]);
@@ -69,7 +72,7 @@ int main(int argc, char** argv)
 	{
 		std::cerr << e.what() << '\n';
 	}
-		
+	*/	
 	//server(socketD, address, argv[2]);
 	free(address);
 	close(socketD);
