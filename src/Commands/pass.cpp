@@ -11,7 +11,7 @@ void Cmd_pass::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "You may not reregister\n", 24, 0);
 		return ;
 	}
-	if (!server.get_password().compare(arguments[1])) {
+	if (arguments.size() > 1 && !server.get_password().compare(arguments[1])) {
 		sender.authentify();
 		cout << "Client " << sender.get_fd() << " is authentified." << endl;
 	}

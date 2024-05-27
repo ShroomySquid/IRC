@@ -62,10 +62,27 @@ void Server::AcceptClients() {
         login_attempt(clients, infd);
 }
 
+bool Server::append_buffer(void) {
+	int a = 0;
+	while (buffer[buffer_len])
+		buffer_len++;
+	while (recv_buffer[a] && (buffer_len + a) < 1024) {
+		buffer[buffer_len + a] = recv_buffer[a];
+		a++;
+	}
+	buffer_len += a;
+	if (buffer_len <= 2)
+		return (true);
+	if ((buffer_len) >= 1024 && (buffer[buffer_len - 2] != '\r' || buffer[buffer_len - 1] != '\n')) {
+		cout << "Invalid message: message too long without being terminated" << endl;
+		return (false);
+	}
+	return (true);
+}
+
 void Server::ProcessClientMessage(const pollfd& pfd) {
-	process_called++;
-	cout << process_called << endl;
-    int bytesReceived = recv(pfd.fd, buffer, 1024, 0);
+    int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
+	//cout << "recv_buffer: " << recv_buffer << endl;
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -74,35 +91,39 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         }
         return;
     }
-
-    if (buffer[0] != '\0') {
-        //std::string receivedData(buffer, bytesReceived);
-        if (!is_IRC_message(buffer)) {
-            cout << "Client sent invalid data: " << buffer << endl;
-            bzero(buffer, 1024);
+    if (recv_buffer[0] != '\0') {
+		if (!append_buffer()) {
+			bzero(buffer, 1024);
+			bzero(recv_buffer, 1024);
+			buffer_len = 0;
+			return ;
+		}
+        //cout << "buffer (after append): " << buffer << endl;
+        bzero(recv_buffer, 1024);
+        if (!is_IRC_message(buffer))
             return;
-        }
-        //receivedData.erase(receivedData.length() - 2, 2);
-        buffer[bytesReceived - 2] = '\0';
+        buffer[buffer_len - 2] = '\0';
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << buffer << endl;
+            cout << "buffer: " << buffer << endl;
             process_message(*this, *(it->second), commands, buffer);
         }
         bzero(buffer, 1024);
+		buffer_len = 0;
     }
 }
 
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
-	cout << "test buffer: " << buffer << endl;
+	process_called++;
+	cout << process_called << endl;
 	std::vector<std::string> args; // arguments de la commande.
     char *token = std::strtok(input, " ");
-    if (token == NULL)
-    {
-        return ;
-    }
-	std::string cmd = token;
+	std::string cmd;
+	if (!token)
+		cmd = "";
+	else
+		cmd = token;
     // Keep printing tokens while one of the
     // delimiters present in str[].
     while (token != NULL)

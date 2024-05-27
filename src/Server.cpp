@@ -8,6 +8,7 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
     this->socketD = socketD;
     this->address = address;
     this->password = password;
+	buffer_len = 0;
     initializeCommands();
     initializeBindings(socketD, address);
 	process_called = 0;
@@ -54,7 +55,6 @@ bool Server::is_IRC_message(const std::string& message)
 	// avec netcat (ctrl v ctrl m enter)
 
 	std::string end = message.substr(message.length() - 2,2);
-
     if (message.length() >= 2 && end == "\r\n") 
 	{
 		return true; 	
@@ -138,7 +138,7 @@ std::map<int, Client*>& Server::get_clients()
 
 Client* Server::find_client(std::string client_name) {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++) {
-		if (it->second->get_nickname().compare(client_name))
+		if (!it->second->get_nickname().compare(client_name))
 			return (it->second);
 	}
 	return (NULL);

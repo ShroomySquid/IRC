@@ -26,7 +26,6 @@ bool Channel::promote(Client* c) {
 		return (false);
 	this->operators.push_back(c);	
 	this->members.erase(it);
-	cout << "promote S" << endl;
 	return true;
 }
 
@@ -38,7 +37,6 @@ bool Channel::demote(Client* c) {
 		return (false);
 	this->members.push_back(c);	
 	this->operators.erase(it);
-	cout << "demote S" << endl;
 	return true;
 }
 
@@ -171,10 +169,8 @@ void Channel::set_invite(bool invite_val) {
 	on_invite = invite_val;
 }
 
-bool Channel::has_password(void) {
-	if (password.length())
-		return (true);
-	return false;
+std::string Channel::get_password(void) {
+	return (password);
 }
 
 void Channel::set_password(std::string new_password) {

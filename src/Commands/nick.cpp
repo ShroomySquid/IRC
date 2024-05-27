@@ -12,12 +12,12 @@ void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> 
 		send(sender.get_fd(), "Client is not authentified\r\n", 28, 0);
 		return ;
 	}
-	// if (sender.get_nickname().length()) {	
-	// 	send(sender.get_fd(), "Nickname already registered\r\n", 29, 0);
-	// 	return ;
-	// }
-	if (arguments.empty() || !arguments[1][0]) {	
-		send(sender.get_fd(), "No nickname given\r\n", 19, 0);
+	if (arguments.size() < 2 || !arguments[1][0]) {	
+		send(sender.get_fd(), "No nickname given\n", 19, 0);
+		return ;
+	}
+	if (check_invalid_symbols(arguments[1])) {	
+		send(sender.get_fd(), "Erroneus nickname\n", 19, 0);
 		return ;
 	}
 	// if (check_invalid_symbols(arguments[1])) {	

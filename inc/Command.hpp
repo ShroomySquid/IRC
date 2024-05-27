@@ -26,6 +26,7 @@ class Cmd_join : public Command
         Cmd_join();
         ~Cmd_join();
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+		void fill_chan_to_join(std::map<std::string, std::string> &chan_to_join, std::string channels, std::string passwords);
 };
 
 class Cmd_kick : public Command

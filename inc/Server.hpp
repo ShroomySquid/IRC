@@ -12,7 +12,9 @@
 class Server
 {
     private:
-        char buffer[1024];
+        char recv_buffer[1024];
+		char buffer[1024];
+		int buffer_len;
 		int process_called;
         int socketD;
         struct sockaddr_in *address;
@@ -43,7 +45,7 @@ class Server
         void MarkAndRemoveDisconnectedClients();
         void initializeCommands();
         void initializeBindings(int socketD, struct sockaddr_in *address);
-
+		bool append_buffer(void);
         // ------------------------------
     public:
         Server(int socketD, struct sockaddr_in *address, std::string password);

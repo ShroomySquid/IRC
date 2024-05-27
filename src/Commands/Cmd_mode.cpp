@@ -69,7 +69,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	Client* client = server.find_client(arguments[3]);
 	if (!mode.compare("+o")) {
-		if (arguments.size() < 4 || !arguments[3].length() || channel->is_member(client)) {	
+		if (arguments.size() < 4 || !arguments[3].length() || !channel->is_member(client)) {	
 			// err_???
 			send(sender.get_fd(), "No valid channel member provided\n", 33, 0);
 			return ;
@@ -79,9 +79,9 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		return ;
 	}
 	if (!mode.compare("-o")) {
-		if (arguments.size() < 4 || !arguments[3].length() || channel->is_operator(client)) {
+		if (arguments.size() < 4 || !arguments[3].length() || !channel->is_operator(client)) {
 			// err_???
-			send(sender.get_fd(), "No valid channel operator provided\n", 33, 0);
+			send(sender.get_fd(), "No valid channel operator provided\n", 35, 0);
 			return ;
 		}
 		channel->demote(client);
@@ -91,7 +91,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	if (!mode.compare("+l")) {
 		if (arguments.size() < 4 || !arguments[3].length()) {	
 			// err_???
-			send(sender.get_fd(), "No members limit provided\n", 26, 0);
+			send(sender.get_fd(), "No members limit provided\n", 28, 0);
 			return ;
 		}
 		int limit = atoi(arguments[3].c_str());

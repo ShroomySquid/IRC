@@ -40,7 +40,7 @@ class Channel
 		void set_topic_protected(bool protect_val);
 		bool is_on_invite(void);
 		void set_invite(bool invite_val);
-		bool has_password(void);
+		std::string get_password(void);
 		void set_password(std::string new_password);
 		int	get_limit(void);
 		void set_limit(int new_limit);
