@@ -14,6 +14,8 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
 	}
+	if (arguments.size() <= 1)
+		return;
 	channel = server.getChannel(arguments[1]);
 	if (!channel) {
 		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);

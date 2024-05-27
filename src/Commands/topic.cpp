@@ -14,6 +14,8 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		not_registered_yet(sender.get_fd());
 		return ;
 	}
+	if (arguments.size() <= 1)
+		return;
 	channel = server.getChannel(arguments[1]);
 	if (!channel) {
 		// err_nosuchchannel 403
