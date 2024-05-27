@@ -89,7 +89,7 @@ void Client::regist()
 }
 
 std::string Client::get_client() {
-	if (_nickname.length())
+	if (!_nickname.length())
 		return _username;
 	return _nickname;
 }

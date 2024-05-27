@@ -10,25 +10,21 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 {
 	std::string current_mode;
 	Channel *channel;
-	//int current_length;
 	if (!sender.is_registered()) {
-		not_registered_yet(sender.get_fd());
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
 	}
 	channel = server.getChannel(arguments[1]);
 	if (!channel) {
-		// err_nosuchchannel 403
-		send(sender.get_fd(), "No such channel\n", 17, 0);
+		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 		return ;
 	}
 	if (arguments.size() < 3) {
-		// RPL_CHANNELMODEIS 324
-		send(sender.get_fd(), "Ehhhh\n", 6, 0);
+		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, sender.get_client().c_str(), arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
 		return ;
 	}
 	if (!channel->is_operator(&sender)) {
-		// err_chanoprivsneeded 482
-		send(sender.get_fd(), "Ehhhh\n", 6, 0);
+		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), RR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
 	}
 	std::string mode = arguments[2];
@@ -54,8 +50,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	if (!mode.compare("+k")) {
 		if (arguments.size() < 4 || !arguments[3].length()) {	
-			// err_???
-			send(sender.get_fd(), "No password provided\n", 21, 0);
+			sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (password)", ERR_NEEDMOREPARAMS_MSG, NULL);
 			return ;
 		}
 		channel->set_password(arguments[3]);
@@ -69,9 +64,12 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	Client* client = server.find_client(arguments[3]);
 	if (!mode.compare("+o")) {
-		if (arguments.size() < 4 || !arguments[3].length() || !channel->is_member(client)) {	
-			// err_???
-			send(sender.get_fd(), "No valid channel member provided\n", 33, 0);
+		if (arguments.size() < 5 || !arguments[3].length()) {
+			sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
+			return ;
+		}
+		if (!channel->is_member(client)) {	
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), arguments[3].c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
 		channel->promote(client);
@@ -79,9 +77,12 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		return ;
 	}
 	if (!mode.compare("-o")) {
-		if (arguments.size() < 4 || !arguments[3].length() || !channel->is_operator(client)) {
-			// err_???
-			send(sender.get_fd(), "No valid channel operator provided\n", 35, 0);
+		if (arguments.size() < 4 || !arguments[3].length()) {
+			sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
+			return ;
+		}
+		if (!channel->is_operator(client)) {	
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), arguments[3].c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
 		channel->demote(client);
@@ -90,14 +91,12 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	if (!mode.compare("+l")) {
 		if (arguments.size() < 4 || !arguments[3].length()) {	
-			// err_???
-			send(sender.get_fd(), "No members limit provided\n", 28, 0);
+			sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
 			return ;
 		}
 		int limit = atoi(arguments[3].c_str());
 		if (limit < 1) {
-			// err_???
-			send(sender.get_fd(), "Invalid members limit provided\n", 31, 0);
+			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE (limit)", ":Invalid parameter", NULL);
 			return ;
 		}
 		channel->set_limit(limit);
@@ -109,6 +108,5 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		channel->broadcastCmd("MODE (limit)", "Channel now have no member limit");
 		return ;
 	}
-	// ERR_???
-	send(sender.get_fd(), "Invalid mode passed\n", 20, 0);
+	sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
 }
