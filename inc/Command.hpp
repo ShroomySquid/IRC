@@ -98,6 +98,14 @@ class Cmd_part : public Command
         Cmd_part();
         ~Cmd_part();
 		void fill_chan_to_quit(std::vector<std::string> &chan_to_quit, std::string channels);
+		void execute(Server &server, Client& sender, std::vector<std::string> arguments);
+};
+
+class Cmd_invite : public Command
+{
+    public:
+        Cmd_invite();
+        ~Cmd_invite();
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 

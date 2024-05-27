@@ -82,6 +82,12 @@ Client * Channel::getMember_by_name(std::string name)
 		if (c->get_username() == name)
 			return c;
 	}
+	for (it = this->operators.begin(); it != this->operators.end(); it++)
+	{
+		Client *o = (*it);
+		if (o->get_username() == name)
+			return o;
+	}
 	return NULL;
 }
 
@@ -115,6 +121,7 @@ void Channel::broadcastAll(Client &sender, std::string message)
 {
 	if (!is_member(&sender) && !is_operator(&sender)) {
 		cout << "Not part of the channel.\n" << endl;
+		return;
 	}
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
@@ -126,6 +133,7 @@ void Channel::broadcastAll(Client &sender, std::string message)
 		if (*it != &sender)
 			send((*it)->get_fd(), message.c_str(), message.size(), 0);
 	}
+	//std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
 }
 
 void Channel::broadcastCmd(std::string cmd, std::string arg) {

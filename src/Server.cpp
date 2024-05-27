@@ -26,6 +26,7 @@ void Server::initializeCommands() {
     commands["TOPIC"] = new Cmd_topic();
     commands["MODE"] = new Cmd_mode();
     commands["PART"] = new Cmd_part();
+	commands["INVITE"] = new Cmd_invite();
 }
 
 void Server::initializeBindings(int socketD, struct sockaddr_in *address) {
@@ -139,7 +140,7 @@ std::map<int, Client*>& Server::get_clients()
 
 Client* Server::find_client(std::string client_name) {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++) {
-		if (!it->second->get_nickname().compare(client_name))
+		if (!it->second->get_client().compare(client_name))
 			return (it->second);
 	}
 	return (NULL);
