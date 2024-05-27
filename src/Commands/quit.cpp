@@ -11,8 +11,8 @@ void Cmd_quit::execute(Server &server, Client& sender, std::vector<std::string> 
 		not_registered_yet(sender.get_fd());
 		return ;
 	}
-	if (arguments.size() <= 1)
-		return;
+	//if (arguments.size() <= 1)
+	//	return;
 
     // quit all channels with this user
     std::map <std::string, Channel*> channels = server.get_all_channels();
@@ -27,7 +27,8 @@ void Cmd_quit::execute(Server &server, Client& sender, std::vector<std::string> 
 	std::string quitmessage = std::string();
 	quitmessage += sender.get_client();
 	quitmessage += " Quit: ";
-	quitmessage += arguments[1];
+	if (arguments.size() > 1)
+		quitmessage += arguments[1];
 	std::map<int, Client*> clients =  server.get_clients();
 	std::map<int, Client*>::iterator it2;
 	for (it2 = clients.begin(); it2 != clients.end(); it2++)
