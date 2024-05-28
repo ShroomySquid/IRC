@@ -11,7 +11,8 @@ Channel::Channel(std::string name)
 	this->topic_protection = true;
 	this->on_invite = false;
 	this->password = "";
-	this->limit = -1;
+	this->limit = 0;
+	this->clients_in_channel = 1;
 }
 Channel::~Channel(){}
 Channel::Channel(const Channel& src)
@@ -80,6 +81,7 @@ bool Channel::addClient(Client* c, bool ope)
 		return true;
 	}
 	this->operators.push_back(c);
+	this->clients_in_channel++;
 
 	// erase from invited 
 	if (!invited.empty()) {
@@ -135,13 +137,17 @@ void Channel::removeClient(Client *c)
 {
 	if (!members.empty()) {
 		std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
-		if (it != members.end())
+		if (it != members.end()) {
 			this->members.erase(it);
+			this->clients_in_channel--;
+		}
 	}
 	if (!operators.empty()) {
 		std::vector<Client*>::iterator i = std::find(operators.begin(), operators.end(), c);
-		if (i != operators.end())
-			this->operators.erase(i);
+		if (i != operators.end()) {
+			this->operators.erase(i);	
+			this->clients_in_channel--;
+		}
 	}
 }
 
@@ -225,7 +231,13 @@ void Channel::set_password(std::string new_password) {
 	password = new_password;
 }
 
+int Channel::get_clients_nbr(void) {
+	cout << "Clients in channel: " << clients_in_channel << endl;
+	return (clients_in_channel);
+}
+
 int Channel::get_limit(void) {
+	cout << "limit: " << limit << endl;
 	return (limit);
 }
 

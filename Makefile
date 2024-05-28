@@ -10,8 +10,10 @@ all: $(NAME)
 $(NAME): $(MY_SOURCES)
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
-run: $(NAME)
+run: $(MY_SOURCES)
+	$(CC) $(CCFLAGS) -g -fsanitize=address -o $(NAME) $(MY_SOURCES)
 	./$(NAME) 6667 patate
+
 
 debug: CCFLAGS += $(DEBUG_FLAGS)
 debug: re run

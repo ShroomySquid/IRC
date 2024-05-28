@@ -142,8 +142,6 @@ void Server::Split_message(Client* client, char *buffer) {
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);    
-	if (bytesReceived < 2 && recv_buffer[0] == '\n')
-		recv_buffer[0] = '\0';
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -152,6 +150,8 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
         }
         return;
     }
+	if (bytesReceived < 2 && recv_buffer[0] == '\n')
+		recv_buffer[0] = '\0';
 
     // [debug] prints all received bytes from client on fd
     DEBUG_PRINT_HEX(recv_buffer, bytesReceived);

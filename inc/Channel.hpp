@@ -16,6 +16,7 @@ class Channel
 		bool topic_protection;
 		bool on_invite;
 		int limit;
+		int clients_in_channel;
 		std::string password;
     public:
         Channel(std::string name);
@@ -44,6 +45,7 @@ class Channel
 		void set_invite(bool invite_val);
 		std::string get_password(void);
 		void set_password(std::string new_password);
+		int get_clients_nbr(void);
 		int	get_limit(void);
 		void set_limit(int new_limit);
 };

@@ -85,6 +85,10 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			send(sender.get_fd(), "You must be invited to enter this channel\n", 43, 0);
 			continue ;
 		}
+		if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {	
+			send(sender.get_fd(), "channel is full\n", 16, 0);
+			continue ;
+		}
 		bool success = channel->addClient(&sender, is_operator);
 		if (success) {
 			channel->broadcastCmd(sender.get_nickname(), "has joined the channel.");

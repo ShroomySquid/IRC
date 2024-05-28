@@ -9,10 +9,10 @@ Cmd_mode::~Cmd_mode(){}
 void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	std::string current_mode;
-	bool add = true;
-	bool plus = false;
-	bool minus = false;
-	int i = 0;
+	//bool add = true;
+	//bool plus = false;
+	//bool minus = false;
+	//int i = 0;
 	Channel *channel;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
@@ -120,7 +120,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		return ;
 	}
 	if (!mode.compare("-l")) {
-		channel->set_limit(-1);
+		channel->set_limit(0);
 		channel->broadcastCmd("MODE (limit)", "Channel now have no member limit");
 		return ;
 	}
