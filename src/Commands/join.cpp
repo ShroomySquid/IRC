@@ -43,14 +43,14 @@ void Cmd_join::fill_chan_to_join(std::map<std::string, std::string> &chan_to_joi
 
 void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	bool is_operator;
+	bool is_operator	
 	if (!sender.is_registered()) {
-		not_registered_yet(sender.get_fd());
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
 	}
 	if (arguments.size() < 2) {
-		// err_needmoreparams 461
-		send(sender.get_fd(), "need more param\n", 16, 0);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
+		return ;
 	}
 	std::map<std::string, std::string> chan_to_join;
 	if (arguments.size() < 3)
@@ -64,7 +64,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 		Channel *channel = server.getChannel(it->first);
 		if (channel == NULL)
 		{
-			std::cout << "Creating new channel" << std::endl;
+			//std::cout << "Creating new channel" << std::endl;
 			channel = new Channel(it->first);
 			server.addChannel(it->first, channel);
 			is_operator = true;
@@ -76,17 +76,15 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			continue ;
 		}
 		if (channel->get_password() != "" && channel->get_password() != it->second) {
-			//err_badchannelkey 475
-			send(sender.get_fd(), "bad password\n", 13, 0);
+			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, sender.get_client().c_str(), arguments[1].c_str(), ERR_BADCHANNELKEY_MSG, NULL);
 			continue ;
 		}
 		if (channel->is_on_invite() && !channel->is_Invited(&sender)) {	
-			//err_inviteonlychan 473
-			send(sender.get_fd(), "You must be invited to enter this channel\n", 43, 0);
+			sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, sender.get_client().c_str(), arguments[1].c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
 			continue ;
 		}
 		if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {	
-			send(sender.get_fd(), "channel is full\n", 16, 0);
+			sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANNELISFULL_MSG, NULL);
 			continue ;
 		}
 		bool success = channel->addClient(&sender, is_operator);

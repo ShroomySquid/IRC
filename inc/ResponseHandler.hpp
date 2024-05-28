@@ -52,6 +52,12 @@
 #define ERR_ALREADYREGISTERED_MSG ":You may not reregister"
 #define ERR_PASSWDMISMATCH "464"
 #define ERR_PASSWDMISMATCH_MSG ":Password incorrect"
+#define ERR_CHANNELISFULL "471"
+#define ERR_CHANNELISFULL_MSG ":Cannot join channel (+l)"
+#define ERR_INVITEONLYCHAN "473"
+#define ERR_INVITEONLYCHAN_MSG ":Cannot join channel (+i)"
+#define ERR_BADCHANNELKEY "475"
+#define ERR_BADCHANNELKEY_MSG ":Cannot join channel (+k)"
 #define ERR_CHANOPRIVSNEEDED "482"
 #define ERR_CHANOPRIVSNEEDED_MSG ":You're not channel operator"
 
