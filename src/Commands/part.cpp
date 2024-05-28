@@ -28,12 +28,11 @@ void Cmd_part::fill_chan_to_quit(std::vector<std::string> &chan_to_quit, std::st
 void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	if (!sender.is_registered()) {
-		not_registered_yet(sender.get_fd());
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
 	}
 	if (arguments.size() < 2) {
-		// err_needmoreparams 461
-		send(sender.get_fd(), "need more param\n", 16, 0);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, "*", "PART", ERR_NEEDMOREPARAMS_MSG, NULL);
 		return ;
 	}
 	std::vector<std::string> chan_to_quit;
@@ -44,16 +43,14 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 		Channel *channel = server.getChannel(*it);
 		if (channel == NULL)
 		{
-			// err_nosuchchannel 403
-			send(sender.get_fd(), "need more param\n", 16, 0);
+			sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 			continue ;
 		}
 		if (!channel->is_operator(&sender) && !channel->is_member(&sender)) {
-			//err_notonchannel 442
-			send(sender.get_fd(), "bad password\n", 13, 0);
+			sendErrorMsg(sender.get_fd(), ERR_NOTONCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOTONCHANNEL_MSG, NULL);
 			continue ;
 		}
 		channel->removeClient(&sender);
-		//broadcast to channel that client has leaved + his message 
+		channel->broadcastCmd("part", "someone has leave the channel"); 
 	}
 }

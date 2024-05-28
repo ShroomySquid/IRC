@@ -9,6 +9,10 @@ Cmd_mode::~Cmd_mode(){}
 void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	std::string current_mode;
+	bool add = true;
+	bool plus = false;
+	bool minus = false;
+	int i = 0;
 	Channel *channel;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
@@ -28,16 +32,17 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	if (!channel->is_operator(&sender)) {
 		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
-	}	
-	//std::string mode = arguments[2];
-
-
-
-
-
-
-
-
+	}
+	// multiple flags
+	/*
+	std::string mode = arguments[2];
+	while (mode[i]) {
+		if (mode[i] == '-')
+			minus = true
+		i++;
+	}
+	*/
+	// case by case
 	std::string mode = arguments[2];
 	if (!mode.compare("+i")) {
 		channel->set_invite(true);

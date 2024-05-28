@@ -13,7 +13,6 @@ void Cmd_nick::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	if (sender.get_nickname().length()) {
 		sendErrorMsg(sender.get_fd(), ERR_ALREADYREGISTERED, ERR_ALREADYREGISTERED_MSG, NULL);
-		// send(sender.get_fd(), "Nickname already registered\n", 29, 0);
 		return ;
 	}
 	if (arguments.size() < 2 || !arguments[1][0]) {
