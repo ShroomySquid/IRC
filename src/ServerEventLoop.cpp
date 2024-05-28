@@ -104,6 +104,22 @@ bool Server::append_buffer(void) {
 	return (true);
 }
 
+void Server::Get_rid_of_newlines(char *buffer) {
+	int i = 0;
+	int a = 0;
+	while (buffer[i] && buffer[i + a] && buffer[i + 1]) {
+		if (buffer[i + a] == '\n' && (i == 0 || buffer[i + a - 1] != '\r')) {
+			while (buffer[i + a] && buffer[i + a] == '\n')
+				a++;
+		}
+		if (a && buffer[i + a])
+			buffer[i] = buffer[i + a];
+		i++;
+	}
+	if (buffer[i + 1])
+		buffer[i + 1] = '\0';
+}
+
 void Server::Split_message(Client* client, char *buffer) {
 	int i = 0;
 	while (buffer[i] && buffer[i + 1] && !(buffer[i + 1] == '\n' && buffer[i] == '\r'))
@@ -116,8 +132,6 @@ void Server::Split_message(Client* client, char *buffer) {
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
-	if (bytesReceived < 2 && recv_buffer[0] == '\n')
-		recv_buffer[0] = '\0';
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -144,9 +158,10 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            // cout << "buffer: " << buffer << endl;
+            //cout << "buffer: " << buffer;
+			Get_rid_of_newlines(buffer);
+            //cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
-            //process_message(*this, *(it->second), commands, buffer);
         }
         bzero(buffer, buffer_len);
 		buffer_len = 0;

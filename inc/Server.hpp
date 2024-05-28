@@ -44,6 +44,7 @@ class Server
 		bool append_buffer(void);
         void registerClient(std::map<int, Client*> &clients, Client* received_client);
 		void Split_message(Client* client, char *buffer);
+		void Get_rid_of_newlines(char *buffer);
         void initSignals();
         static void handleSignal(int signal);
 
