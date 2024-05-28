@@ -28,7 +28,16 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	if (!channel->is_operator(&sender)) {
 		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
-	}
+	}	
+	//std::string mode = arguments[2];
+
+
+
+
+
+
+
+
 	std::string mode = arguments[2];
 	if (!mode.compare("+i")) {
 		channel->set_invite(true);

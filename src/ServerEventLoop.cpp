@@ -105,6 +105,8 @@ bool Server::append_buffer(void) {
 }
 
 void Server::Get_rid_of_newlines(char *buffer) {
+	// version qui enlève les /n
+	/*
 	int i = 0;
 	int a = 0;
 	while (buffer[i] && buffer[i + a] && buffer[i + 1]) {
@@ -118,6 +120,14 @@ void Server::Get_rid_of_newlines(char *buffer) {
 	}
 	if (buffer[i + 1])
 		buffer[i + 1] = '\0';
+	*/
+	// version qui remplace les /n par des espaces
+	int i = 0;
+	while (buffer[i]) {
+		if (buffer[i] == '\n' && (i == 0 || buffer[i - 1] != '\r'))
+			buffer[i] = ' ';
+		i++;
+	}
 }
 
 void Server::Split_message(Client* client, char *buffer) {
@@ -158,9 +168,9 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            //cout << "buffer: " << buffer;
+            cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
-            //cout << "buffer after get_rid: " << buffer;
+            cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
         }
         bzero(buffer, buffer_len);
