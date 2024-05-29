@@ -17,6 +17,7 @@
 # include "Channel.hpp"
 # include <vector>
 # include <signal.h>
+# include <cerrno>
 
 using std::cout;
 using std::cerr;
