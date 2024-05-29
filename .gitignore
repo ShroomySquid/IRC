@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+irc_commands.log
+server.log
+ircserv
