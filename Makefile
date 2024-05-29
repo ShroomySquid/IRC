@@ -16,6 +16,10 @@ run: $(NAME)
 debug: CCFLAGS += $(DEBUG_FLAGS)
 debug: re run
 
+kill:
+	@lsof -i :6667 | awk 'NR > 1 {print $$2}' | xargs kill -9
+
+
 clean:
 	rm -f *.o
 	rm -rf *.dSYM

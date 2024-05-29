@@ -67,7 +67,9 @@ bool Server::is_IRC_message(const std::string& message)
 		return false;
 	std::string end = message.substr(message.length() - 2,2);
     if (end == "\r\n")
+	{
         return true;
+	}
 	return false;
 }
 
