@@ -25,7 +25,8 @@
 #define MAX_RESPONSE_SIZE 512
 #define PREFIX ":ft_irc"
 
-#define RPL_WELCOME "001 RPL_WELCOME :Welcome to the IRC server"
+#define RPL_WELCOME "001"
+#define RPL_WELCOME_MSG ":Welcome to the IRC server"
 #define RPL_CHANNELMODEIS "324"
 #define RPL_CHANNELMODEIS_MSG "+i/-i: Add/remove channel on invitation\n +t-t: Add/remove restriction on topic\n +k/-k: Add/remove channel password\n +o/-o: Promote/demote member as operator\n +l/-l Add/remove limit of users in channel"
 #define RPL_TOPIC "332"
@@ -38,6 +39,8 @@
 #define ERR_NONICKNAMEGIVEN_MSG ":No nickname given"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_ERRONEUSNICKNAME_MSG ":Erroneus nickname"
+#define ERR_ERRONEUSUSERNAME "432"
+#define ERR_ERRONEUSUSERNAME_MSG ":Erroneus username"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_NICKNAMEINUSE_MSG ":Nickname is already in use"
 #define ERR_USERNOTINCHANNEL "441"
@@ -60,6 +63,9 @@
 #define ERR_BADCHANNELKEY_MSG ":Cannot join channel (+k)"
 #define ERR_CHANOPRIVSNEEDED "482"
 #define ERR_CHANOPRIVSNEEDED_MSG ":You're not channel operator"
+#define ERR_NOTREGISTERED "451"
+#define ERR_NOTREGISTERED_MSG ":You have not registered"
+
 
 void sendErrorMsg(int fd, ...);
 void sendReplyMsg(int fd, ...);

@@ -21,6 +21,8 @@ debug: re run
 kill:
 	@lsof -i :6667 | awk 'NR > 1 {print $$2}' | xargs kill -9
 
+test: all
+	./tests.sh
 
 clean:
 	rm -f *.o

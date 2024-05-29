@@ -83,7 +83,7 @@ void Client::authentify()
 
 void Client::regist()
 {
-    sendReplyMsg(this->_fd, RPL_WELCOME, NULL);
+    sendReplyMsg(this->_fd, RPL_WELCOME, get_nickname().c_str(), RPL_WELCOME_MSG, NULL);
     this->_registered = true;
 }
 

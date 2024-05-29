@@ -65,21 +65,36 @@ send_irc_commands() {
     fi
     log_message "Sending IRC commands..."
     local commands=(
-        "PASS" # Not enough parameters
-        "PASS wrong_password" # Password incorrect
+        # Before PASS error cases
         "NICK" # You must be authentified to use this command
-        "USER" # Client is not authentified
+        "USER" # You must be authentified to use this command
+
+        # PASS error cases
+        "PASS" # Not enough parameters ERR_NEEDMOREPARAMS (461)
+        "PASS wrong_password" # Password incorrect ERR_PASSWDMISMATCH (464)
         "PASS correct_password" # Client is not authentified
-        "PASS correct_password" # You may not reregister
-        "NICK" # No nickname given
-        "NICK (*)&^&*^)_&*)*!%^)&*!#)%^!*&%_#!(*^%)!#&_#*(!&#*)" # Check if the server can handle with weird nicknames
+        "PASS correct_password" # You may not reregister ERR_ALREADYREGISTERED (462)
+
+        # NICK error cases
+        "NICK" # No nickname given ERR_NONICKNAMEGIVEN (431)
+        "NICK #Joe" # ERR_ERRONEUSNICKNAME (432)
+        "NICK :Joe" # ERR_ERRONEUSNICKNAME (432)
+        "NICK more_than_20_characters" # ERR_ERRONEUSNICKNAME (432)
         "NICK Joe" # Nickname set to Joe
-        "NICK Joe" # Nickname already in use
-        "USER George" # User registered as George
-        "USER George" # Already registered
-        "JOIN #testchannel" # Join the channel #testchannel
-        "PRIVMSG #testchannel Hello world!" # Send a message to the channel
-        "QUIT" # Quit the server
+
+        # USER error cases
+        "USER" # Not enough parameters ERR_NEEDMOREPARAMS (461)
+        "USER #George" # ERR_ERRONEUSNICKNAME (432)
+        "USER :George" # ERR_ERRONEUSNICKNAME (432)
+        "USER George"
+
+        # "NICK Joe" # Nickname set to Joe
+        # "NICK Joe" # Nickname already in use
+        # "USER George" # User registered as George
+        # "USER George" # Already registered
+        # "JOIN #testchannel" # Join the channel #testchannel
+        # "PRIVMSG #testchannel Hello world!" # Send a message to the channel
+        # "QUIT" # Quit the server
     )
 
     {

@@ -29,11 +29,11 @@ struct sockaddr_in *set_address(char *ip, int port) {
 bool check_invalid_symbols(std::string buffer) {
 	int i = 0;
 	while (buffer[i]) {
-		if (i > 20)
+		if (i > 20) // 20 is the max length of a nickname
 			return (true);
-		if (!i && (buffer[i] == '#' || buffer[i] == ':'))
+		if (!i && (buffer[i] == '#' || buffer[i] == ':')) // '#' is for channels, ':' is for commands
 			return (true);
-		if (buffer[i] == 32 || (buffer[i] < 14 && buffer[i] > 8))
+		if (buffer[i] == 32 || (buffer[i] < 14 && buffer[i] > 8)) // 32 is space, 14 is CR, 8 is BS
 			return (true);
 		i++;
 	}
