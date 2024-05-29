@@ -43,7 +43,7 @@ void Cmd_join::fill_chan_to_join(std::map<std::string, std::string> &chan_to_joi
 
 void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	bool is_operator	
+	bool is_operator;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
