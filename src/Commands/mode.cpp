@@ -9,7 +9,7 @@ Cmd_mode::~Cmd_mode(){}
 // Mode functions
 void set_invite(Channel* channel, bool b)
 {
-	if (b == true)
+	if (b)
 	{
 		channel->set_invite(true);
 		channel->broadcastCmd("MODE (invite)", "Invite is now requiered to join channel");
@@ -23,7 +23,7 @@ void set_invite(Channel* channel, bool b)
 
 void set_topic(Channel* channel, bool b)
 {
-	if (b == true)
+	if (b)
 	{
 		channel->set_topic_protected(true);
 		channel->broadcastCmd("MODE (topic)", "Topic can only be change by operators");
@@ -37,7 +37,7 @@ void set_topic(Channel* channel, bool b)
 
 void set_password(Channel* channel, bool b, std::string pass)
 {
-	if (b == true)
+	if (b)
 	{
 		channel->set_password(pass);
 		channel->broadcastCmd("MODE (password)", "This channel requieres now a password.");
@@ -50,40 +50,86 @@ void set_password(Channel* channel, bool b, std::string pass)
 	}
 }
 
+void set_op(Channel* channel, bool b, std::string user, Server &server, Client& sender)
+{
+	Client* client = server.find_client(user);
+	if (b)
+	{
+		if (!channel->is_member(client)) {	
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
+			return ;
+		}
+		channel->promote(client);
+		channel->broadcastCmd("MODE (operator)", "<client> has been promoted to operator");
+	}
+	else
+	{
+		if (!channel->is_operator(client)) {	
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
+			return ;
+		}
+		channel->demote(client);
+		channel->broadcastCmd("MODE (operator)", "<client> has been demoted to member");
+	}
+}
 
+void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, std::vector<std::string> arguments)
+{
+	if (b)
+	{
+		int limit = atoi(str_limit.c_str());
+		if (limit < 1)
+		{
+			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE (limit)", ":Invalid parameter", NULL);
+			return ;
+		}
+		channel->set_limit(limit);
+		channel->broadcastCmd("MODE (limit)", "Channel now have a member limit");
+	}
+	else
+	{
+		channel->set_limit(0);
+		channel->broadcastCmd("MODE (limit)", "Channel now have no member limit");
+	}
+}
 
+bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
+{
+	if (!sender.is_registered()) {
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
+		return false;
+	}
+	if (arguments.size() <= 1)
+		return false;
+
+	Channel * channel = server.getChannel(arguments[1]);
+	if (!channel) {
+		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+		return false;
+	}
+	if (arguments.size() < 3) {
+		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, sender.get_client().c_str(), arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
+		return false;
+	}
+	if (!channel->is_operator(&sender)) {
+		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
+		return false;
+	}
+	return true;
+}
 
 
 void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	std::string current_mode;
-	Channel *channel;
-	if (!sender.is_registered()) {
-		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
-		return ;
-	}
-	if (arguments.size() <= 1)
+	if (checkup(server, sender, arguments) == false)
 		return;
-	channel = server.getChannel(arguments[1]);
-	if (!channel) {
-		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
-		return ;
-	}
-	if (arguments.size() < 3) {
-		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, sender.get_client().c_str(), arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
-		return ;
-	}
-	if (!channel->is_operator(&sender)) {
-		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
-		return ;
-	}
-
+	Channel *channel = server.getChannel(arguments[1]);
 
 	// multiple flags
-	//- MODE +ok bob banane
+	// example : MODE +ok bob banane
 	std::string mode = arguments[2];
-
 	bool plus = true;
+	bool needs_argument = false;
 	size_t args_i = 3; // argument iterator for flags
 	for (size_t i = 0; i < mode.length(); i++)
 	{
@@ -105,103 +151,35 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 			set_topic(channel, plus);
 		else if (c == 'k')
 		{
-			if (plus && (arguments.size() < 4 || !arguments[3].length()) ) {	
+			set_password(channel, plus, arguments[args_i]);
+			if (plus)
+				needs_argument = true;
+		}
+		else if (c == 'o')
+		{
+			set_op(channel, plus, arguments[args_i], server, sender);
+			needs_argument = true;
+		}
+		else if (c == 'l')
+		{
+			set_limit(channel, plus, sender, arguments[args_i], arguments);
+			if (plus)
+				needs_argument = true;
+		}
+		else
+		{
+			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
+		}
+
+		if (needs_argument)
+		{
+			if (args_i >= arguments.size())
+			{
 				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (password)", ERR_NEEDMOREPARAMS_MSG, NULL);
 				continue;
-			}	
-			set_password(channel, plus, arguments[args_i]);
+			}
 			args_i ++;
+			needs_argument = false;
 		}
-			
-
 	}
-	
-	
-
-
-
-
-	// // case by case
-	// std::string mode = arguments[2];
-	// if (!mode.compare("+i")) {
-	// 	channel->set_invite(true);
-	// 	channel->broadcastCmd("MODE (invite)", "Invite is now requiered to join channel");
-	// 	return ;
-	// }
-	// if (!mode.compare("-i")) {
-	// 	channel->set_invite(false);
-	// 	channel->broadcastCmd("MODE (invite)", "Invite is not requiered to join channel");
-	// 	return ;
-	// }
-	// if (!mode.compare("+t")) {
-	// 	channel->set_topic_protected(true);
-	// 	channel->broadcastCmd("MODE (topic)", "Topic can only be change by operators");
-	// 	return ;
-	// }
-	// if (!mode.compare("-t")) {
-	// 	channel->set_topic_protected(false);
-	// 	channel->broadcastCmd("MODE (topic)", "Topic can be change by all members");
-	// 	return ;
-	// }
-	// if (!mode.compare("+k")) {
-	// 	if (arguments.size() < 4 || !arguments[3].length()) {	
-	// 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (password)", ERR_NEEDMOREPARAMS_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	channel->set_password(arguments[3]);
-	// 	channel->broadcastCmd("MODE (password)", "This channel requieres now a password.");
-	// 	return ;
-	// }
-	// if (!mode.compare("-k")) {
-	// 	channel->set_password("");
-	// 	channel->broadcastCmd("MODE (password)", "This channel does not requieres a password anymore.");
-	// 	return ;
-	// }
-	// Client* client = server.find_client(arguments[3]);
-	// if (!mode.compare("+o")) {
-	// 	if (arguments.size() < 5 || !arguments[3].length()) {
-	// 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	if (!channel->is_member(client)) {	
-	// 		sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), arguments[3].c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	channel->promote(client);
-	// 	channel->broadcastCmd("MODE (operator)", "<client> has been promoted to operator");
-	// 	return ;
-	// }
-	// if (!mode.compare("-o")) {
-	// 	if (arguments.size() < 4 || !arguments[3].length()) {
-	// 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	if (!channel->is_operator(client)) {	
-	// 		sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), arguments[3].c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	channel->demote(client);
-	// 	channel->broadcastCmd("MODE (operator)", "<client> has been demoted to member");
-	// 	return ;
-	// }
-	// if (!mode.compare("+l")) {
-	// 	if (arguments.size() < 4 || !arguments[3].length()) {	
-	// 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (operator)", ERR_NEEDMOREPARAMS_MSG, NULL);
-	// 		return ;
-	// 	}
-	// 	int limit = atoi(arguments[3].c_str());
-	// 	if (limit < 1) {
-	// 		sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE (limit)", ":Invalid parameter", NULL);
-	// 		return ;
-	// 	}
-	// 	channel->set_limit(limit);
-	// 	channel->broadcastCmd("MODE (limit)", "Channel now have a member limit");
-	// 	return ;
-	// }
-	// if (!mode.compare("-l")) {
-	// 	channel->set_limit(0);
-	// 	channel->broadcastCmd("MODE (limit)", "Channel now have no member limit");
-	// 	return ;
-	// }
-	// sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
 }
