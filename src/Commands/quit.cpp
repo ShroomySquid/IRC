@@ -34,7 +34,8 @@ void Cmd_quit::execute(Server &server, Client& sender, std::vector<std::string> 
 	for (it2 = clients.begin(); it2 != clients.end(); it2++)
 	{
 		Client* c = (*it2).second;
-		send(c->get_fd(), quitmessage.c_str(), quitmessage.size(), 0);
+		sendReplyMsg(c->get_fd(), quitmessage.c_str(), NULL);
+		// send(c->get_fd(), quitmessage.c_str(), quitmessage.size(), 0);
 	}
-	
+
 }
