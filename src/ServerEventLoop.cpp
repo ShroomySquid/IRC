@@ -141,7 +141,7 @@ void Server::Split_message(Client* client, char *buffer) {
 }
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
-    int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);    
+    int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -170,9 +170,9 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << "buffer: " << buffer;
+            // cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
-            cout << "buffer after get_rid: " << buffer;
+            // cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
         }
         bzero(buffer, buffer_len);
