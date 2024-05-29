@@ -6,12 +6,10 @@ SERVER_LOG_FILE="server.log"
 PORT=6667
 PASSWORD="correct_password"
 
-# Function to print messages with timestamps
 log_message() {
     echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
 }
 
-# Clear previous logs
 if [ -e "$LOG_FILE" ]; then
     rm "$LOG_FILE"
     log_message "Previous command log file deleted."
@@ -22,7 +20,6 @@ if [ -e "$SERVER_LOG_FILE" ]; then
     log_message "Previous server log file deleted."
 fi
 
-# Check and kill processes using the specified port
 check_and_kill_port() {
     local port=$1
     local pids
@@ -39,7 +36,6 @@ check_and_kill_port() {
     fi
 }
 
-# Start the IRC server
 start_server() {
     local port=$1
     local password=$2
@@ -49,7 +45,6 @@ start_server() {
     log_message "IRC server started with PID $SERVER_PID"
 }
 
-# Stop the IRC server
 stop_server() {
     if [ -z "$SERVER_PID" ]; then
         log_message "Error: No IRC server running."
@@ -102,6 +97,6 @@ send_irc_commands() {
 
 check_and_kill_port $PORT
 start_server $PORT $PASSWORD
-sleep 2  # Give the server some time to start
+sleep 2
 send_irc_commands $PORT
 stop_server
