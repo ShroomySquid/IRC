@@ -130,7 +130,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	std::string mode = arguments[2];
 	bool plus = true;
 	bool needs_argument = false;
-	size_t args_i = 3; // argument iterator for flags
+	size_t args_i = 2; // argument iterator for flags
 	for (size_t i = 0; i < mode.length(); i++)
 	{
 		char c = mode[i];
@@ -145,41 +145,29 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 			continue;
 		}
 
+		if ((c == 'k' && plus) || c == 'o' || (c == 'l' && plus))
+		{
+			args_i ++;
+			needs_argument = true;
+			if (args_i >= arguments.size())
+			{
+				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
+				return;
+			}
+		}
+
 		if (c == 'i')
 			set_invite(channel, plus);
 		else if (c == 't')
 			set_topic(channel, plus);
 		else if (c == 'k')
-		{
 			set_password(channel, plus, arguments[args_i]);
-			if (plus)
-				needs_argument = true;
-		}
 		else if (c == 'o')
-		{
 			set_op(channel, plus, arguments[args_i], server, sender);
-			needs_argument = true;
-		}
 		else if (c == 'l')
-		{
 			set_limit(channel, plus, sender, arguments[args_i], arguments);
-			if (plus)
-				needs_argument = true;
-		}
 		else
-		{
 			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
-		}
 
-		if (needs_argument)
-		{
-			if (args_i >= arguments.size())
-			{
-				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), "MODE (password)", ERR_NEEDMOREPARAMS_MSG, NULL);
-				continue;
-			}
-			args_i ++;
-			needs_argument = false;
-		}
 	}
 }
