@@ -43,7 +43,7 @@ void Cmd_join::fill_chan_to_join(std::map<std::string, std::string> &chan_to_joi
 
 void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	bool is_operator	
+	bool is_operator;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -72,18 +72,18 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 				channel->set_password(it->second);
 			channel->addClient(&sender, is_operator);
 			cout << "Channel created: " << it->first << endl;
-			//broadcast all the new channel created	
+			//broadcast all the new channel created
 			continue ;
 		}
 		if (channel->get_password() != "" && channel->get_password() != it->second) {
 			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, sender.get_client().c_str(), arguments[1].c_str(), ERR_BADCHANNELKEY_MSG, NULL);
 			continue ;
 		}
-		if (channel->is_on_invite() && !channel->is_Invited(&sender)) {	
+		if (channel->is_on_invite() && !channel->is_Invited(&sender)) {
 			sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, sender.get_client().c_str(), arguments[1].c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
 			continue ;
 		}
-		if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {	
+		if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {
 			sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANNELISFULL_MSG, NULL);
 			continue ;
 		}
