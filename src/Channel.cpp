@@ -191,6 +191,37 @@ void Channel::broadcastAll(int count, ...) {
 	va_end(args);
 }
 
+void Channel::broadcastAlmostAll(int sender_fd, int count, ...) {
+    va_list args;
+    va_start(args, count);
+	int i = 0;
+	std::stringstream ss;
+	ss << PREFIX;
+	ss << " " << get_name();
+	while (i < count) {
+		const char *arg = va_arg(args, const char *);
+		//cout << arg << endl;
+		if (arg == NULL) {
+			break;
+		}
+		ss << " " << arg;
+		i++;
+	}
+	ss << "\r\n";
+	std::string response = ss.str();
+	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
+	{
+		if ((*it)->get_fd() != sender_fd)
+			send((*it)->get_fd(), response.c_str(), response.size(), 0);
+	}
+	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
+	{
+		if ((*it)->get_fd() != sender_fd)
+			send((*it)->get_fd(), response.c_str(), response.size(), 0);
+	}
+	va_end(args);
+}
+
 std::string Channel::get_topic() {
 	return (topic);
 }

@@ -33,6 +33,8 @@
 #define RPL_NOTOPIC "331"
 #define RPL_NOTOPIC_MSG ":No topic is set"
 #define ERR_UNKNOWNERROR "400"
+#define ERR_NOSUCHNICK "401"
+#define ERR_NOSUCHNICK_MSG ":No such nickname"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NOSUCHCHANNEL_MSG ":No such channel"
 #define ERR_NONICKNAMEGIVEN "431"

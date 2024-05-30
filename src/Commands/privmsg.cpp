@@ -46,8 +46,8 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 	std::vector<std::string>::iterator it;
 	std::string args = arguments[2];
 	while (i < args_nbr) {
-		args += arguments[i];
 		args += " ";
+		args += arguments[i];
 		i++;
 	}
 	for (it = targets.begin(); it != targets.end(); it++) {
@@ -57,16 +57,17 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			it->erase(0, 1);
 			Channel* channel = server.getChannel(*it);
 			if (channel == NULL)
-				sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+				sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), (*it).c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 			else
-				channel->broadcastAll(2, sender.get_client().c_str(), args.c_str());
+				channel->broadcastAlmostAll(sender.get_fd(), 2, sender.get_client().c_str(), args.c_str());
 			continue ;
 		}
 		Client* client = server.find_client(*it);
 		if (client == NULL) {
-			sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_NOSUCHNICK, sender.get_client().c_str(), (*it).c_str(), ERR_NOSUCHNICK_MSG, NULL);
 			continue ;
 		}
-		sendErrorMsg(client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
+		if (client->get_fd() != sender.get_fd()) 
+			sendErrorMsg(client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
 	}
 }
