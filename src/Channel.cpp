@@ -7,7 +7,7 @@ Channel::Channel(std::string name)
     this->members = std::vector<Client*>();
     this->operators = std::vector<Client*>();
 	this->invited = std::vector<Client*>();
-    this->name = name;
+    this->name = "#" + name;
 	this->topic_protection = true;
 	this->on_invite = false;
 	this->password = "";
@@ -163,6 +163,7 @@ Channel& Channel::operator=(const Channel& src)
 // check si pas le meme
 // recupere le client dans la map et envoi le message
 
+/*
 void Channel::broadcastAll(Client &sender, std::string message)
 {
 	if (!is_member(&sender) && !is_operator(&sender)) {
@@ -181,7 +182,62 @@ void Channel::broadcastAll(Client &sender, std::string message)
 	}
 	//std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
 }
+*/
+void append_char_p(char *str1, char *str2, int *len) {
+	int len2 = 0;
+	while (*len + len2 < 1024 && str2[len2]) {
+		str1[*len + len2] = str2[len2];
+		len2++;
+	}
+	while (str1[*len] && *len < 1024)
+		*len += 1;
+}
 
+void Channel::init_msg(char *msg, int* len) {
+	std::string str_name = get_name();
+	const char *name = str_name.c_str();
+	while (name[*len]) {
+		msg[*len] = name[*len];
+		*len += 1;
+	}
+	msg[*len] = ' ';
+	*len += 1;
+}
+
+// need to implement error if msg too long
+void Channel::broadcastAll(int count, ...) {
+	char msg[1024];
+	bzero(msg, 1024);
+	int len = 0;
+	init_msg(msg, &len);
+	int i = 0;
+	va_list args;
+	va_start(args, count);
+	while (i < count && len < 1024) {
+		append_char_p(msg, va_arg(args, char *), &len);
+		if (len >= 1024)
+			return ;
+		msg[len] = ' ';
+		len++;
+		i++;
+	}
+	if (len < 1 || len >= 1022)
+		return ;
+	msg[len - 1] = '\r';
+	msg[len] = '\n';
+	len++;
+	msg[len] = '\0';
+	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
+	{
+		send((*it)->get_fd(), msg, len, 0);
+	}
+	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
+	{
+		send((*it)->get_fd(), msg, len, 0);
+	}
+	va_end(args);
+}
+/*
 void Channel::broadcastCmd(std::string cmd, std::string arg) {
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
@@ -198,7 +254,7 @@ void Channel::broadcastCmd(std::string cmd, std::string arg) {
 		send((*it)->get_fd(), "\n", 1, 0);
 	}
 }
-
+*/
 std::string Channel::get_topic() {
 	return (topic);
 }
@@ -232,12 +288,14 @@ void Channel::set_password(std::string new_password) {
 }
 
 int Channel::get_clients_nbr(void) {
-	cout << "Clients in channel: " << clients_in_channel << endl;
 	return (clients_in_channel);
 }
 
+std::string Channel::get_name(void) {
+	return (name);
+}
+
 int Channel::get_limit(void) {
-	cout << "limit: " << limit << endl;
 	return (limit);
 }
 

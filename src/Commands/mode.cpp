@@ -12,12 +12,12 @@ void set_invite(Channel* channel, bool b)
 	if (b)
 	{
 		channel->set_invite(true);
-		channel->broadcastCmd("MODE (invite)", "Invite is now requiered to join channel");
+		channel->broadcastAll(2, "MODE (invite)", "Invite is now requiered to join channel");
 	}
 	else
 	{
 		channel->set_invite(false);
-		channel->broadcastCmd("MODE (invite)", "Invite is not requiered to join channel");
+		channel->broadcastAll(2, "MODE (invite)", "Invite is not requiered to join channel");
 	}
 }
 
@@ -26,12 +26,12 @@ void set_topic(Channel* channel, bool b)
 	if (b)
 	{
 		channel->set_topic_protected(true);
-		channel->broadcastCmd("MODE (topic)", "Topic can only be change by operators");
+		channel->broadcastAll(2, "MODE (topic)", "Topic can only be change by operators");
 	}
 	else
 	{
 		channel->set_topic_protected(false);
-		channel->broadcastCmd("MODE (topic)", "Topic can be change by all members");
+		channel->broadcastAll(2, "MODE (topic)", "Topic can be change by all members");
 	}
 }
 
@@ -40,13 +40,13 @@ void set_password(Channel* channel, bool b, std::string pass)
 	if (b)
 	{
 		channel->set_password(pass);
-		channel->broadcastCmd("MODE (password)", "This channel requieres now a password.");
+		channel->broadcastAll(2, "MODE (password)", "This channel requieres now a password.");
 		return ;
 	}
 	else
 	{
 		channel->set_password("");
-		channel->broadcastCmd("MODE (password)", "This channel does not requieres a password anymore.");
+		channel->broadcastAll(2, "MODE (password)", "This channel does not requieres a password anymore.");
 	}
 }
 
@@ -60,7 +60,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 			return ;
 		}
 		channel->promote(client);
-		channel->broadcastCmd("MODE (operator)", "<client> has been promoted to operator");
+		channel->broadcastAll(3, "MODE (operator)", user.c_str(), "has been promoted to operator");
 	}
 	else
 	{
@@ -69,7 +69,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 			return ;
 		}
 		channel->demote(client);
-		channel->broadcastCmd("MODE (operator)", "<client> has been demoted to member");
+		channel->broadcastAll(3, "MODE (operator)", user.c_str(), "has been demoted to member");
 	}
 }
 
@@ -84,12 +84,12 @@ void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, 
 			return ;
 		}
 		channel->set_limit(limit);
-		channel->broadcastCmd("MODE (limit)", "Channel now have a member limit");
+		channel->broadcastAll(3, "MODE (limit)", "Channel now have a member limitof:", str_limit.c_str());
 	}
 	else
 	{
 		channel->set_limit(0);
-		channel->broadcastCmd("MODE (limit)", "Channel now have no member limit");
+		channel->broadcastAll(2, "MODE (limit)", "Channel now have no member limit");
 	}
 }
 
@@ -99,9 +99,10 @@ bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return false;
 	}
-	if (arguments.size() <= 1)
+	if (arguments.size() < 2) {
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 		return false;
-
+	}
 	Channel * channel = server.getChannel(arguments[1]);
 	if (!channel) {
 		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
