@@ -39,7 +39,6 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 	fill_chan_to_quit(chan_to_quit, arguments[1]);
 	std::vector<std::string>::iterator it;
 	for (it = chan_to_quit.begin(); it != chan_to_quit.end(); it++) {
-		cout << *it << endl;
 		Channel *channel = server.getChannel(*it);
 		if (channel == NULL)
 		{

@@ -7,14 +7,6 @@ Cmd_quit::~Cmd_quit(){}
 
 void Cmd_quit::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
-	if (!sender.is_registered()) {
-		not_registered_yet(sender.get_fd());
-		return ;
-	}
-	//if (arguments.size() <= 1)
-	//	return;
-
-    // quit all channels with this user
     std::map <std::string, Channel*> channels = server.get_all_channels();
     std::map <std::string, Channel*>::iterator it;
 	for (it = channels.begin(); it != channels.end(); it++)

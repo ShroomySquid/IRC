@@ -163,98 +163,34 @@ Channel& Channel::operator=(const Channel& src)
 // check si pas le meme
 // recupere le client dans la map et envoi le message
 
-/*
-void Channel::broadcastAll(Client &sender, std::string message)
-{
-	if (!is_member(&sender) && !is_operator(&sender)) {
-		cout << "Not part of the channel.\n" << endl;
-		return;
-	}
-	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
-	{
-		if (*it != &sender)
-			send((*it)->get_fd(), message.c_str(), message.size(), 0);
-	}
-	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
-	{
-		if (*it != &sender)
-			send((*it)->get_fd(), message.c_str(), message.size(), 0);
-	}
-	//std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
-}
-*/
-void append_char_p(char *str1, char *str2, int *len) {
-	int len2 = 0;
-	while (*len + len2 < 1024 && str2[len2]) {
-		str1[*len + len2] = str2[len2];
-		len2++;
-	}
-	while (str1[*len] && *len < 1024)
-		*len += 1;
-}
-
-void Channel::init_msg(char *msg, int* len) {
-	std::string str_name = get_name();
-	const char *name = str_name.c_str();
-	while (name[*len]) {
-		msg[*len] = name[*len];
-		*len += 1;
-	}
-	msg[*len] = ' ';
-	*len += 1;
-}
-
-// need to implement error if msg too long
 void Channel::broadcastAll(int count, ...) {
-	char msg[1024];
-	bzero(msg, 1024);
-	int len = 0;
-	init_msg(msg, &len);
+    va_list args;
+    va_start(args, count);
 	int i = 0;
-	va_list args;
-	va_start(args, count);
-	while (i < count && len < 1024) {
-		append_char_p(msg, va_arg(args, char *), &len);
-		if (len >= 1024)
-			return ;
-		msg[len] = ' ';
-		len++;
+	std::stringstream ss;
+	ss << PREFIX;
+	ss << " " << get_name();
+	while (i < count) {
+		const char *arg = va_arg(args, const char *);
+		if (arg == NULL) {
+			break;
+		}
+		ss << " " << arg;
 		i++;
 	}
-	if (len < 1 || len >= 1022)
-		return ;
-	msg[len - 1] = '\r';
-	msg[len] = '\n';
-	len++;
-	msg[len] = '\0';
+	ss << "\r\n";
+	std::string response = ss.str();
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		send((*it)->get_fd(), msg, len, 0);
+		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
 	{
-		send((*it)->get_fd(), msg, len, 0);
+		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	va_end(args);
 }
-/*
-void Channel::broadcastCmd(std::string cmd, std::string arg) {
-	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
-	{
-		send((*it)->get_fd(), cmd.c_str(), cmd.size(), 0);
-		send((*it)->get_fd(), ": ", 2, 0);
-		send((*it)->get_fd(), arg.c_str(), arg.size(), 0);
-		send((*it)->get_fd(), "\n", 1, 0);
-	}
-	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
-	{
-		send((*it)->get_fd(), cmd.c_str(), cmd.size(), 0);
-		send((*it)->get_fd(), ": ", 2, 0);
-		send((*it)->get_fd(), arg.c_str(), arg.size(), 0);
-		send((*it)->get_fd(), "\n", 1, 0);
-	}
-}
-*/
+
 std::string Channel::get_topic() {
 	return (topic);
 }

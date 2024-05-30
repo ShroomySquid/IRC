@@ -3,6 +3,7 @@
 # include "Client.hpp"
 # include <vector> 
 # include <algorithm>
+# include <sstream>
 class Client;
 class Channel
 {
@@ -48,7 +49,7 @@ class Channel
 		int get_clients_nbr(void);
 		int	get_limit(void);
 		std::string	get_name(void);
-		void init_msg(char *msg, int* i);
+		//void init_msg(char *msg, int* i);
 		void set_limit(int new_limit);
 };
 

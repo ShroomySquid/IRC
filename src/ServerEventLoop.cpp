@@ -170,9 +170,9 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << "buffer: " << buffer;
+            //cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
-            cout << "buffer after get_rid: " << buffer;
+            //cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
         }
         bzero(buffer, buffer_len);
@@ -199,8 +199,8 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
     }
 	if (commands.find(cmd) != commands.end())
 		commands[cmd]->execute(server, sender, args); // execute la commande
-	// else
-	// 	std::cout << cmd << " : Command not found" << std::endl;
+	else
+	 	std::cout << cmd << " : Command not found" << std::endl;
 }
 
 void Server::MarkAndRemoveDisconnectedClients() {
