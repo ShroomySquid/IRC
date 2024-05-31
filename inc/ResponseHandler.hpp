@@ -45,6 +45,8 @@
 #define ERR_ERRONEUSUSERNAME_MSG ":Erroneus username"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_NICKNAMEINUSE_MSG ":Nickname is already in use"
+#define ERR_USERNAMEINUSE "433"
+#define ERR_USERNAMEINUSE_MSG ":Username is already in use"
 #define ERR_USERNOTINCHANNEL "441"
 #define ERR_USERNOTINCHANNEL_MSG ":They aren't on that channel"
 #define ERR_NOTONCHANNEL "442"

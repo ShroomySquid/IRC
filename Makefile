@@ -31,6 +31,9 @@ clean:
 fclean:         clean
 	rm -f $(NAME) test
 
+tclean:
+	rm -f irc_commands.log server.log user1_commands.log user2_commands.log
+
 re:             fclean $(NAME)
 
 .PHONY: all clean fclean re
