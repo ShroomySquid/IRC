@@ -15,6 +15,9 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 		return;
 	}
 	std::string channelName = arguments[1];
+	if (channelName[0] == '#' || channelName[0] == '&') {
+		channelName.erase(0, 1);
+	}
 	std::string user = arguments[2];
 	Channel* channel = server.getChannel(channelName);
 	if (!channel) {
