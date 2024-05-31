@@ -22,7 +22,6 @@ class Channel
     public:
         Channel(std::string name);
         ~Channel();
-        Channel& operator=(const Channel& src);
         Channel(const Channel& src);
 		std::vector<Client*> get_members();
         void removeClient(Client* client);

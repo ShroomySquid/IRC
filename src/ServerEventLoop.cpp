@@ -170,7 +170,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            //cout << "buffer: " << buffer;
+            cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
             //cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);

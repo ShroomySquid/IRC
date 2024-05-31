@@ -30,16 +30,16 @@ void send_join_response_msg(Client& sender, Channel* channel)
 
 	std::string joinmessage = ":" + sender.get_client() + " JOIN " + channel->get_name() + "\r\n";
 
-	for (it = members.begin(); it != members.end(); it++)
-	{
-		Client* c = (*it);
-		send(c->get_fd(), joinmessage.c_str(), joinmessage.length(),0);
+	//for (it = members.begin(); it != members.end(); it++)
+	//{
+		//Client* c = (*it);
+		send(sender.get_fd(), joinmessage.c_str(), joinmessage.length(),0);
 		if (channel->get_topic() != "")
-			sendReplyMsg(c->get_fd(), RPL_TOPIC, c->get_client().c_str(), channel->get_name().c_str(), channel->get_topic(), NULL);
+			sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 
-		sendReplyMsg(c->get_fd(), RPL_NAMREPLY, c->get_client().c_str(), "=", channel->get_name().c_str(), ":",clients_nicknames.c_str(), NULL);
-		sendReplyMsg(c->get_fd(), RPL_ENDOFNAMES,c->get_client().c_str(),channel->get_name().c_str(),":End of /NAMES list",  NULL);
-	}
+		sendReplyMsg(sender.get_fd(), RPL_NAMREPLY, sender.get_client().c_str(), "=", channel->get_name().c_str(), ":",clients_nicknames.c_str(), NULL);
+		sendReplyMsg(sender.get_fd(), RPL_ENDOFNAMES,sender.get_client().c_str(),channel->get_name().c_str(),":End of /NAMES list",  NULL);
+	//}
 }
 
 void Cmd_join::fill_chan_to_join(std::map<std::string, std::string> &chan_to_join, std::string channels, std::string passwords) {

@@ -21,13 +21,19 @@ Channel::Channel(const Channel& src)
 }
 
 bool Channel::promote(Client* c) {	
-	if (members.empty() || !c)
+	if (!c || members.empty())
 		return (false);
+	if (!operators.empty())
+	{
+		std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
+		if (it != operators.end())
+			return (false);
+	}
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
-	if (it == members.end())
-		return (false);
-	this->operators.push_back(c);	
-	this->members.erase(it);
+	if (it != members.end())
+		this->operators.push_back(c);	
+	else
+		return false;
 	return true;
 }
 
@@ -37,7 +43,6 @@ bool Channel::demote(Client* c) {
 	std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
 	if (it == operators.end())
 		return (false);
-	this->members.push_back(c);	
 	this->operators.erase(it);
 	return true;
 }
@@ -64,7 +69,7 @@ bool Channel::is_operator(Client* c)
 
 bool Channel::addClient(Client* c, bool ope)
 {
-	if (is_member(c) || is_operator(c))
+	if (is_member(c))
 		return false;
 	if (this->on_invite)
 	{
@@ -75,12 +80,9 @@ bool Channel::addClient(Client* c, bool ope)
 			return false;
 		}
 	}
-	if (!ope) 
-	{
-		this->members.push_back(c);
-		return true;
-	}
-	this->operators.push_back(c);
+	this->members.push_back(c);
+	if (ope)
+		this->operators.push_back(c);
 	this->clients_in_channel++;
 
 	// erase from invited 
@@ -96,7 +98,7 @@ bool Channel::addInvited(Client *c)
 {
 	if (!this->on_invite)
 		return false;
-	if (is_member(c) || is_operator(c))
+	if (is_member(c))
 		return false;
 	std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
 	if (it == invited.end())
@@ -124,12 +126,6 @@ Client * Channel::getMember_by_name(std::string name)
 		if (c->get_username() == name)
 			return c;
 	}
-	for (it = this->operators.begin(); it != this->operators.end(); it++)
-	{
-		Client *o = (*it);
-		if (o->get_username() == name)
-			return o;
-	}
 	return NULL;
 }
 
@@ -145,18 +141,9 @@ void Channel::removeClient(Client *c)
 	if (!operators.empty()) {
 		std::vector<Client*>::iterator i = std::find(operators.begin(), operators.end(), c);
 		if (i != operators.end()) {
-			this->operators.erase(i);	
-			this->clients_in_channel--;
+			this->operators.erase(i);
 		}
 	}
-}
-
-Channel& Channel::operator=(const Channel& src)
-{
-    this->members = src.members;
-    this->operators = src.operators;
-    this->name = src.name;
-    return *this;
 }
 
 // TODO
@@ -184,10 +171,6 @@ void Channel::broadcastAll(int count, ...) {
 	{
 		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
-	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
-	{
-		send((*it)->get_fd(), response.c_str(), response.size(), 0);
-	}
 	va_end(args);
 }
 
@@ -210,11 +193,6 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	ss << "\r\n";
 	std::string response = ss.str();
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
-	{
-		if ((*it)->get_fd() != sender->get_fd())
-			send((*it)->get_fd(), response.c_str(), response.size(), 0);
-	}
-	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
 	{
 		if ((*it)->get_fd() != sender->get_fd())
 			send((*it)->get_fd(), response.c_str(), response.size(), 0);
@@ -259,7 +237,7 @@ int Channel::get_clients_nbr(void) {
 }
 
 std::string Channel::get_name(void) {
-	return (name);
+	return ("#" + name);
 }
 
 int Channel::get_limit(void) {
