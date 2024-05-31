@@ -159,7 +159,7 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " #" << get_name();
+	ss << " " << get_name();
 	ss << " " << ":";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
@@ -190,7 +190,7 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " #" << get_name();
+	ss << " " << get_name();
 	ss << " " << ":";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
