@@ -248,7 +248,7 @@ int Channel::get_clients_nbr(void) {
 }
 
 std::string Channel::get_name(void) {
-	return ("#" + name);
+	return (name);
 }
 
 int Channel::get_limit(void) {
