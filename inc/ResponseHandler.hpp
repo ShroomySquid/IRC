@@ -31,6 +31,8 @@
 #define RPL_CHANNELMODEIS_MSG "+i/-i: Add/remove channel on invitation\n +t-t: Add/remove restriction on topic\n +k/-k: Add/remove channel password\n +o/-o: Promote/demote member as operator\n +l/-l Add/remove limit of users in channel"
 #define RPL_TOPIC "332"
 #define RPL_NOTOPIC "331"
+#define RPL_NAMREPLY "353"
+#define RPL_ENDOFNAMES "366"
 #define RPL_NOTOPIC_MSG ":No topic is set"
 #define ERR_UNKNOWNERROR "400"
 #define ERR_NOSUCHNICK "401"

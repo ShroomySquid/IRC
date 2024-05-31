@@ -191,12 +191,12 @@ void Channel::broadcastAll(int count, ...) {
 	va_end(args);
 }
 
-void Channel::broadcastAlmostAll(int sender_fd, int count, ...) {
+void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
     va_list args;
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	ss << PREFIX;
+	ss << ":" << sender->get_client();
 	ss << " " << get_name();
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
@@ -211,12 +211,12 @@ void Channel::broadcastAlmostAll(int sender_fd, int count, ...) {
 	std::string response = ss.str();
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		if ((*it)->get_fd() != sender_fd)
+		if ((*it)->get_fd() != sender->get_fd())
 			send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
 	{
-		if ((*it)->get_fd() != sender_fd)
+		if ((*it)->get_fd() != sender->get_fd())
 			send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	va_end(args);
@@ -268,4 +268,9 @@ int Channel::get_limit(void) {
 
 void Channel::set_limit(int new_limit) {
 	limit = new_limit;
+}
+
+std::vector<Client*> Channel::get_members()
+{
+	return this->members;
 }

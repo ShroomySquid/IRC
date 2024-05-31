@@ -130,7 +130,6 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	// example : MODE +ok bob banane
 	std::string mode = arguments[2];
 	bool plus = true;
-	bool needs_argument = false;
 	size_t args_i = 2; // argument iterator for flags
 	for (size_t i = 0; i < mode.length(); i++)
 	{
@@ -149,7 +148,6 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		if ((c == 'k' && plus) || c == 'o' || (c == 'l' && plus))
 		{
 			args_i ++;
-			needs_argument = true;
 			if (args_i >= arguments.size())
 			{
 				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
