@@ -158,7 +158,7 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 	(void)sender;
 	//ss << PREFIX;
 	//ss << " " << get_name();
-	//ss << ":" << sender->get_client();
+	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
 	ss << " " << get_name();
 	ss << " " << ":";
@@ -189,7 +189,7 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	std::stringstream ss;
 	//ss << PREFIX;
 	//ss << " " << get_name();
-	//ss << ":" << sender->get_client();
+	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
 	ss << " " << get_name();
 	ss << " " << ":";

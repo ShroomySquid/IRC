@@ -30,7 +30,7 @@ void Cmd_privmsg::parse_targets(std::vector<std::string> &target_vec, std::strin
 void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	int args_nbr = arguments.size();
-	int i = 3;
+	int i = 4;
 	cout << "priv started" << endl;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
