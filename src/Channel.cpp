@@ -163,19 +163,26 @@ Channel& Channel::operator=(const Channel& src)
 // check si pas le meme
 // recupere le client dans la map et envoi le message
 
-void Channel::broadcastAll(int count, ...) {
+void Channel::broadcastAll(Client& sender, int count, ...) {
     va_list args;
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	ss << PREFIX;
-	ss << " " << get_name();
+	//ss << PREFIX;
+	//ss << " " << get_name();
+	ss << ":" << sender.get_client();
+	ss << " " << PRIVMSG;
+	ss << " #" << get_name();
+	ss << " " << ":";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
 			break;
 		}
-		ss << " " << arg;
+		if (i)
+			ss << arg;
+		else
+			ss << " " << arg;
 		i++;
 	}
 	ss << "\r\n";
@@ -196,15 +203,21 @@ void Channel::broadcastAlmostAll(int sender_fd, int count, ...) {
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	ss << PREFIX;
-	ss << " " << get_name();
+	//ss << PREFIX;
+	//ss << " " << get_name();
+	ss << ":" << sender.get_client();
+	ss << " " << PRIVMSG;
+	ss << " #" << get_name();
+	ss << " " << ":";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
-		//cout << arg << endl;
 		if (arg == NULL) {
 			break;
 		}
-		ss << " " << arg;
+		if (i)
+			ss << arg;
+		else
+			ss << " " << arg;
 		i++;
 	}
 	ss << "\r\n";
