@@ -199,8 +199,8 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
     }
 	if (commands.find(cmd) != commands.end())
 		commands[cmd]->execute(server, sender, args); // execute la commande
-	// else
-	// 	std::cout << cmd << " : Command not found" << std::endl;
+	else
+	 	std::cout << cmd << " : Command not found" << std::endl;
 }
 
 void Server::MarkAndRemoveDisconnectedClients() {

@@ -13,7 +13,7 @@ void sendErrorMsg(int fd, ...) {
 		}
 		ss << " " << arg;
 	}
-	ss << "\n";
+	ss << "\r\n";
 	std::string response = ss.str();
 	send(fd, response.c_str(), response.size(), 0);
 	va_end(args);
@@ -32,7 +32,7 @@ void sendReplyMsg(int fd, ...) {
 		}
 		ss << " " << arg;
 	}
-	ss << "\n";
+	ss << "\r\n";
 	std::string response = ss.str();
 	send(fd, response.c_str(), response.size(), 0);
 	va_end(args);

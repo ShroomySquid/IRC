@@ -42,6 +42,7 @@ class Cmd_privmsg : public Command
     public:
         Cmd_privmsg();
         ~Cmd_privmsg();
+		void parse_targets(std::vector<std::string> &target_vec, std::string targets);
         void execute(Server &server, Client& sender, std::vector<std::string> arguments);
 };
 

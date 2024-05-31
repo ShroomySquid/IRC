@@ -3,6 +3,7 @@
 # include "Client.hpp"
 # include <vector> 
 # include <algorithm>
+# include <sstream>
 class Client;
 class Channel
 {
@@ -32,8 +33,8 @@ class Channel
         bool addClient(Client* c, bool ope);
         bool addInvited(Client* c);
 		bool is_Invited(Client* c);
-		void broadcastAll(Client &sender, std::string message);
-		void broadcastCmd(std::string cmd, std::string arg);
+		void broadcastAll(int count, ...);
+		void broadcastAlmostAll(int sender_fd, int count, ...);
         
 		Client * getMember_by_name(std::string name);
 		
@@ -47,6 +48,7 @@ class Channel
 		void set_password(std::string new_password);
 		int get_clients_nbr(void);
 		int	get_limit(void);
+		std::string	get_name(void);
 		void set_limit(int new_limit);
 };
 

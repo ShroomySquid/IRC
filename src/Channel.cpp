@@ -7,7 +7,7 @@ Channel::Channel(std::string name)
     this->members = std::vector<Client*>();
     this->operators = std::vector<Client*>();
 	this->invited = std::vector<Client*>();
-    this->name = name;
+    this->name = "#" + name;
 	this->topic_protection = true;
 	this->on_invite = false;
 	this->password = "";
@@ -163,40 +163,63 @@ Channel& Channel::operator=(const Channel& src)
 // check si pas le meme
 // recupere le client dans la map et envoi le message
 
-void Channel::broadcastAll(Client &sender, std::string message)
-{
-	if (!is_member(&sender) && !is_operator(&sender)) {
-		cout << "Not part of the channel.\n" << endl;
-		return;
+void Channel::broadcastAll(int count, ...) {
+    va_list args;
+    va_start(args, count);
+	int i = 0;
+	std::stringstream ss;
+	ss << PREFIX;
+	ss << " " << get_name();
+	while (i < count) {
+		const char *arg = va_arg(args, const char *);
+		if (arg == NULL) {
+			break;
+		}
+		ss << " " << arg;
+		i++;
 	}
+	ss << "\r\n";
+	std::string response = ss.str();
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		if (*it != &sender)
-			send((*it)->get_fd(), message.c_str(), message.size(), 0);
+		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
 	{
-		if (*it != &sender)
-			send((*it)->get_fd(), message.c_str(), message.size(), 0);
+		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
-	//std::cout << "Message sent to channel: " << arguments.at(2) << std::endl;
+	va_end(args);
 }
 
-void Channel::broadcastCmd(std::string cmd, std::string arg) {
+void Channel::broadcastAlmostAll(int sender_fd, int count, ...) {
+    va_list args;
+    va_start(args, count);
+	int i = 0;
+	std::stringstream ss;
+	ss << PREFIX;
+	ss << " " << get_name();
+	while (i < count) {
+		const char *arg = va_arg(args, const char *);
+		//cout << arg << endl;
+		if (arg == NULL) {
+			break;
+		}
+		ss << " " << arg;
+		i++;
+	}
+	ss << "\r\n";
+	std::string response = ss.str();
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		send((*it)->get_fd(), cmd.c_str(), cmd.size(), 0);
-		send((*it)->get_fd(), ": ", 2, 0);
-		send((*it)->get_fd(), arg.c_str(), arg.size(), 0);
-		send((*it)->get_fd(), "\n", 1, 0);
+		if ((*it)->get_fd() != sender_fd)
+			send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	for (std::vector<Client*>::iterator it = this->operators.begin(); it != this->operators.end(); it++)
 	{
-		send((*it)->get_fd(), cmd.c_str(), cmd.size(), 0);
-		send((*it)->get_fd(), ": ", 2, 0);
-		send((*it)->get_fd(), arg.c_str(), arg.size(), 0);
-		send((*it)->get_fd(), "\n", 1, 0);
+		if ((*it)->get_fd() != sender_fd)
+			send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
+	va_end(args);
 }
 
 std::string Channel::get_topic() {
@@ -232,12 +255,14 @@ void Channel::set_password(std::string new_password) {
 }
 
 int Channel::get_clients_nbr(void) {
-	cout << "Clients in channel: " << clients_in_channel << endl;
 	return (clients_in_channel);
 }
 
+std::string Channel::get_name(void) {
+	return (name);
+}
+
 int Channel::get_limit(void) {
-	cout << "limit: " << limit << endl;
 	return (limit);
 }
 
