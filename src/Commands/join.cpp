@@ -76,15 +76,15 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			continue ;
 		}
 		if (channel->get_password() != "" && channel->get_password() != it->second) {
-			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, sender.get_client().c_str(), arguments[1].c_str(), ERR_BADCHANNELKEY_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, sender.get_client().c_str(), channel->get_name().c_str(), ERR_BADCHANNELKEY_MSG, NULL);
 			continue ;
 		}
 		if (channel->is_on_invite() && !channel->is_Invited(&sender)) {
-			sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, sender.get_client().c_str(), arguments[1].c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, sender.get_client().c_str(), channel->get_name().c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
 			continue ;
 		}
 		if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {
-			sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANNELISFULL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, sender.get_client().c_str(), channel->get_name().c_str(), ERR_CHANNELISFULL_MSG, NULL);
 			continue ;
 		}
 		bool success = channel->addClient(&sender, is_operator);
