@@ -7,46 +7,46 @@ Cmd_mode::Cmd_mode(){}
 Cmd_mode::~Cmd_mode(){}
 
 // Mode functions
-void set_invite(Channel* channel, bool b)
+void set_invite(Client *sender, Channel* channel, bool b)
 {
 	if (b)
 	{
 		channel->set_invite(true);
-		channel->broadcastAll(2, "MODE (invite)", "Invite is now requiered to join channel");
+		channel->broadcastAll(sender,2, "MODE (invite)", "Invite is now requiered to join channel");
 	}
 	else
 	{
 		channel->set_invite(false);
-		channel->broadcastAll(2, "MODE (invite)", "Invite is not requiered to join channel");
+		channel->broadcastAll(sender,2, "MODE (invite)", "Invite is not requiered to join channel");
 	}
 }
 
-void set_topic(Channel* channel, bool b)
+void set_topic(Client* sender, Channel* channel, bool b)
 {
 	if (b)
 	{
 		channel->set_topic_protected(true);
-		channel->broadcastAll(2, "MODE (topic)", "Topic can only be change by operators");
+		channel->broadcastAll(sender, 2, "MODE (topic)", "Topic can only be change by operators");
 	}
 	else
 	{
 		channel->set_topic_protected(false);
-		channel->broadcastAll(2, "MODE (topic)", "Topic can be change by all members");
+		channel->broadcastAll(sender, 2, "MODE (topic)", "Topic can be change by all members");
 	}
 }
 
-void set_password(Channel* channel, bool b, std::string pass)
+void set_password(Client* sender, Channel* channel, bool b, std::string pass)
 {
 	if (b)
 	{
 		channel->set_password(pass);
-		channel->broadcastAll(2, "MODE (password)", "This channel requieres now a password.");
+		channel->broadcastAll(sender, 2, "MODE (password)", "This channel requieres now a password.");
 		return ;
 	}
 	else
 	{
 		channel->set_password("");
-		channel->broadcastAll(2, "MODE (password)", "This channel does not requieres a password anymore.");
+		channel->broadcastAll(sender, 2, "MODE (password)", "This channel does not requieres a password anymore.");
 	}
 }
 
@@ -60,7 +60,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 			return ;
 		}
 		channel->promote(client);
-		channel->broadcastAll(3, "MODE (operator)", user.c_str(), "has been promoted to operator");
+		channel->broadcastAll(&sender, 3, "MODE (operator)", user.c_str(), "has been promoted to operator");
 	}
 	else
 	{
@@ -69,7 +69,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 			return ;
 		}
 		channel->demote(client);
-		channel->broadcastAll(3, "MODE (operator)", user.c_str(), "has been demoted to member");
+		channel->broadcastAll(&sender, 3, "MODE (operator)", user.c_str(), "has been demoted to member");
 	}
 }
 
@@ -84,12 +84,12 @@ void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, 
 			return ;
 		}
 		channel->set_limit(limit);
-		channel->broadcastAll(3, "MODE (limit)", "Channel now have a member limitof:", str_limit.c_str());
+		channel->broadcastAll(&sender, 3, "MODE (limit)", "Channel now have a member limitof:", str_limit.c_str());
 	}
 	else
 	{
 		channel->set_limit(0);
-		channel->broadcastAll(2, "MODE (limit)", "Channel now have no member limit");
+		channel->broadcastAll(&sender, 2, "MODE (limit)", "Channel now have no member limit");
 	}
 }
 
@@ -130,7 +130,6 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 	// example : MODE +ok bob banane
 	std::string mode = arguments[2];
 	bool plus = true;
-	bool needs_argument = false;
 	size_t args_i = 2; // argument iterator for flags
 	for (size_t i = 0; i < mode.length(); i++)
 	{
@@ -149,7 +148,6 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		if ((c == 'k' && plus) || c == 'o' || (c == 'l' && plus))
 		{
 			args_i ++;
-			needs_argument = true;
 			if (args_i >= arguments.size())
 			{
 				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
@@ -158,11 +156,11 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		}
 
 		if (c == 'i')
-			set_invite(channel, plus);
+			set_invite(&sender, channel, plus);
 		else if (c == 't')
-			set_topic(channel, plus);
+			set_topic(&sender, channel, plus);
 		else if (c == 'k')
-			set_password(channel, plus, arguments[args_i]);
+			set_password(&sender, channel, plus, arguments[args_i]);
 		else if (c == 'o')
 			set_op(channel, plus, arguments[args_i], server, sender);
 		else if (c == 'l')

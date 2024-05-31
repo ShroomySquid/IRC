@@ -44,5 +44,5 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		return ;
 	}
 	channel->set_topic(arguments[2]);
-	channel->broadcastAll(3, "TOPIC", "is set to:", arguments[2].c_str());
+	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", arguments[2].c_str());
 }
