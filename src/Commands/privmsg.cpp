@@ -30,7 +30,7 @@ void Cmd_privmsg::parse_targets(std::vector<std::string> &target_vec, std::strin
 void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	int args_nbr = arguments.size();
-	int i = 3;
+	int i = 4;
 	cout << "priv started" << endl;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
@@ -59,7 +59,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			if (channel == NULL)
 				sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), (*it).c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 			else
-				channel->broadcastAlmostAll(sender.get_fd(), 2, sender.get_client().c_str(), args.c_str());
+				channel->broadcastAlmostAll(&sender, 2, sender.get_client().c_str(), args.c_str());
 			continue ;
 		}
 		Client* client = server.find_client(*it);

@@ -6,6 +6,7 @@ Cmd_user::~Cmd_user(){}
 
 void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	(void)server;
 	if (!sender.is_authentified()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, "*", "USER", ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -27,12 +28,6 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 		else
 			sendErrorMsg(sender.get_fd(), ERR_ERRONEUSUSERNAME, sender.get_nickname().c_str(), ERR_ERRONEUSUSERNAME_MSG, NULL);
 		return ;
-	}
-	for (std::map<int, Client*>::iterator it = server.get_clients().begin(); it != server.get_clients().end(); it++) {
-		if (!it->second->get_username().compare(arguments[1])) {
-			sendErrorMsg(sender.get_fd(), ERR_USERNAMEINUSE, ERR_USERNAMEINUSE_MSG, NULL);
-			return ;
-		}
 	}
 	sender.set_username(arguments[1]);
 	if (sender.get_nickname().length() && sender.get_username().length())

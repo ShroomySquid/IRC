@@ -18,7 +18,7 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 		return ;
 	}
-	channel = server.getChannel(arguments[1]);
+	channel = server.getChannel(("#" + arguments[1]));
 	if (!channel) {
 		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 		return ;
@@ -44,5 +44,5 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		return ;
 	}
 	channel->set_topic(arguments[2]);
-	channel->broadcastAll(3, "TOPIC", "is set to:", arguments[2].c_str());
+	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", arguments[2].c_str());
 }

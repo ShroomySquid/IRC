@@ -22,9 +22,8 @@ class Channel
     public:
         Channel(std::string name);
         ~Channel();
-        Channel& operator=(const Channel& src);
         Channel(const Channel& src);
-
+		std::vector<Client*> get_members();
         void removeClient(Client* client);
 		bool demote(Client* c);
 		bool promote(Client* c);
@@ -33,8 +32,8 @@ class Channel
         bool addClient(Client* c, bool ope);
         bool addInvited(Client* c);
 		bool is_Invited(Client* c);
-		void broadcastAll(int count, ...);
-		void broadcastAlmostAll(int sender_fd, int count, ...);
+		void broadcastAll(Client* sender, int count, ...);
+		void broadcastAlmostAll(Client* sender, int count, ...);
         
 		Client * getMember_by_name(std::string name);
 		
