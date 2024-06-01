@@ -156,21 +156,15 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 	int i = 0;
 	std::stringstream ss;
 	(void)sender;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << ": ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
 			break;
 		}
-		if (i)
-			ss << arg;
-		else
-			ss << " " << arg;
+		ss << " " << arg;
 		i++;
 	}
 	ss << "\r\n";
@@ -187,12 +181,9 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << ": ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {

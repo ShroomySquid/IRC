@@ -38,6 +38,25 @@ void sendReplyMsg(int fd, ...) {
 	va_end(args);
 }
 
+void sendMsg(int fd, ...) {
+    va_list args;
+    va_start(args, fd);
+
+	std::stringstream ss;
+	//ss << PREFIX;
+	while (1) {
+		const char *arg = va_arg(args, const char *);
+		if (arg == NULL) {
+			break;
+		}
+		ss << " " << arg;
+	}
+	ss << "\r\n";
+	std::string response = ss.str();
+	send(fd, response.c_str(), response.size(), 0);
+	va_end(args);
+}
+
 std::string current_timestamp() {
     std::time_t now = std::time(0);
     std::tm now_tm;
