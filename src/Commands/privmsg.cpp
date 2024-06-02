@@ -13,8 +13,6 @@ void Cmd_privmsg::parse_targets(std::vector<std::string> &target_vec, std::strin
 		while (targets[target_start] && targets[target_start] == ',')
 			target_start++;
 		len = 0;
-		//if (target_vec[target_start] == '#' || target_vec[target_start] == '&')
-		//	target_start++;
 		while (targets[target_start + len] && targets[target_start + len] != ',')
 			len++;
 		if (len > 0) {
@@ -40,7 +38,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 		return ;
 	}
-	cout << "no basic errors" << endl;
+	//cout << "no basic errors" << endl;
 	std::vector<std::string> targets;
 	parse_targets(targets, arguments[1]);
 	std::vector<std::string>::iterator it;
@@ -51,7 +49,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		i++;
 	}
 	for (it = targets.begin(); it != targets.end(); it++) {
-		cout << "checking: " << *it << endl;
+		//cout << "checking: " << *it << endl;
 		if ((*it)[0] == '#' || (*it)[0] == '&')
 		{
 			it->erase(0, 1);
@@ -68,6 +66,6 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			continue ;
 		}
 		if (client->get_fd() != sender.get_fd()) 
-			sendErrorMsg(client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
+			sendMsg(sender.get_client(), client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
 	}
 }

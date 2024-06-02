@@ -1,6 +1,7 @@
 #ifndef RESPONSE_HANDLER_H
 #define RESPONSE_HANDLER_H
 
+#pragma once
 #include <cstdarg>
 #include <iostream>
 #include <sstream>
@@ -70,8 +71,8 @@
 #define ERR_NOTREGISTERED "451"
 #define ERR_NOTREGISTERED_MSG ":You have not registered"
 
-
 void sendErrorMsg(int fd, ...);
+void sendMsg(std::string sender_name, int fd, ...);
 void sendReplyMsg(int fd, ...);
 std::string current_timestamp();
 void sendServerMsg(const char* format, ...);
