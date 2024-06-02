@@ -38,11 +38,14 @@ void sendReplyMsg(int fd, ...) {
 	va_end(args);
 }
 
-void sendMsg(int fd, ...) {
+void sendMsg(std::string sender_name, int fd, ...) {
     va_list args;
     va_start(args, fd);
 
 	std::stringstream ss;
+	ss << ":" << sender_name;
+	ss << " " << "PRIVMSG ";
+	//ss << " " << get_name() << " :";
 	//ss << PREFIX;
 	while (1) {
 		const char *arg = va_arg(args, const char *);

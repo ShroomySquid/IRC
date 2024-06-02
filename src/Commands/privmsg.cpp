@@ -66,6 +66,6 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			continue ;
 		}
 		if (client->get_fd() != sender.get_fd()) 
-			sendErrorMsg(client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
+			sendMsg(sender.get_client(), client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
 	}
 }
