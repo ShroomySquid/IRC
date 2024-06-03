@@ -50,6 +50,6 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 			continue ;
 		}
 		channel->removeClient(&sender);
-		channel->broadcastAll(&sender, 3, "part", sender.get_client().c_str(), "has leave the channel"); 
+		channel->broadcastAll(&sender, 2, sender.get_client().c_str(), "has leaved the channel"); 
 	}
 }

@@ -155,28 +155,23 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	(void)sender;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << " :";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
 			break;
 		}
-		if (i)
-			ss << arg;
-		else
-			ss << " " << arg;
+		ss << " " << arg;
 		i++;
 	}
 	ss << "\r\n";
 	std::string response = ss.str();
+	cout << response;
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
+		cout << (*it)->get_client() << " received broadcast" << endl;
 		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	va_end(args);
@@ -187,12 +182,9 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << " :";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
