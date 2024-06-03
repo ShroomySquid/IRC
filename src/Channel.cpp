@@ -174,7 +174,6 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 		cout << (*it)->get_client() << " received broadcast" << endl;
 		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
-	cout << "Broadcast done..." << endl;
 	va_end(args);
 }
 

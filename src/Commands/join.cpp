@@ -5,8 +5,6 @@
 Cmd_join::Cmd_join(){}
 Cmd_join::~Cmd_join(){}
 
-// send response message to the client back
-// channel message + topic + list of users
 void send_join_response_msg(Client& sender, Channel* channel)
 {
 	std::vector<Client*> members = channel->get_members();
@@ -19,26 +17,13 @@ void send_join_response_msg(Client& sender, Channel* channel)
 			clients_nicknames += "@";
 		clients_nicknames += (*it)->get_nickname();
 	}
-	// for each operator
-	// for (it = members.begin(); it != members.end(); it++)
-	// {
-	// 	clients_nicknames += " ";
-	// 	if (channel->is_operator(*(it)))
-	// 		clients_nicknames += "@";
-	// 	clients_nicknames += (*it)->get_nickname();
-	// }
 
 	std::string joinmessage = ":" + sender.get_client() + " JOIN " + channel->get_name() + "\r\n";
-
-	//for (it = members.begin(); it != members.end(); it++)
-	//{
-		//Client* c = (*it);
 	send(sender.get_fd(), joinmessage.c_str(), joinmessage.length(),0);
 	if (channel->get_topic() != "")
 		sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 	sendReplyMsg(sender.get_fd(), RPL_NAMREPLY, sender.get_client().c_str(), "=", channel->get_name().c_str(), ":",clients_nicknames.c_str(), NULL);
 	sendReplyMsg(sender.get_fd(), RPL_ENDOFNAMES,sender.get_client().c_str(),channel->get_name().c_str(),":End of /NAMES list",  NULL);
-	//}
 }
 
 void Cmd_join::fill_chan_to_join(std::vector<std::string> &chan_to_join, std::string channels) {

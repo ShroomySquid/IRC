@@ -40,6 +40,8 @@
 #define ERR_NOSUCHNICK_MSG ":No such nickname"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NOSUCHCHANNEL_MSG ":No such channel"
+#define ERR_CANNOTSENDTOCHAN "404"
+#define ERR_CANNOTSENDTOCHAN_MSG ":Cannot send to channel"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_NONICKNAMEGIVEN_MSG ":No nickname given"
 #define ERR_ERRONEUSNICKNAME "432"
