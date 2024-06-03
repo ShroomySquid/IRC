@@ -75,7 +75,8 @@ void sendServerMsg(const char* format, ...) {
     va_start(args, format);
 
     std::ostringstream oss;
-    oss << current_timestamp() << " ";
+
+    oss << "\033[2m" << current_timestamp() << "\033[0m ";
 
     while (*format != '\0') {
         if (*format == '%' && *(format + 1) != '\0') {
@@ -83,12 +84,16 @@ void sendServerMsg(const char* format, ...) {
             switch (*format) {
                 case 'd': {
                     int i = va_arg(args, int);
-                    oss << i;
+                    oss << "\033[32m" << i << "\033[0m";
                     break;
                 }
                 case 's': {
                     const char* s = va_arg(args, const char*);
-                    oss << s;
+                    oss << "\033[32m" << s << "\033[0m";
+                    break;
+                }
+                case '%': {
+                    oss << '%';
                     break;
                 }
                 default: {
@@ -103,6 +108,6 @@ void sendServerMsg(const char* format, ...) {
     }
 
     va_end(args);
-    oss << "\n";
+    oss << std::endl; // Use endl instead of \n for better platform compatibility
     std::cout << oss.str();
 }

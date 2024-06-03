@@ -170,7 +170,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << "buffer: " << buffer;
+            // cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
             // cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
@@ -206,7 +206,7 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
 void Server::MarkAndRemoveDisconnectedClients() {
     for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ) {
         if (it->second->is_disconnected()) {
-            DEBUG_PRINT("Closing client on fd " << it->second->get_fd());
+            sendServerMsg("Closing and deleting client %s", it->second->get_client().c_str());
             close(it->second->get_fd());
             delete it->second;
             std::map<int, Client*>::iterator to_erase = it++;

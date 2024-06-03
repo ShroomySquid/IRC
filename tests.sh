@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SERVER_PID=""
-LOG_FILE="irc_commands.log"
+LOG_FILE="client.log"
 SERVER_LOG_FILE="server.log"
 PORT=6667
 PASSWORD="correct_password"
@@ -141,9 +141,10 @@ testing_user1() {
 
     local commands=(
         "PASS correct_password"
-        "NICK User1"
-        "USER user1 0 * :User One"
-        "JOIN #testchannel"
+        "NICK nickname1"
+        "USER username1 0 * realname1"
+        "JOIN #testchannel1"
+        "JOIN #testchannel2"
         "PRIVMSG #testchannel :Hello from User1"
     )
 
@@ -155,9 +156,10 @@ testing_user2() {
 
     local commands=(
         "PASS correct_password"
-        "NICK User1"  # Intentionally conflicting nickname to test server response
-        "USER user2 0 * :User Two"
-        "JOIN #testchannel"
+        "NICK nickname2"
+        "USER username2 0 * realname2"
+        "JOIN #testchannel1"
+        "JOIN #testchannel2"
         "PRIVMSG #testchannel :Hello from User2"
     )
 
@@ -170,19 +172,19 @@ check_and_kill_port $PORT
 start_server $PORT $PASSWORD
 
 # Sequential tests
-testing_command_before_authentification
-testing_pass_error_cases
-testing_nick_error_cases
-testing_user_error_cases
+# testing_command_before_authentification
+# testing_pass_error_cases
+# testing_nick_error_cases
+# testing_user_error_cases
 
 # Simulate two users connected to the server simultaneously
-# testing_user1 &
-# pid1=$!
-# testing_user2 &
-# pid2=$!
+testing_user1 &
+pid1=$!
+testing_user2 &
+pid2=$!
 
 # Wait for both users to finish their commands
-# wait $pid1
-# wait $pid2
+wait $pid1
+wait $pid2
 
 stop_server

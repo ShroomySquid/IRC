@@ -22,7 +22,7 @@ void send_join_response_msg(Client& sender, Channel* channel)
 	send(sender.get_fd(), joinmessage.c_str(), joinmessage.length(),0);
 	if (channel->get_topic() != "")
 		sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
-	sendReplyMsg(sender.get_fd(), RPL_NAMREPLY, sender.get_client().c_str(), "=", channel->get_name().c_str(), ":",clients_nicknames.c_str(), NULL);
+	sendReplyMsg(sender.get_fd(), RPL_NAMREPLY, sender.get_client().c_str(), "=", channel->get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
 	sendReplyMsg(sender.get_fd(), RPL_ENDOFNAMES,sender.get_client().c_str(),channel->get_name().c_str(),":End of /NAMES list",  NULL);
 }
 
@@ -77,7 +77,7 @@ int Cmd_join::check_errors(int *pass_start, Channel* channel, std::string passwo
 	return (0);
 }
 
-std::string Cmd_join::return_pass(int *pass_start, std::string passwords) {	
+std::string Cmd_join::return_pass(int *pass_start, std::string passwords) {
 	int pass_len = 0;
 	std::string pass_name;
 	while (passwords[*pass_start] && passwords[*pass_start] == ',')
@@ -87,7 +87,7 @@ std::string Cmd_join::return_pass(int *pass_start, std::string passwords) {
 	if (pass_len == 0)
 		pass_name = "";
 	else
-		pass_name = passwords.substr(*pass_start, pass_len);	
+		pass_name = passwords.substr(*pass_start, pass_len);
 	*pass_start += pass_len;
 	return (pass_name);
 }
@@ -121,7 +121,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			is_operator = true;
 			channel->set_password(return_pass(&pass_start, passwords));
 			channel->addClient(&sender, is_operator);
-			cout << "Channel created: " << *it << endl;
+			sendServerMsg("New channel created: %s", (*it).c_str(), NULL);
 			send_join_response_msg(sender, channel);
 			continue ;
 		}
