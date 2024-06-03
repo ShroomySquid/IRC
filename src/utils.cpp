@@ -31,9 +31,9 @@ bool check_invalid_symbols(std::string buffer) {
 	while (buffer[i]) {
 		if (i > 20) // 20 is the max length of a nickname
 			return (true);
-		if (!i && (buffer[i] == '#' || buffer[i] == ':')) // '#' is for channels, ':' is for commands
+		if (!i && (buffer[i] == '#' || buffer[i] == ':' || buffer[i] == '&')) // '#' is for channels, ':' is for commands
 			return (true);
-		if (buffer[i] == 32 || (buffer[i] < 14 && buffer[i] > 8)) // 32 is space, 14 is CR, 8 is BS
+		if (buffer[i] == 32 || (buffer[i] < 14 && buffer[i] > 8) || buffer[i] == ',') // 32 is space, 14 is CR, 8 is BS
 			return (true);
 		i++;
 	}

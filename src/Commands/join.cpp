@@ -112,6 +112,10 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 		Channel *channel = server.getChannel(*it);
 		if (channel == NULL)
 		{
+			if (check_invalid_symbols(*it)) {
+				sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), (*it).c_str(), "Invalid channel name provided", NULL);
+				continue ;
+			}
 			channel = new Channel(*it);
 			server.addChannel(*it, channel);
 			is_operator = true;
