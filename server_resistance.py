@@ -5,7 +5,7 @@ import time
 TARGET_HOST = '127.0.0.1'
 TARGET_PORT = 6667
 NUM_CONNECTIONS = 10000
-CONCURRENCY_LIMIT = 12
+CONCURRENCY_LIMIT = 6
 THROTTLE_DELAY = 0.1
 
 request_count = 0
@@ -13,6 +13,12 @@ bytes_transferred = 0
 total_response_time = 0
 error_count = 0
 start_time = None
+
+COMMANDS_TO_EXECUTE = [
+    b'JOIN #test\r\n',
+    b'PRIVMSG #test :Hello from client\r\n',
+    b'QUIT\r\n'
+]
 
 def connect_to_server(user_id):
     global request_count, bytes_transferred, total_response_time, error_count
@@ -23,17 +29,17 @@ def connect_to_server(user_id):
         s.send(b'PASS patate\r\n')
         s.send(f'NICK user{user_id}\r\n'.encode())
         s.send(b'USER user 0 * :user\r\n')
-        s.send(b'JOIN #test\r\n')
-        s.send(b'PRIVMSG #test :Hello from client\r\n')
+        for command in COMMANDS_TO_EXECUTE:
+            s.send(command)
+            start = time.time()
 
-        start = time.time()
         while True:
             response = s.recv(4096)
             if not response:
                 break
             total_response_time += time.time() - start
             request_count += 1
-            bytes_transferred += len(response)  # Track the number of bytes transferred
+            bytes_transferred += len(response)
         s.close()
     except Exception as e:
         print(f"Error connecting to server: {e}")
@@ -46,16 +52,10 @@ def main():
     threads = []
     for i in range(1, NUM_CONNECTIONS + 1):
         if i % CONCURRENCY_LIMIT == 0:
-            time.sleep(THROTTLE_DELAY)  # Throttle the connection rate
+            time.sleep(THROTTLE_DELAY)
         t = threading.Thread(target=connect_to_server, args=(i,))
         t.start()
         threads.append(t)
-    # Disconnect from server
-    for i in range(1, NUM_CONNECTIONS + 1):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((TARGET_HOST, TARGET_PORT))
-        s.send(f'QUIT user{i}\r\n'.encode())
-        s.close()
 
     for t in threads:
         t.join()
