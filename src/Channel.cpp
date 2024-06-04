@@ -119,11 +119,11 @@ bool Channel::is_Invited(Client* c)
 
 Client * Channel::getMember_by_name(std::string name)
 {
-	std::vector<Client*>::iterator it;
+	std::vector<Client*>::iterator it = this->members.begin();
 	for (it = this->members.begin(); it != this->members.end(); it++)
 	{
 		Client *c = (*it);
-		if (c->get_username() == name)
+		if (c->get_client() == name)
 			return c;
 	}
 	return NULL;

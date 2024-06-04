@@ -17,7 +17,7 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
 
     std::string user = arguments[1];
     std::string channelname = arguments[2];
-    if (channelname[0] == '#')
+    if (channelname[0] == '#' || channelname[0] == '&')
     {
         channelname = channelname.substr(1, channelname.length());
     }
