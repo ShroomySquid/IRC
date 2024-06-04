@@ -205,3 +205,6 @@ wait $pid1
 wait $pid2
 
 stop_server
+
+# /buffer close #channel (close the buffer on the left side panel of channel)
+

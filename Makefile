@@ -2,7 +2,7 @@ NAME            =   ircserv
 SRC_DIRECT      =   src
 MY_SOURCES      =   $(shell find $(SRC_DIRECT) -name "*.cpp")
 CC              =   c++
-CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 DEBUG_FLAGS     =   -g -DDEBUG
 
 all: $(NAME)

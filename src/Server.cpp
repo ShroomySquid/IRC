@@ -131,6 +131,7 @@ Server::~Server()
 		sendServerMsg("Deleting client: %s", it->second->get_client().c_str(), NULL);
 		close(it->second->get_fd());
 		delete it->second;
+		it->second = NULL;
 	}
 	//deleting all command instances
 	std::map<std::string, Command*>::iterator it = commands.begin();
