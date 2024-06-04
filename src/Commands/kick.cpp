@@ -33,11 +33,15 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 	{
 		// send kick message to client
     	std::string kick_message = (":"+sender.get_nickname() + " KICK " + "#" + channelName + " " + user + "\r\n");
-    	send(kicked->get_fd(), kick_message.c_str() , kick_message.length(),0);
 
+		std::vector<Client*> members = channel->get_members();
 
+		for (std::vector<Client*>::iterator it = members.begin(); it != members.end(); it++)
+		{
+			Client *c = (*it);
+			send(c->get_fd(), kick_message.c_str() , kick_message.length(),0);
+		}
 		channel->removeClient(kicked);
-		channel->broadcastAll(&sender, 3, "KICK", user.c_str(), "has been kick out of the server");
 	}
 	else {
 		sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
