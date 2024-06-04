@@ -28,11 +28,11 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		topic = channel->get_topic();
 		topic_length = topic.length();
 		if (!topic_length) {
-			sendReplyMsg(sender.get_fd(), RPL_NOTOPIC, arguments[1].c_str(), RPL_NOTOPIC_MSG, NULL);
+			sendReplyMsg(sender.get_fd(), RPL_NOTOPIC, sender.get_client().c_str(), channel->get_name().c_str(), RPL_NOTOPIC_MSG, NULL);
 			return ;
 		}
 		else {
-			sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), arguments[1].c_str(), channel->get_topic().c_str(), NULL);
+			sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 			return ;
 		}
 	}
@@ -45,5 +45,6 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		return ;
 	}
 	channel->set_topic(arguments[2]);
+	sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", arguments[2].c_str());
 }

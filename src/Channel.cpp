@@ -208,8 +208,12 @@ void Channel::update_members_in_channel(void) {
 			clients_nicknames += "@";
 		clients_nicknames += (*ite)->get_nickname();
 	}
+
 	for (std::vector<Client*>::iterator it = members.begin(); it != members.end(); it++)
 	{
+		if (this->get_topic() != "")
+			sendReplyMsg((*it)->get_fd(), RPL_TOPIC, (*it)->get_client().c_str(), get_name().c_str(), get_topic().c_str(), NULL);
+
 		sendReplyMsg((*it)->get_fd(), RPL_NAMREPLY, (*it)->get_client().c_str(), "=", get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
 		sendReplyMsg((*it)->get_fd(), RPL_ENDOFNAMES, (*it)->get_client().c_str(), get_name().c_str(), ":End of /NAMES list",  NULL);
 	}
