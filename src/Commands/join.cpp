@@ -7,26 +7,10 @@ Cmd_join::~Cmd_join(){}
 
 void send_join_response_msg(Client& sender, Channel* channel)
 {
-	/*
-	std::vector<Client*> members = channel->get_members();
-	std::vector<Client*>::iterator it = members.begin();
-	std::string clients_nicknames = "";
-	for (it = members.begin(); it != members.end(); it++)
-	{
-		clients_nicknames += " ";
-		if (channel->is_operator(*(it)))
-			clients_nicknames += "@";
-		clients_nicknames += (*it)->get_nickname();
-	}
-	*/
 	std::string joinmessage = ":" + sender.get_client() + " JOIN " + channel->get_name() + "\r\n";
 	send(sender.get_fd(), joinmessage.c_str(), joinmessage.length(),0);
 	if (channel->get_topic() != "")
-		sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
-	/*
-	sendReplyMsg(sender.get_fd(), RPL_NAMREPLY, sender.get_client().c_str(), "=", channel->get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
-	sendReplyMsg(sender.get_fd(), RPL_ENDOFNAMES,sender.get_client().c_str(),channel->get_name().c_str(),":End of /NAMES list",  NULL);
-	*/
+		sendReplyMsg(sender.get_fd(), RPL_TOPIC, channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 }
 
 void Cmd_join::fill_chan_to_join(std::vector<std::string> &chan_to_join, std::string channels) {
@@ -51,11 +35,11 @@ void Cmd_join::fill_chan_to_join(std::vector<std::string> &chan_to_join, std::st
 
 int Cmd_join::init(Client& sender, std::vector<std::string> arguments) {
 	if (!sender.is_registered()) {
-		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return (1);
 	}
 	if (arguments.size() < 2) {
-		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 		return (1);
 	}
 	return (0);
@@ -65,16 +49,16 @@ int Cmd_join::check_errors(int *pass_start, Channel* channel, std::string passwo
 	if (channel->get_password() != "") {
 		std::string pass_name = return_pass(pass_start, passwords);
 		if (channel->get_password() != pass_name) {
-			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, sender.get_client().c_str(), channel->get_name().c_str(), ERR_BADCHANNELKEY_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_BADCHANNELKEY, channel->get_name().c_str(), ERR_BADCHANNELKEY_MSG, NULL);
 			return (1) ;
 		}
 	}
 	if (channel->is_on_invite() && !channel->is_Invited(&sender)) {
-		sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, sender.get_client().c_str(), channel->get_name().c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_INVITEONLYCHAN, channel->get_name().c_str(), ERR_INVITEONLYCHAN_MSG, NULL);
 		return (1);
 	}
 	if (channel->get_limit() > 0 && channel->get_limit() <= channel->get_clients_nbr()) {
-		sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, sender.get_client().c_str(), channel->get_name().c_str(), ERR_CHANNELISFULL_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_CHANNELISFULL, channel->get_name().c_str(), ERR_CHANNELISFULL_MSG, NULL);
 		return (1);
 	}
 	return (0);
@@ -116,7 +100,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 		if (channel == NULL)
 		{
 			if (check_invalid_symbols(*it)) {
-				sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), (*it).c_str(), "Invalid channel name provided", NULL);
+				sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, (*it).c_str(), "Invalid channel name provided", NULL);
 				continue ;
 			}
 			channel = new Channel(*it);

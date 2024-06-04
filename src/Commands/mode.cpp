@@ -56,7 +56,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 	if (b)
 	{
 		if (!channel->is_member(client)) {	
-			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
 		channel->promote(client);
@@ -65,7 +65,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 	else
 	{
 		if (!channel->is_operator(client)) {	
-			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, sender.get_client().c_str(), user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
 		channel->demote(client);
@@ -81,7 +81,7 @@ void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, 
 		int limit = atoi(str_limit.c_str());
 		if (limit < 1)
 		{
-			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE (limit)", ":Invalid parameter", NULL);
+			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, arguments[1].c_str(), "MODE (limit)", ":Invalid parameter", NULL);
 			return ;
 		}
 		channel->set_limit(limit);
@@ -97,30 +97,30 @@ void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, 
 bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	if (!sender.is_registered()) {
-		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return false;
 	}
 	if (arguments.size() < 2) {
-		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, arguments[0].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 		return false;
 	}
 	if (arguments[1][0] == '#' || arguments[1][0] == '&')
 		arguments[1].erase(0, 1);	
 	else {
-		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 		return false;
 	}
 	Channel * channel = server.getChannel(arguments[1]);
 	if (!channel) {
-		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 		return false;
 	}
 	if (arguments.size() < 3) {
-		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, sender.get_client().c_str(), arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
+		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
 		return false;
 	}
 	if (!channel->is_operator(&sender)) {
-		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, sender.get_client().c_str(), arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return false;
 	}
 	return true;
@@ -155,7 +155,7 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 			args_i ++;
 			if (args_i >= arguments.size())
 			{
-				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_client().c_str(), arguments[1].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
+				sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, arguments[1].c_str(), ERR_NEEDMOREPARAMS_MSG, NULL);
 				return;
 			}
 		}
@@ -171,6 +171,6 @@ void Cmd_mode::execute(Server &server, Client& sender, std::vector<std::string> 
 		else if (c == 'l')
 			set_limit(channel, plus, sender, arguments[args_i], arguments);
 		else
-			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, sender.get_client().c_str(), arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
+			sendErrorMsg(sender.get_fd(), ERR_UNKNOWNERROR, arguments[1].c_str(), "MODE", ":Unknowed mode", NULL);
 	}
 }
