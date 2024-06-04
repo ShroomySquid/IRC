@@ -32,6 +32,6 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 	if (client)
 	{
 		channel->removeClient(client);
-		channel->broadcastAll(&sender, 3, "KICK", sender.get_client().c_str(), "has been kick out of the server");
+		channel->broadcastAll(&sender, 3, "KICK", user.c_str(), "has been kick out of the server");
 	}
 }
