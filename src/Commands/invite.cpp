@@ -31,7 +31,7 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
         return;
     }
 
-    if (channel->getMember_by_name(sender.get_username()) == NULL)
+    if (channel->getMember_by_name(sender.get_client()) == NULL)
     {
         sendReplyMsg(sender.get_fd(), ERR_NOTONCHANNEL, sender.get_nickname().c_str(), channel->get_name().c_str(), ERR_NOTONCHANNEL_MSG, NULL);
         return;
