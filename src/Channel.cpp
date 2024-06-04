@@ -198,8 +198,7 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	va_end(args);
 }
 
-void Channel::update_members_in_channel(void) {		
-	std::vector<Client*> members = get_members();
+void Channel::update_members_in_channel(void) {
 	std::vector<Client*>::iterator ite = members.begin();
 	std::string clients_nicknames = "";
 	for (ite = members.begin(); ite != members.end(); ite++)
