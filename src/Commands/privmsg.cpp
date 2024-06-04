@@ -25,7 +25,7 @@ void Cmd_privmsg::parse_targets(std::vector<std::string> &target_vec, std::strin
 void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	int args_nbr = arguments.size();
-	int i = 4;
+	int i = 3;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -43,6 +43,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		args += arguments[i];
 		i++;
 	}
+	cout << "Args within privmsg: " << args << endl;
 	for (it = targets.begin(); it != targets.end(); it++) {
 		if ((*it)[0] == '#' || (*it)[0] == '&')
 		{

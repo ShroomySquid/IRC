@@ -71,6 +71,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 		channel->demote(client);
 		channel->broadcastAll(&sender, 3, "MODE (operator)", user.c_str(), "has been demoted to member");
 	}
+	channel->update_members_in_channel();
 }
 
 void set_limit(Channel* channel, bool b, Client& sender, std::string str_limit, std::vector<std::string> arguments)

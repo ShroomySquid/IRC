@@ -214,7 +214,6 @@ void Channel::update_members_in_channel(void) {
 			clients_nicknames += "@";
 		clients_nicknames += (*ite)->get_nickname();
 	}
-	cout << "In channel: " << clients_nicknames << endl;
 	for (std::vector<Client*>::iterator it = members.begin(); it != members.end(); it++)
 	{
 		sendReplyMsg((*it)->get_fd(), RPL_NAMREPLY, (*it)->get_client().c_str(), "=", get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
