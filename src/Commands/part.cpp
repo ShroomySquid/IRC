@@ -52,5 +52,6 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 		channel->removeClient(&sender);
 		sendServerMsg("%s has leaved the channel: %s", sender.get_client().c_str(), arguments[1].c_str(), NULL);
 		channel->broadcastAll(&sender, 2, sender.get_client().c_str(), "has leaved the channel");
+		channel->update_members_in_channel();
 	}
 }

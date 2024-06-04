@@ -203,6 +203,26 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	va_end(args);
 }
 
+void Channel::update_members_in_channel(void) {		
+	std::vector<Client*> members = get_members();
+	std::vector<Client*>::iterator ite = members.begin();
+	std::string clients_nicknames = "";
+	for (ite = members.begin(); ite != members.end(); ite++)
+	{
+		clients_nicknames += " ";
+		if (is_operator(*(ite)))
+			clients_nicknames += "@";
+		clients_nicknames += (*ite)->get_nickname();
+	}
+	cout << "In channel: " << clients_nicknames << endl;
+	for (std::vector<Client*>::iterator it = members.begin(); it != members.end(); it++)
+	{
+		sendReplyMsg((*it)->get_fd(), RPL_NAMREPLY, (*it)->get_client().c_str(), "=", get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
+		sendReplyMsg((*it)->get_fd(), RPL_ENDOFNAMES, (*it)->get_client().c_str(), get_name().c_str(), ":End of /NAMES list",  NULL);
+	}
+
+}
+
 std::string Channel::get_topic() {
 	return (topic);
 }

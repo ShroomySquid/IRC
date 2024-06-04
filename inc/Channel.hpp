@@ -34,6 +34,7 @@ class Channel
 		bool is_Invited(Client* c);
 		void broadcastAll(Client* sender, int count, ...);
 		void broadcastAlmostAll(Client* sender, int count, ...);
+		void update_members_in_channel(void);
         
 		Client * getMember_by_name(std::string name);
 		
