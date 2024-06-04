@@ -5,6 +5,7 @@ LOG_FILE="client.log"
 SERVER_LOG_FILE="server.log"
 PORT=6667
 PASSWORD="correct_password"
+PIPE_FILE="/tmp/irc_server_output.pipe"
 
 log_message() {
     echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
@@ -40,8 +41,21 @@ start_server() {
     local port=$1
     local password=$2
     log_message "Starting IRC server on port $port..."
-    ./ircserv $port $password > "$SERVER_LOG_FILE" 2>&1 &
+
+    # Create a named pipe if it doesn't exist
+    if [ ! -p "$PIPE_FILE" ]; then
+        mkfifo "$PIPE_FILE"
+    fi
+
+    # Start the IRC server in the background, redirecting its output to the named pipe
+    ./ircserv $port $password > "$PIPE_FILE" 2>&1 &
     SERVER_PID=$!
+
+    # Use a background process to read from the named pipe, remove ANSI codes, and append to the log file
+    {
+        sed "s/\x1B\[[0-9;]*[mGK]//g" < "$PIPE_FILE" | tee -a "$SERVER_LOG_FILE"
+    } &
+
     sleep 2  # Ensure the server has enough time to start
     if ps -p $SERVER_PID > /dev/null; then
         log_message "IRC server started with PID $SERVER_PID"
@@ -62,6 +76,10 @@ stop_server() {
         log_message "IRC server stopped."
     else
         log_message "Failed to stop IRC server."
+    fi
+
+    if [ -p "$PIPE_FILE" ]; then
+        rm "$PIPE_FILE"
     fi
 }
 
@@ -142,10 +160,9 @@ testing_user1() {
     local commands=(
         "PASS correct_password"
         "NICK nickname1"
-        "USER username1 0 * realname1"
-        "JOIN #testchannel1"
-        "JOIN #testchannel2"
-        "PRIVMSG #testchannel :Hello from User1"
+        "USER username1"
+        "JOIN"
+        # "PRIVMSG #testchannel :Hello from User1"
     )
 
     send_irc_commands $PORT commands[@]
@@ -180,7 +197,7 @@ start_server $PORT $PASSWORD
 # Simulate two users connected to the server simultaneously
 testing_user1 &
 pid1=$!
-testing_user2 &
+# testing_user2 &
 pid2=$!
 
 # Wait for both users to finish their commands

@@ -10,16 +10,14 @@ all: $(NAME)
 $(NAME): $(MY_SOURCES)
 	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
-run: $(MY_SOURCES)
-	$(CC) $(CCFLAGS) -g -fsanitize=address -o $(NAME) $(MY_SOURCES)
+run: $(NAME)
 	./$(NAME) 6667 patate
-
 
 debug: CCFLAGS += $(DEBUG_FLAGS)
 debug: re run
 
 kill:
-	@lsof -i :6667 | awk 'NR > 1 {print $$2}' | xargs kill -9
+	lsof -i :6667 | awk 'NR > 1 {print $$2}' | xargs kill -9
 
 test: all
 	./tests.sh

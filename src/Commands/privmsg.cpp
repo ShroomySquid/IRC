@@ -51,7 +51,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			if (channel == NULL)
 				sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), (*it).c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 			else if (channel->is_member(&sender)) {
-				sendServerMsg("PRIVMSG sent from %s to #%s", sender.get_client().c_str(), (*it).c_str(), NULL);
+				sendServerMsg("PRIVMSG sent from %s to %s", sender.get_client().c_str(), (*it).c_str(), NULL);
 				channel->broadcastAlmostAll(&sender, 2, sender.get_client().c_str(), args.c_str());
 			}
 			else
@@ -64,6 +64,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 			continue ;
 		}
 		if (client->get_fd() != sender.get_fd()) {
+			sendServerMsg("PRIVMSG sent from %s to %s", sender.get_client().c_str(), (*it).c_str(), NULL);
 			sendMsg(sender.get_client(), client->get_fd(), sender.get_client().c_str(), args.c_str(), NULL);
 		}
 	}

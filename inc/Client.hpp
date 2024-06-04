@@ -8,6 +8,8 @@ class Client
 {
     private:
         const int _fd;
+        std::string _ip;
+        int _port;
 		std::string _username;
 		std::string _nickname;
         bool _disconnected;
@@ -15,13 +17,15 @@ class Client
 		bool _registered;
         Client();
     public:
-        Client(int fd);
-        Client(int fd, std::string username, std::string nickname);
+        Client(int fd, std::string ip, int port);
+        Client(int fd, std::string ip, int port, std::string username, std::string nickname);
         ~Client();
         Client& operator=(const Client& src);
         Client(const Client& src);
 
         int get_fd();
+        std::string get_ip() const;
+        int get_port() const;
 		std::string get_username();
 		std::string get_nickname();
 		std::string get_client();

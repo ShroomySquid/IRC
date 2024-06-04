@@ -1,20 +1,2 @@
 :ft_irc 001 nickname1 :Welcome to the IRC server
-:ft_irc 001 nickname2 :Welcome to the IRC server
-:nickname2 JOIN #testchannel1
-:ft_irc 353 nickname2 = #testchannel1 :  @nickname2
-:ft_irc 366 nickname2 #testchannel1 :End of /NAMES list
-:nickname1 JOIN #testchannel1
-:ft_irc 353 nickname1 = #testchannel1 :  @nickname2 nickname1
-:ft_irc 366 nickname1 #testchannel1 :End of /NAMES list
-:nickname1 PRIVMSG #testchannel1 : nickname1  has joined the channel
-:nickname1 PRIVMSG #testchannel1 : nickname1  has joined the channel
-:nickname1 JOIN #testchannel2
-:ft_irc 353 nickname1 = #testchannel2 :  @nickname1
-:ft_irc 366 nickname1 #testchannel2 :End of /NAMES list
-:nickname2 JOIN #testchannel2
-:ft_irc 353 nickname2 = #testchannel2 :  @nickname1 nickname2
-:ft_irc 366 nickname2 #testchannel2 :End of /NAMES list
-:nickname2 PRIVMSG #testchannel2 : nickname2  has joined the channel
-:nickname2 PRIVMSG #testchannel2 : nickname2  has joined the channel
-:ft_irc 403 nickname2 testchannel :No such channel
-:ft_irc 403 nickname1 testchannel :No such channel
+:ft_irc 461 nickname1 JOIN :Not enough parameters

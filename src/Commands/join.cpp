@@ -130,6 +130,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 		bool success = channel->addClient(&sender, is_operator);
 		if (success) {
 			send_join_response_msg(sender, channel);
+			sendServerMsg("Client %s joined channel: %s", sender.get_client().c_str(), (*it).c_str(), NULL);
 			channel->broadcastAll(&sender, 2, sender.get_nickname().c_str(), " has joined the channel");
 		}
 	}
