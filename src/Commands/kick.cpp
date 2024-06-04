@@ -28,10 +28,15 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
 	}
-	Client *client = channel->getMember_by_name(user);
-	if (client)
+	Client *kicked = channel->getMember_by_name(user);
+	if (kicked)
 	{
-		channel->removeClient(client);
+		// send kick message to client
+    	std::string kick_message = (":"+sender.get_nickname() + " KICK " + "#" + channelName + " " + user + "\r\n");
+    	send(kicked->get_fd(), kick_message.c_str() , kick_message.length(),0);
+
+
+		channel->removeClient(kicked);
 		channel->broadcastAll(&sender, 3, "KICK", user.c_str(), "has been kick out of the server");
 	}
 	else {
