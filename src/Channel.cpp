@@ -12,7 +12,7 @@ Channel::Channel(std::string name)
 	this->on_invite = false;
 	this->password = "";
 	this->limit = 0;
-	this->clients_in_channel = 1;
+	this->clients_in_channel = 0;
 }
 Channel::~Channel(){}
 Channel::Channel(const Channel& src)
