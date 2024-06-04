@@ -1,0 +1,2 @@
+:ft_irc 001 nickname1 :Welcome to the IRC server
+:ft_irc 461 nickname1 JOIN :Not enough parameters

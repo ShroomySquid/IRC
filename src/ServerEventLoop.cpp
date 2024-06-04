@@ -10,8 +10,6 @@ void Server::Run() {
         MarkAndRemoveDisconnectedClients();
         initSignals();
     }
-    close(socketD);
-    // Full cleanup if signal is received
 }
 
 void Server::ListenClients() {
@@ -66,23 +64,23 @@ void Server::AcceptClients() {
     int infd = accept(socketD, (struct sockaddr*)&clientAddress, &clientAddressSize);
 
     if (infd > 0) {
-        // 1. Create a new client object
-        Client* newClient = new Client(infd);
+        // Extract IP and Port
+        char clientIp[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIp, INET_ADDRSTRLEN);
+        int clientPort = ntohs(clientAddress.sin_port);
+
+        // Create a new client object with IP and Port
+        Client* newClient = new Client(infd, clientIp, clientPort);
         if (newClient == NULL) {
             perror("new");
             return;
         }
 
-        // 2. Register the client
+        // Register the client
         registerClient(clients, newClient);
 
-        // 3. Extract IP and Port
-        char clientIp[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(clientAddress.sin_addr), clientIp, INET_ADDRSTRLEN);
-        int clientPort = ntohs(clientAddress.sin_port);
-
-        // 5. Log the connection
-        sendServerMsg("Connection established from %s:%d", clientIp, clientPort);
+        // Log the connection
+        sendServerMsg("Connection established from: %s:%d", clientIp, clientPort);
     }
 }
 
@@ -141,7 +139,7 @@ void Server::Split_message(Client* client, char *buffer) {
 }
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
-    int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);    
+    int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
@@ -170,9 +168,9 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
             return;
 		std::map<int, Client*>::iterator it = clients.find(pfd.fd);
         if (it != clients.end()) {
-            cout << "buffer: " << buffer;
+            // cout << "buffer: " << buffer;
 			Get_rid_of_newlines(buffer);
-            //cout << "buffer after get_rid: " << buffer;
+            // cout << "buffer after get_rid: " << buffer;
 			Split_message(it->second, buffer);
         }
         bzero(buffer, buffer_len);
@@ -206,7 +204,7 @@ void Server::process_message(Server &server, Client &sender, std::map<std::strin
 void Server::MarkAndRemoveDisconnectedClients() {
     for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ) {
         if (it->second->is_disconnected()) {
-            DEBUG_PRINT("Closing client on fd " << it->second->get_fd());
+            sendServerMsg("Closing and deleting client: %s (%s:%d)", it->second->get_client().c_str(), it->second->get_ip().c_str(), it->second->get_port());
             close(it->second->get_fd());
             delete it->second;
             std::map<int, Client*>::iterator to_erase = it++;

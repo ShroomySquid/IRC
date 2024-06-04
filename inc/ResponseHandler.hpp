@@ -1,6 +1,7 @@
 #ifndef RESPONSE_HANDLER_H
 #define RESPONSE_HANDLER_H
 
+#pragma once
 #include <cstdarg>
 #include <iostream>
 #include <sstream>
@@ -40,14 +41,18 @@
 #define ERR_NOSUCHNICK_MSG ":No such nickname"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NOSUCHCHANNEL_MSG ":No such channel"
+#define ERR_CANNOTSENDTOCHAN "404"
+#define ERR_CANNOTSENDTOCHAN_MSG ":Cannot send to channel"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_NONICKNAMEGIVEN_MSG ":No nickname given"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_ERRONEUSNICKNAME_MSG ":Erroneus nickname"
-#define ERR_ERRONEUSUSERNAME "432"
-#define ERR_ERRONEUSUSERNAME_MSG ":Erroneus username"
+//#define ERR_ERRONEUSUSERNAME "432"
+//#define ERR_ERRONEUSUSERNAME_MSG ":Erroneus username"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_NICKNAMEINUSE_MSG ":Nickname is already in use"
+#define ERR_USERNAMEINUSE "433"
+#define ERR_USERNAMEINUSE_MSG ":Username is already in use"
 #define ERR_USERNOTINCHANNEL "441"
 #define ERR_USERNOTINCHANNEL_MSG ":They aren't on that channel"
 #define ERR_NOTONCHANNEL "442"
@@ -73,8 +78,8 @@
 #define ERR_NOTREGISTERED "451"
 #define ERR_NOTREGISTERED_MSG ":You have not registered"
 
-
 void sendErrorMsg(int fd, ...);
+void sendMsg(std::string sender_name, int fd, ...);
 void sendReplyMsg(int fd, ...);
 std::string current_timestamp();
 void sendServerMsg(const char* format, ...);

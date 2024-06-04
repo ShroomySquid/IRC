@@ -28,11 +28,11 @@ void Cmd_part::fill_chan_to_quit(std::vector<std::string> &chan_to_quit, std::st
 void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
 	if (!sender.is_registered()) {
-		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, sender.get_client().c_str(), ERR_NOTREGISTERED_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return ;
 	}
 	if (arguments.size() < 2) {
-		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, "*", "PART", ERR_NEEDMOREPARAMS_MSG, NULL);
+		sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, "PART", ERR_NEEDMOREPARAMS_MSG, NULL);
 		return ;
 	}
 	std::vector<std::string> chan_to_quit;
@@ -42,14 +42,16 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 		Channel *channel = server.getChannel(*it);
 		if (channel == NULL)
 		{
-			sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 			continue ;
 		}
 		if (!channel->is_operator(&sender) && !channel->is_member(&sender)) {
-			sendErrorMsg(sender.get_fd(), ERR_NOTONCHANNEL, sender.get_client().c_str(), arguments[1].c_str(), ERR_NOTONCHANNEL_MSG, NULL);
+			sendErrorMsg(sender.get_fd(), ERR_NOTONCHANNEL, arguments[1].c_str(), ERR_NOTONCHANNEL_MSG, NULL);
 			continue ;
 		}
 		channel->removeClient(&sender);
-		channel->broadcastAll(&sender, 3, "part", sender.get_client().c_str(), "has leave the channel"); 
+		sendServerMsg("%s has leaved the channel: %s", sender.get_client().c_str(), arguments[1].c_str(), NULL);
+		channel->broadcastAll(&sender, 2, sender.get_client().c_str(), "has leaved the channel");
+		channel->update_members_in_channel();
 	}
 }

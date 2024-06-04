@@ -76,7 +76,7 @@ bool Channel::addClient(Client* c, bool ope)
 		std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
 		if (it == invited.end())
 		{
-			std::cout << "cannot join beacause client is not invited !" << std::endl;
+			std::cout << "cannot join because client is not invited !" << std::endl;
 			return false;
 		}
 	}
@@ -146,35 +146,25 @@ void Channel::removeClient(Client *c)
 	}
 }
 
-// TODO
-// check si pas le meme
-// recupere le client dans la map et envoi le message
-
 void Channel::broadcastAll(Client* sender, int count, ...) {
     va_list args;
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	(void)sender;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << " : ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
 			break;
 		}
-		if (i)
-			ss << arg;
-		else
-			ss << " " << arg;
+		ss << " " << arg;
 		i++;
 	}
 	ss << "\r\n";
 	std::string response = ss.str();
+	//cout << response;
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
 		send((*it)->get_fd(), response.c_str(), response.size(), 0);
@@ -187,12 +177,9 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
     va_start(args, count);
 	int i = 0;
 	std::stringstream ss;
-	//ss << PREFIX;
-	//ss << " " << get_name();
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name();
-	ss << " " << ":";
+	ss << " " << get_name() << " : ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
@@ -209,6 +196,25 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 			send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	va_end(args);
+}
+
+void Channel::update_members_in_channel(void) {		
+	std::vector<Client*> members = get_members();
+	std::vector<Client*>::iterator ite = members.begin();
+	std::string clients_nicknames = "";
+	for (ite = members.begin(); ite != members.end(); ite++)
+	{
+		clients_nicknames += " ";
+		if (is_operator(*(ite)))
+			clients_nicknames += "@";
+		clients_nicknames += (*ite)->get_nickname();
+	}
+	for (std::vector<Client*>::iterator it = members.begin(); it != members.end(); it++)
+	{
+		sendReplyMsg((*it)->get_fd(), RPL_NAMREPLY, (*it)->get_client().c_str(), "=", get_name().c_str(), ":", clients_nicknames.c_str(), NULL);
+		sendReplyMsg((*it)->get_fd(), RPL_ENDOFNAMES, (*it)->get_client().c_str(), get_name().c_str(), ":End of /NAMES list",  NULL);
+	}
+
 }
 
 std::string Channel::get_topic() {

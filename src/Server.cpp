@@ -83,6 +83,7 @@ void Server::remove_client(std::map<int, Client*> &clients) {
 		for (std::map<std::string, Channel*>::iterator i = channels.begin(); i != channels.end(); i++) {
 			i->second->removeClient(it->second);
 		}
+		sendServerMsg("Deleting client: %s", it->second->get_client().c_str(), NULL);
 		close(it->second->get_fd());
 		delete it->second;
 		std::map<int, Client*>::iterator to_erase = it;
@@ -115,6 +116,7 @@ void Server::free_channel()
 	std::map<std::string, Channel*>::iterator it = channels.begin();
 	while (it != channels.end())
 	{
+		sendServerMsg("Deleting channel: %s", it->first.c_str(), NULL);
 		delete (*it).second;
 		it++;
 	}
@@ -123,22 +125,27 @@ void Server::free_channel()
 
 Server::~Server()
 {
-	if (!clients.empty())
+	// Closing all clients and deleting them
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
-		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
-		{
-			close(it->second->get_fd());
-			delete it->second;
-		}
+		sendServerMsg("Deleting client: %s", it->second->get_client().c_str(), NULL);
+		close(it->second->get_fd());
+		delete it->second;
+		it->second = NULL;
 	}
 	//deleting all command instances
 	std::map<std::string, Command*>::iterator it = commands.begin();
-	while (it != commands.end())
+	sendServerMsg("Deleting all commands", NULL);
+	if (it != commands.end())
 	{
-		delete (*it).second;
-		it++;
+		while (it != commands.end())
+		{
+			delete (*it).second;
+			it++;
+		}
 	}
 	free_channel();
+	close(socketD);
 }
 
 std::string Server::get_password() const
