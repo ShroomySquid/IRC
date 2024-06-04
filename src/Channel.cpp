@@ -76,7 +76,7 @@ bool Channel::addClient(Client* c, bool ope)
 		std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
 		if (it == invited.end())
 		{
-			std::cout << "cannot join beacause client is not invited !" << std::endl;
+			std::cout << "cannot join because client is not invited !" << std::endl;
 			return false;
 		}
 	}
@@ -146,10 +146,6 @@ void Channel::removeClient(Client *c)
 	}
 }
 
-// TODO
-// check si pas le meme
-// recupere le client dans la map et envoi le message
-
 void Channel::broadcastAll(Client* sender, int count, ...) {
     va_list args;
     va_start(args, count);
@@ -168,10 +164,9 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 	}
 	ss << "\r\n";
 	std::string response = ss.str();
-	cout << response;
+	//cout << response;
 	for (std::vector<Client*>::iterator it = this->members.begin(); it != this->members.end(); it++)
 	{
-		cout << (*it)->get_client() << " received broadcast" << endl;
 		send((*it)->get_fd(), response.c_str(), response.size(), 0);
 	}
 	va_end(args);
