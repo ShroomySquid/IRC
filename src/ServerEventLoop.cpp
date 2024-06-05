@@ -1,10 +1,10 @@
 #include "../inc/Server.hpp"
-#include "../inc/Command.hpp"
-#include "../inc/ResponseHandler.hpp"
 
 void Server::Run() {
     DEBUG_PRINT("Running server...");
     ListenClients();
+    initializeBot();
+
     while (online) {
         PollAndProcessClients();
         MarkAndRemoveDisconnectedClients();
@@ -30,7 +30,7 @@ void Server::PollAndProcessClients() {
         return;
     }
 
-    for (std::vector<pollfd>::iterator pfd_it = pfds.begin(); pfd_it != pfds.end(); ++pfd_it) {
+   for (std::vector<pollfd>::iterator pfd_it = pfds.begin(); pfd_it != pfds.end(); ++pfd_it) {
         if (pfd_it->fd == socketD && pfd_it->revents & POLLIN) {
             AcceptClients();
         } else if (pfd_it->revents & POLLIN) {
@@ -178,7 +178,6 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
     }
 }
 
-
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
 	std::vector<std::string> args; // arguments de la commande.
@@ -212,5 +211,46 @@ void Server::MarkAndRemoveDisconnectedClients() {
         } else {
             ++it;
         }
+    }
+}
+
+
+void Server::initializeBot() {
+    int botSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (botSocket == -1) {
+        perror("socket");
+        return;
+    }
+
+    // Assuming bot connects from localhost; adjust as necessary
+    struct sockaddr_in botAddress;
+    botAddress.sin_family = AF_INET;
+    botAddress.sin_port = htons(6667);
+    inet_pton(AF_INET, "127.0.0.1", &botAddress.sin_addr);
+
+    if (connect(botSocket, (struct sockaddr*)&botAddress, sizeof(botAddress)) == -1) {
+        perror("connect");
+        return;
+    }
+
+    // Create bot instance and register it
+    Bot* bot = new Bot(botSocket, "127.0.0.1", 6667, "IRCbot");
+    registerClient(clients, bot);
+
+    // Authenticate and join channel
+    bot->send("PASS " + password);
+    bot->send("NICK IRCbot");
+    bot->send("USER IRCbot");
+}
+
+void Server::handleBotMessage(Bot* bot) {
+    char buffer[512];
+    int numbytes = recv(bot->get_fd(), buffer, sizeof(buffer) - 1, 0);
+    if (numbytes > 0) {
+        buffer[numbytes] = '\0';
+        std::string message(buffer);
+        bot->handleMessage(message);
+    } else if (numbytes == 0) {
+        bot->disconnect();
     }
 }

@@ -1,5 +1,5 @@
 #include "../inc/Server.hpp"
-#include "../inc/Command.hpp"
+#include "../inc/Bot.hpp"
 
 bool online = true;
 
@@ -178,3 +178,4 @@ void Server::handleSignal(int signal)
 	if (signal == SIGINT || signal == SIGTERM || signal == SIGQUIT)
 		online = false;
 }
+

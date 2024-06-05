@@ -2,7 +2,11 @@
 #define SERVER_HPP
 
 #include "IRC.hpp"
+#include "Command.hpp"
 #include "ResponseHandler.hpp"
+#include "Bot.hpp"
+
+class Bot;
 
 extern bool online;
 
@@ -47,6 +51,8 @@ class Server
 		void Get_rid_of_newlines(char *buffer);
         void initSignals();
         static void handleSignal(int signal);
+        void initializeBot();
+        void handleBotMessage(Bot* bot);
 
         // ------------------------------
     public:
@@ -61,6 +67,7 @@ class Server
 		std::string get_password() const;
 		std::map<int, Client*>& get_clients();
 		Client* find_client(std::string client_name);
+
 };
 
 
