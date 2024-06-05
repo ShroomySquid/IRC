@@ -20,7 +20,7 @@ Channel::Channel(const Channel& src)
     *this = src;
 }
 
-bool Channel::promote(Client* c) {	
+bool Channel::promote(Client* c) {
 	if (!c || members.empty())
 		return (false);
 	if (!operators.empty())
@@ -31,13 +31,13 @@ bool Channel::promote(Client* c) {
 	}
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
 	if (it != members.end())
-		this->operators.push_back(c);	
+		this->operators.push_back(c);
 	else
 		return false;
 	return true;
 }
 
-bool Channel::demote(Client* c) {	
+bool Channel::demote(Client* c) {
 	if (operators.empty() || !c)
 		return (false);
 	std::vector<Client*>::iterator it = std::find(operators.begin(), operators.end(), c);
@@ -47,17 +47,24 @@ bool Channel::demote(Client* c) {
 	return true;
 }
 
-bool Channel::is_member(Client* c) 
+bool Channel::is_member(Client* c)
 {
-	if (members.empty() || !c)
+	DEBUG_PRINT("Channel::is_member");
+	if (members.empty() || !c) {
+		DEBUG_PRINT("Channel::is_member: false : No members in channel");
 		return (false);
+	}
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
 	if (it == members.end())
+	{
+		DEBUG_PRINT("Channel::is_member: false : You are not a member of this channel");
 		return (false);
+	}
+	DEBUG_PRINT("Channel::is_member: true : You are a member of this channel");
 	return (true);
 }
 
-bool Channel::is_operator(Client* c) 
+bool Channel::is_operator(Client* c)
 {
 	if (operators.empty() || !c)
 		return (false);
@@ -85,7 +92,7 @@ bool Channel::addClient(Client* c, bool ope)
 		this->operators.push_back(c);
 	this->clients_in_channel++;
 
-	// erase from invited 
+	// erase from invited
 	if (!invited.empty()) {
 		std::vector<Client*>::iterator it = std::find(invited.begin(), invited.end(), c);
 		if (it != invited.end())
@@ -139,10 +146,6 @@ void Channel::removeClient(Client *c)
 		}
 	}
 	if (!operators.empty()) {
-		std::vector<Client*>::iterator i = std::find(operators.begin(), operators.end(), c);
-		if (i != operators.end()) {
-			this->operators.erase(i);
-		}
 	}
 	is_no_operator_left();
 }

@@ -3,15 +3,15 @@ SRC_DIRECT      =   src
 MY_SOURCES      =   $(shell find $(SRC_DIRECT) -name "*.cpp")
 CC              =   c++
 CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
-DEBUG_FLAGS     =   -g -DDEBUG
+DEBUG_FLAGS     =   -fsanitize=address -g -DDEBUG
 
 all: $(NAME)
 
 $(NAME): $(MY_SOURCES)
-	$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
+	@$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
 run: $(NAME)
-	./$(NAME) 6667 patate
+	@./$(NAME) 6667 patate
 
 debug: CCFLAGS += $(DEBUG_FLAGS)
 debug: re run
@@ -23,15 +23,15 @@ test: all
 	./tests.sh
 
 clean:
-	rm -f *.o
-	rm -rf *.dSYM
+	@rm -f *.o
+	@rm -rf *.dSYM
 
-fclean:         clean
-	rm -f $(NAME) test
+fclean: clean
+	@rm -f $(NAME) test
 
 tclean:
 	rm -f irc_commands.log server.log user1_commands.log user2_commands.log
 
-re:             fclean $(NAME)
+re: fclean $(NAME)
 
 .PHONY: all clean fclean re

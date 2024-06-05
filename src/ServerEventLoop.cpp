@@ -10,6 +10,8 @@ void Server::Run() {
         MarkAndRemoveDisconnectedClients();
         initSignals();
     }
+    sendServerMsg("Server shutting down...", NULL);
+    close(socketD);
 }
 
 void Server::ListenClients() {
@@ -32,8 +34,14 @@ void Server::PollAndProcessClients() {
 
     for (std::vector<pollfd>::iterator pfd_it = pfds.begin(); pfd_it != pfds.end(); ++pfd_it) {
         if (pfd_it->fd == socketD && pfd_it->revents & POLLIN) {
+            DEBUG_PRINT("New client connection detected...");
+            DEBUG_PRINT("Revents: " << pfd_it->revents);
+            DEBUG_PRINT("Revents binary: " << std::bitset<8>(pfd_it->revents));
             AcceptClients();
         } else if (pfd_it->revents & POLLIN) {
+            DEBUG_PRINT("Client message detected...");
+            DEBUG_PRINT("Revents: " << pfd_it->revents);
+            DEBUG_PRINT("Revents binary: " << std::bitset<8>(pfd_it->revents));
             ProcessClientMessage(*pfd_it);
         }
     }
@@ -129,6 +137,7 @@ void Server::Get_rid_of_newlines(char *buffer) {
 }
 
 void Server::Split_message(Client* client, char *buffer) {
+    DEBUG_PRINT("Splitting message...");
 	int i = 0;
 	while (buffer[i] && buffer[i + 1] && !(buffer[i + 1] == '\n' && buffer[i] == '\r'))
 		i++;
@@ -139,6 +148,7 @@ void Server::Split_message(Client* client, char *buffer) {
 }
 
 void Server::ProcessClientMessage(const pollfd& pfd) {
+    DEBUG_PRINT("Processing client message...");
     int bytesReceived = recv(pfd.fd, recv_buffer, 1024, 0);
     if (bytesReceived <= 0) {
         std::map<int, Client*>::iterator it = clients.find(pfd.fd);
@@ -152,7 +162,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
 		recv_buffer[0] = '\0';
 
     // [debug] prints all received bytes from client on fd
-    DEBUG_PRINT_HEX(recv_buffer, bytesReceived);
+    // DEBUG_PRINT_HEX(recv_buffer, bytesReceived);
     DEBUG_PRINT("Received " << bytesReceived << " bytes from client on fd " << pfd.fd << ": " << recv_buffer);
 
 
@@ -181,6 +191,7 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
 
 void Server::process_message(Server &server, Client &sender, std::map<std::string, Command*>& commands, char *input)
 {
+    DEBUG_PRINT("Processing message...");
 	std::vector<std::string> args; // arguments de la commande.
     char *token = std::strtok(input, " ");
 	std::string cmd;
