@@ -55,7 +55,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 	Client* client = server.find_client(user);
 	if (b)
 	{
-		if (!channel->is_member(client)) {	
+		if (!channel->is_member(client)) {
 			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
@@ -64,7 +64,7 @@ void set_op(Channel* channel, bool b, std::string user, Server &server, Client& 
 	}
 	else
 	{
-		if (!channel->is_operator(client)) {	
+		if (!channel->is_operator(client)) {
 			sendErrorMsg(sender.get_fd(), ERR_USERNOTINCHANNEL, user.c_str(), ERR_USERNOTINCHANNEL_MSG, NULL);
 			return ;
 		}
@@ -105,7 +105,7 @@ bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 		return false;
 	}
 	if (arguments[1][0] == '#' || arguments[1][0] == '&')
-		arguments[1].erase(0, 1);	
+		arguments[1].erase(0, 1);
 	else {
 		sendErrorMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, arguments[1].c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
 		return false;
