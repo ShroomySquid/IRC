@@ -110,6 +110,7 @@ void Cmd_join::execute(Server &server, Client& sender, std::vector<std::string> 
 			channel->addClient(&sender, is_operator);
 			sendServerMsg("New channel created: %s", (*it).c_str(), NULL);
 			send_join_response_msg(sender, channel);
+			channel->update_members_in_channel();
 			continue ;
 		}
 		if (check_errors(&pass_start, channel, passwords, sender))
