@@ -19,6 +19,7 @@ class Channel
 		int limit;
 		int clients_in_channel;
 		std::string password;
+		void is_no_operator_left();
     public:
         Channel(std::string name);
         ~Channel();

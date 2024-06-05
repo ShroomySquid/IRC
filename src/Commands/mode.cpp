@@ -116,7 +116,7 @@ bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 		return false;
 	}
 	if (arguments.size() < 3) {
-		sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
+		//sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
 		return false;
 	}
 	if (!channel->is_operator(&sender)) {

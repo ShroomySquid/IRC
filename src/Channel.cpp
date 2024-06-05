@@ -144,6 +144,17 @@ void Channel::removeClient(Client *c)
 			this->operators.erase(i);
 		}
 	}
+	is_no_operator_left();
+}
+
+void Channel::is_no_operator_left()
+{
+	if (this->operators.empty())
+	{
+		this->on_invite = false;
+		this->set_password("");
+		this->topic_protection = false;
+	}
 }
 
 void Channel::broadcastAll(Client* sender, int count, ...) {
@@ -153,7 +164,7 @@ void Channel::broadcastAll(Client* sender, int count, ...) {
 	std::stringstream ss;
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name() << " : ";
+	ss << " " << get_name() << " ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
@@ -179,7 +190,7 @@ void Channel::broadcastAlmostAll(Client* sender, int count, ...) {
 	std::stringstream ss;
 	ss << ":" << sender->get_client();
 	ss << " " << "PRIVMSG";
-	ss << " " << get_name() << " : ";
+	ss << " " << get_name() << " ";
 	while (i < count) {
 		const char *arg = va_arg(args, const char *);
 		if (arg == NULL) {
