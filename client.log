@@ -1,2 +1,15 @@
 :ft_irc 001 nickname1 :Welcome to the IRC server
-:ft_irc 461 nickname1 JOIN :Not enough parameters
+:ft_irc 001 nickname2 :Welcome to the IRC server
+:nickname1 JOIN #testchannel
+:ft_irc 353 nickname1 = #testchannel :  @nickname1
+:ft_irc 366 nickname1 #testchannel :End of /NAMES list
+:nickname2 JOIN #testchannel
+:ft_irc 353 nickname1 = #testchannel :  @nickname1 nickname2
+:ft_irc 366 nickname1 #testchannel :End of /NAMES list
+:ft_irc 353 nickname2 = #testchannel :  @nickname1 nickname2
+:ft_irc 366 nickname2 #testchannel :End of /NAMES list
+:nickname2 PRIVMSG #testchannel  nickname2  has joined the channel
+:nickname2 PRIVMSG #testchannel  nickname2  has joined the channel
+:ft_irc 482 testchannel :You're not channel operator
+
+:ft_irc 443 :User already on channel

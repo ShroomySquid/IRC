@@ -25,7 +25,6 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
 
     if (channel == NULL)
     {
-        
         //sendErrorMsg(sender.get_fd(), "403", "ERR_NOSUCHCHANNEL", ": No such channel\r\n");
         sendReplyMsg(sender.get_fd(), ERR_NOSUCHCHANNEL, sender.get_nickname().c_str(), channelname.c_str(), ERR_NOSUCHCHANNEL_MSG, NULL);
         return;
@@ -38,7 +37,8 @@ void Cmd_invite::execute(Server &server, Client& sender, std::vector<std::string
     }
     if (channel->getMember_by_name(user))
     {
-        sendReplyMsg(sender.get_fd(), ERR_USERONCHANNEL, ERR_USERONCHANNEL_MSG, NULL);
+        //   "<client> <nick> <channel> :is already on channel"
+        sendReplyMsg(sender.get_fd(), ERR_USERONCHANNEL, sender.get_nickname().c_str(), channel->get_name().c_str() ,ERR_USERONCHANNEL_MSG, NULL);
         return;
     }
 

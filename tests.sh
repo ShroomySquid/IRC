@@ -171,6 +171,21 @@ testing_mode_command() {
     send_irc_commands $PORT commands[@]
 }
 
+testing_invite_command() {
+    log_message "Testing MODE command..."
+
+    local commands=(
+        "PASS correct_password"
+        "NICK Joe"
+        "USER George"
+        "JOIN #testchannel"
+        "MODE #testchannel +i"
+        "MODE #testchannel"
+    )
+
+    send_irc_commands $PORT commands[@]
+}
+
 testing_user1() {
     log_message "Testing User 1..."
 
@@ -178,8 +193,7 @@ testing_user1() {
         "PASS correct_password"
         "NICK nickname1"
         "USER username1"
-        "JOIN"
-        # "PRIVMSG #testchannel :Hello from User1"
+        "JOIN #testchannel"
     )
 
     send_irc_commands $PORT commands[@]
@@ -191,10 +205,8 @@ testing_user2() {
     local commands=(
         "PASS correct_password"
         "NICK nickname2"
-        "USER username2 0 * realname2"
-        "JOIN #testchannel1"
-        "JOIN #testchannel2"
-        "PRIVMSG #testchannel :Hello from User2"
+        "USER username2"
+        "JOIN #testchannel"
     )
 
     send_irc_commands $PORT commands[@]
@@ -210,17 +222,18 @@ start_server $PORT $PASSWORD
 # testing_pass_error_cases
 # testing_nick_error_cases
 # testing_user_error_cases
-testing_mode_command
+# testing_mode_command
+# testing_invite_command
 
 # Simulate two users connected to the server simultaneously
-# testing_user1 &
-# pid1=$!
-# testing_user2 &
-# pid2=$!
+testing_user1 &
+pid1=$!
+testing_user2 &
+pid2=$!
 
 # Wait for both users to finish their commands
-# wait $pid1
-# wait $pid2
+wait $pid1
+wait $pid2
 
 stop_server
 
