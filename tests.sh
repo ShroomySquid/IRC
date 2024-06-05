@@ -154,6 +154,23 @@ testing_user_error_cases() {
     send_irc_commands $PORT commands[@]
 }
 
+testing_mode_command() {
+    log_message "Testing MODE command..."
+
+    local commands=(
+        "PASS correct_password"
+        "NICK Joe"
+        "USER George"
+        "JOIN #testchannel"
+        "MODE #testchannel +k password"
+        "MODE #testchannel +l 10"
+        "MODE #testchannel +i"
+        "MODE #testchannel"
+    )
+
+    send_irc_commands $PORT commands[@]
+}
+
 testing_user1() {
     log_message "Testing User 1..."
 
@@ -193,16 +210,17 @@ start_server $PORT $PASSWORD
 # testing_pass_error_cases
 # testing_nick_error_cases
 # testing_user_error_cases
+testing_mode_command
 
 # Simulate two users connected to the server simultaneously
-testing_user1 &
-pid1=$!
+# testing_user1 &
+# pid1=$!
 # testing_user2 &
-pid2=$!
+# pid2=$!
 
 # Wait for both users to finish their commands
-wait $pid1
-wait $pid2
+# wait $pid1
+# wait $pid2
 
 stop_server
 

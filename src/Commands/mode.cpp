@@ -116,7 +116,19 @@ bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 		return false;
 	}
 	if (arguments.size() < 3) {
-		//sendReplyMsg(sender.get_fd(), RPL_CHANNELMODEIS, arguments[1].c_str(), RPL_CHANNELMODEIS_MSG, NULL);
+		std::string mode_msg = "";
+		if (channel->get_password() != "")
+			mode_msg += "k";
+		if (channel->get_limit() != 0)
+			mode_msg += "l";
+		if (channel->is_on_invite())
+			mode_msg += "i";
+		if (channel->is_topic_protected())
+			mode_msg += "t";
+		if (channel->is_operator(&sender))
+			mode_msg += "o";
+		std::string full_messsage = ":" + sender.get_client() + " PRIVMSG " + channel->get_name() + " :Mode " + channel->get_name() + " [" + mode_msg + "]" "\r\n";
+		send(sender.get_fd(), full_messsage.c_str(), full_messsage.size(), 0);
 		return false;
 	}
 	if (!channel->is_operator(&sender)) {
