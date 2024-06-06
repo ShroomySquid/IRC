@@ -3,11 +3,11 @@
 This program is a server made following the IRC protocol. It has the standard features of an IRC server: you can send messages, create and join channels, change permissions, etc.
 It is specifically made to work with the Weechat client, but it also work well with netcat.
 
-[General documentation for Weechat](https://weechat.org/doc/)
-
 This project is part of the 42 Quebec cursus and was made with the cooperation of [joeroeg](https://github.com/joeroeg). It is specifically made to run on MacOS.
 
 [General documentation for IRC](https://modern.ircdocs.horse/)
+
+[General documentation for Weechat](https://weechat.org/doc/)
 
 ## Run the server
 
@@ -63,6 +63,8 @@ Example:
 /set irc.server.irc.username Jack
 /connect irc
 ```
+
+If you need more information on how to use weechat, you can consult the [Weechat documentation](https://weechat.org/doc/).
 
 To leave the server, simply run the QUIT command (or /quit in weechat).
 
