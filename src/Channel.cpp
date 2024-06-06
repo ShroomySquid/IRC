@@ -145,7 +145,16 @@ void Channel::removeClient(Client *c)
 			this->clients_in_channel--;
 		}
 	}
+	// if operator, remove from operators but check if there is no operator left
 	if (!operators.empty()) {
+		std::vector<Client*>::iterator i = std::find(operators.begin(), operators.end(), c);
+		if (i != operators.end()) {
+			if (operators.size() == 1) {
+				this->is_no_operator_left();
+			}
+			else
+				this->operators.erase(i);
+		}
 	}
 	is_no_operator_left();
 }

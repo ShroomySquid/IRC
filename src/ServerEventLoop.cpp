@@ -23,9 +23,9 @@ void Server::ListenClients() {
 }
 
 void Server::PollAndProcessClients() {
-    std::vector<pollfd> pfds;
-    CreatePollfds(pfds);
-    int poll_count = poll(&pfds[0], pfds.size(), 0); // 0 seconds means poll will return immediately without blocking.
+    std::vector<pollfd> pfds; // 1. Create a vector of pollfd structures
+    CreatePollfds(pfds); // 2. Fill the vector with the listening socket and all client sockets
+    int poll_count = poll(&pfds[0], pfds.size(), 0); // 3. Poll the sockets. 0 timeout means poll will return immediately. -1 means wait indefinitely. Returns the number of sockets with events.
 
     if (poll_count < 0) {
         perror("poll");

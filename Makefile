@@ -22,7 +22,7 @@ MY_SOURCES      =   $(SRC_DIRECT)/main.cpp \
                     $(CMD_DIRECT)/topic.cpp \
                     $(CMD_DIRECT)/user.cpp
 CC              =   c++
-CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
+CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -g
 DEBUG_FLAGS     =   -fsanitize=address -g -DDEBUG
 
 all: $(NAME)
@@ -31,7 +31,7 @@ $(NAME): $(MY_SOURCES)
 	@$(CC) $(CCFLAGS) -o $(NAME) $(MY_SOURCES)
 
 run: $(NAME)
-	@./$(NAME) 6667 patate
+	./$(NAME) 6667 patate
 
 debug: CCFLAGS += $(DEBUG_FLAGS)
 debug: re run
