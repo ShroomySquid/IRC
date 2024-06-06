@@ -1,7 +1,7 @@
 # IRC -- Internet Relay Protocol
 
-Server made following the IRC protocol. It has the standard features of an IRC server: you can send messages, create and join channels, change permissions, etc.
-It is specifically made to work with the Weechat Client, but you can also use netcat.
+This program is a server made following the IRC protocol. It has the standard features of an IRC server: you can send messages, create and join channels, change permissions, etc.
+It is specifically made to work with the Weechat client, but it also work well with netcat.
 
 [General documentation for Weechat](https://weechat.org/doc/)
 
@@ -40,18 +40,20 @@ NICK Jack
 USER Jack
 ```
 
-Then you can interact with the server and other users. This server support the JOIN command to both join a create a channel, the TOPIC command to check or
-set the topic of a channel, the PRIVMSG command to send a message to another user or to a channel, the KICK command to kick a user from a channel,
+Once you are registered, you can interact with the server and other users. This server support the JOIN command to both join a create a channel, the TOPIC command 
+to check or set the topic of a channel, the PRIVMSG command to send a message to another user or to a channel, the KICK command to kick a user from a channel,
 the MODE command to set the modes of a channel, the INVITE command to invite someone to the channel and the PART command to leave a channel.
 If you need more details about commands in IRC, you can consult the [IRC documentation](https://modern.ircdocs.horse/).
 
 To join the server as a client with Weechat, Open Weechat in a terminal window and put the following commands:
 
+```bash
 /server add [server name] [ip address]/[port] -notls
 /set irc.server.[server name].password [password]
 /set irc.server.[server name].nicks [nickname]
 /set irc.server.[server name].username [username]
 /connect [server name]
+```
 
 Example:
 ```bash
@@ -72,4 +74,4 @@ To leave the server, simply run the QUIT command (or /quit in weechat).
 git@github.com:ShroomySquid/IRC.git
 ```
 
-- Run the command "make" in the terminal window in the folder to compile the program.
+- Run the command "make" in the terminal window in the folder to compile the program and then it's done!.
