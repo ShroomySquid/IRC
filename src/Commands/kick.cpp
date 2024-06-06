@@ -41,6 +41,7 @@ void Cmd_kick::execute(Server &server, Client& sender, std::vector<std::string> 
 			Client *c = (*it);
 			send(c->get_fd(), kick_message.c_str() , kick_message.length(),0);
 		}
+		sendServerMsg("%s has kicked %s from %s", sender.get_client().c_str(), user.c_str(), channel->get_name().c_str());
 		channel->removeClient(kicked);
 	}
 	else {

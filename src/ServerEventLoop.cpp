@@ -111,23 +111,6 @@ bool Server::append_buffer(void) {
 }
 
 void Server::Get_rid_of_newlines(char *buffer) {
-	// version qui enlève les /n
-	/*
-	int i = 0;
-	int a = 0;
-	while (buffer[i] && buffer[i + a] && buffer[i + 1]) {
-		if (buffer[i + a] == '\n' && (i == 0 || buffer[i + a - 1] != '\r')) {
-			while (buffer[i + a] && buffer[i + a] == '\n')
-				a++;
-		}
-		if (a && buffer[i + a])
-			buffer[i] = buffer[i + a];
-		i++;
-	}
-	if (buffer[i + 1])
-		buffer[i + 1] = '\0';
-	*/
-	// version qui remplace les /n par des espaces
 	int i = 0;
 	while (buffer[i]) {
 		if (buffer[i] == '\n' && (i == 0 || buffer[i - 1] != '\r'))
@@ -161,7 +144,6 @@ void Server::ProcessClientMessage(const pollfd& pfd) {
 	if (bytesReceived < 2 && recv_buffer[0] == '\n')
 		recv_buffer[0] = '\0';
 
-    // [debug] prints all received bytes from client on fd
     // DEBUG_PRINT_HEX(recv_buffer, bytesReceived);
     DEBUG_PRINT("Received " << bytesReceived << " bytes from client on fd " << pfd.fd << ": " << recv_buffer);
 

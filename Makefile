@@ -1,6 +1,26 @@
 NAME            =   ircserv
 SRC_DIRECT      =   src
-MY_SOURCES      =   $(shell find $(SRC_DIRECT) -name "*.cpp")
+CMD_DIRECT      =   $(SRC_DIRECT)/Commands
+MY_SOURCES      =   $(SRC_DIRECT)/main.cpp \
+                    $(SRC_DIRECT)/Client.cpp \
+                    $(SRC_DIRECT)/Server.cpp \
+                    $(SRC_DIRECT)/ServerEventLoop.cpp \
+                    $(SRC_DIRECT)/ResponseHandler.cpp \
+                    $(SRC_DIRECT)/Channel.cpp \
+                    $(SRC_DIRECT)/utils.cpp \
+                    $(CMD_DIRECT)/cap.cpp \
+                    $(CMD_DIRECT)/invite.cpp \
+                    $(CMD_DIRECT)/join.cpp \
+                    $(CMD_DIRECT)/kick.cpp \
+                    $(CMD_DIRECT)/mode.cpp \
+                    $(CMD_DIRECT)/nick.cpp \
+                    $(CMD_DIRECT)/part.cpp \
+                    $(CMD_DIRECT)/pass.cpp \
+                    $(CMD_DIRECT)/ping.cpp \
+                    $(CMD_DIRECT)/privmsg.cpp \
+                    $(CMD_DIRECT)/quit.cpp \
+                    $(CMD_DIRECT)/topic.cpp \
+                    $(CMD_DIRECT)/user.cpp
 CC              =   c++
 CCFLAGS         =   -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 DEBUG_FLAGS     =   -fsanitize=address -g -DDEBUG

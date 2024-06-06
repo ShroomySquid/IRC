@@ -22,15 +22,6 @@ void Cmd_user::execute(Server &server, Client& sender, std::vector<std::string> 
 			sendErrorMsg(sender.get_fd(), ERR_NEEDMOREPARAMS, sender.get_nickname().c_str(), "USER", ERR_NEEDMOREPARAMS_MSG, NULL);
 		return ;
 	}
-	/*
-	if (check_invalid_symbols(arguments[1])) {
-		if (sender.get_nickname().length() == 0)
-			sendErrorMsg(sender.get_fd(), ERR_ERRONEUSUSERNAME, ERR_ERRONEUSUSERNAME_MSG, NULL);
-		else
-			sendErrorMsg(sender.get_fd(), ERR_ERRONEUSUSERNAME, sender.get_nickname().c_str(), ERR_ERRONEUSUSERNAME_MSG, NULL);
-		return ;
-	}
-	*/
 	sender.set_username(arguments[1]);
 	if (sender.get_nickname().length() && sender.get_username().length())
 	{

@@ -32,5 +32,6 @@ void Cmd_quit::execute(Server &server, Client& sender, std::vector<std::string> 
 		Channel *c = (*it).second;
 		c->removeClient(&sender);
 	}
+	sendServerMsg("%s has quit", sender.get_client().c_str());
 	sender.disconnect();
 }

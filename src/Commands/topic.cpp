@@ -9,7 +9,7 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 {
 	std::string topic;
 	Channel *channel;
-	int topic_length;	
+	int topic_length;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -46,5 +46,6 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 	}
 	channel->set_topic(arguments[2]);
 	sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
+	sendServerMsg("%s has set the topic to: %s", sender.get_client().c_str(), channel->get_topic().c_str());
 	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", arguments[2].c_str());
 }
