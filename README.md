@@ -1,13 +1,15 @@
 # IRC -- Internet Relay Protocol
 
 This program is a server made following the IRC protocol. It has the standard features of an IRC server: you can send messages, create and join channels, change permissions, etc.
-It is specifically made to work with the Weechat client, but it also work well with netcat.
+It is specifically made to work with the Weechat client, but it also work well with netcat. It is specifically made to run on MacOS.
 
-This project is part of the 42 Quebec cursus and was made with the cooperation of [joeroeg](https://github.com/joeroeg). It is specifically made to run on MacOS.
+This project is part of the 42 Quebec cursus and was made with the cooperation of [joeroeg](https://github.com/joeroeg).
 
 [General documentation for IRC](https://modern.ircdocs.horse/)
 
 [General documentation for Weechat](https://weechat.org/doc/)
+
+- Run the command "make" in the terminal window in the folder to compile the program. You can now run the program.
 
 ## Run the server
 
@@ -76,4 +78,4 @@ To leave the server, simply run the QUIT command (or /quit in weechat).
 git@github.com:ShroomySquid/IRC.git
 ```
 
-- Run the command "make" in the terminal window in the folder to compile the program and then it's done!.
+- Run the command "make" in the terminal window in the folder to compile the program. You can now run the program.
