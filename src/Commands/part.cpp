@@ -27,6 +27,7 @@ void Cmd_part::fill_chan_to_quit(std::vector<std::string> &chan_to_quit, std::st
 
 void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> arguments)
 {
+	int i = 2;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -37,6 +38,15 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 	}
 	std::vector<std::string> chan_to_quit;
 	fill_chan_to_quit(chan_to_quit, arguments[1]);
+	std::string args = "has left the channel, reason gived:";
+	if (arguments.size() > 3) {
+		int args_nbr = arguments.size();
+		while (i < args_nbr) {
+			args += " ";
+			args += arguments[i];
+			i++;
+		}
+	}
 	std::vector<std::string>::iterator it;
 	for (it = chan_to_quit.begin(); it != chan_to_quit.end(); it++) {
 		Channel *channel = server.getChannel(*it);
@@ -60,7 +70,7 @@ void Cmd_part::execute(Server &server, Client& sender, std::vector<std::string> 
 		}
 
 		channel->removeClient(&sender);
-		sendServerMsg("%s has leaved the channel: %s", sender.get_client().c_str(), arguments[1].c_str(), NULL);
-		channel->broadcastAll(&sender, 2, sender.get_client().c_str(), "has leaved the channel");
+		sendServerMsg("%s has left the channel: %s", sender.get_client().c_str(), arguments[1].c_str(), NULL);
+		channel->broadcastAll(&sender, 2, sender.get_client().c_str(), args.c_str());
 	}
 }

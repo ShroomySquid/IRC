@@ -43,7 +43,7 @@ void Cmd_privmsg::execute(Server &server, Client& sender, std::vector<std::strin
 		args += arguments[i];
 		i++;
 	}
-	cout << "Args within privmsg: " << args << endl;
+	//cout << "Args within privmsg: " << args << endl;
 	for (it = targets.begin(); it != targets.end(); it++) {
 		if ((*it)[0] == '#' || (*it)[0] == '&')
 		{
