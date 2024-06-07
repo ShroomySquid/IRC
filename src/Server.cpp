@@ -11,8 +11,8 @@ Server::Server(int socketD, struct sockaddr_in *address, std::string password)
     this->address = address;
     this->password = password;
 	buffer_len = 0;
-    initializeCommands();
     initializeBindings(socketD, address);
+    initializeCommands();
 	initSignals();
 	bzero(buffer, 1024);
 	bzero(recv_buffer, 1024);
@@ -177,4 +177,13 @@ void Server::handleSignal(int signal)
 {
 	if (signal == SIGINT || signal == SIGTERM || signal == SIGQUIT)
 		online = false;
+}
+
+void Server::remove_from_all_chan(Client* client) {
+	std::map<std::string, Channel*>::iterator it = channels.begin();
+	while (it != channels.end())
+	{
+		it->second->removeClient(client);
+		it++;
+	}
 }

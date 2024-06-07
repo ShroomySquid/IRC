@@ -131,7 +131,7 @@ bool checkup(Server &server, Client& sender, std::vector<std::string> arguments)
 		send(sender.get_fd(), full_messsage.c_str(), full_messsage.size(), 0);
 		return false;
 	}
-	if (!channel->is_operator(&sender)) {
+	if (!channel->is_member(&sender) || !channel->is_operator(&sender)) {
 		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return false;
 	}

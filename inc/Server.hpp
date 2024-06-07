@@ -46,6 +46,7 @@ class Server
 		void Split_message(Client* client, char *buffer);
 		void Get_rid_of_newlines(char *buffer);
         void initSignals();
+		void remove_from_all_chan(Client* client);
         static void handleSignal(int signal);
 
         // ------------------------------

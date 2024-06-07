@@ -201,6 +201,7 @@ void Server::MarkAndRemoveDisconnectedClients() {
             close(it->second->get_fd());
             delete it->second;
             std::map<int, Client*>::iterator to_erase = it++;
+			remove_from_all_chan(it->second);
             clients.erase(to_erase);
         } else {
             ++it;

@@ -51,16 +51,16 @@ bool Channel::is_member(Client* c)
 {
 	DEBUG_PRINT("Channel::is_member");
 	if (members.empty() || !c) {
-		DEBUG_PRINT("Channel::is_member: false : No members in channel");
+		//DEBUG_PRINT("Channel::is_member: false : No members in channel");
 		return (false);
 	}
 	std::vector<Client*>::iterator it = std::find(members.begin(), members.end(), c);
 	if (it == members.end())
 	{
-		DEBUG_PRINT("Channel::is_member: false : You are not a member of this channel");
+		//DEBUG_PRINT("Channel::is_member: false : You are not a member of this channel");
 		return (false);
 	}
-	DEBUG_PRINT("Channel::is_member: true : You are a member of this channel");
+	//DEBUG_PRINT("Channel::is_member: true : You are a member of this channel");
 	return (true);
 }
 
