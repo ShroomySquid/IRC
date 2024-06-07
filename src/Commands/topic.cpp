@@ -10,6 +10,7 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 	std::string topic;
 	Channel *channel;
 	int topic_length;
+	int i = 3;
 	if (!sender.is_registered()) {
 		sendErrorMsg(sender.get_fd(), ERR_NOTREGISTERED, ERR_NOTREGISTERED_MSG, NULL);
 		return ;
@@ -36,6 +37,13 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 			return ;
 		}
 	}
+	int args_nbr = arguments.size();
+	std::string args = arguments[2];
+	while (i < args_nbr) {
+		args += " ";
+		args += arguments[i];
+		i++;
+	}
 	if (channel->is_topic_protected() && !channel->is_operator(&sender)) {
 		sendErrorMsg(sender.get_fd(), ERR_CHANOPRIVSNEEDED, arguments[1].c_str(), ERR_CHANOPRIVSNEEDED_MSG, NULL);
 		return ;
@@ -44,8 +52,8 @@ void Cmd_topic::execute(Server &server, Client& sender, std::vector<std::string>
 		sendErrorMsg(sender.get_fd(), ERR_NOTONCHANNEL, arguments[1].c_str(), ERR_NOTONCHANNEL_MSG, NULL);
 		return ;
 	}
-	channel->set_topic(arguments[2]);
+	channel->set_topic(args);
 	sendReplyMsg(sender.get_fd(), RPL_TOPIC, sender.get_client().c_str(), channel->get_name().c_str(), channel->get_topic().c_str(), NULL);
 	sendServerMsg("%s has set the topic to: %s", sender.get_client().c_str(), channel->get_topic().c_str());
-	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", arguments[2].c_str());
+	channel->broadcastAll(&sender, 3, "TOPIC", "is set to:", args.c_str());
 }
